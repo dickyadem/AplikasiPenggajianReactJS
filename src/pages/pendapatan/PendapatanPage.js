@@ -7,6 +7,7 @@ import { RiDeleteBin5Fill } from "react-icons/ri";
 import { FaSearch } from "react-icons/fa";
 import { useEffect, useState } from "react";
 import PendapatanService from "../../services/PendapatanService";
+import Paginator from "../../widgets/commons/PaginatorWidget";
 
 
 const PendapatanPage = () => {
@@ -50,8 +51,9 @@ const PendapatanPage = () => {
       }
     >
       <Card className="mt-2">
-        <Card.Header className="bg-secondary text-light">
+      <Card.Header className="bg-secondary text-light d-flex justify-content-between align-items-center">
           <h5>Pendapatan</h5>
+          <Paginator paginate={paginatePendapatan} callbackPaginator={callbackPaginator} />
         </Card.Header>
         <Table striped bordered hover size="sm">
           <thead>
@@ -61,13 +63,14 @@ const PendapatanPage = () => {
             </tr>
           </thead>
           <tbody>
-          {daftarPendapatan.results &&
-              daftarPendapatan.results.map((pendapatan, index) => (
-                <tr key={index}>
-                  <td>{pendapatan.ID_Pendapatan}</td>
-                  <td>{pendapatan.Nama_Pendapatan}</td>
-                </tr>
-              ))}
+            {daftarPendapatan.results && daftarPendapatan.results.map((pendapatan, index) => (
+              <tr
+                key={index}
+                onClick={() => navigate(`/pendapatan/edit/${pendapatan.ID_Pendapatan}`)}>
+                <td>{pendapatan.ID_Pendapatan}</td>
+                <td>{pendapatan.Nama_Pendapatan}</td>
+              </tr>
+            ))}
           </tbody>
         </Table>
       </Card>

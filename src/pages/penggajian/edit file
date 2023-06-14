@@ -1,148 +1,107 @@
-// import { Button, Card, Col, Form, Row, Table } from "react-bootstrap";
+// import { Button, Card, Col, Form, InputGroup, Row, Table } from "react-bootstrap";
 // import NavigationWidget from "../../widgets/commons/NavigationWidget";
-// import { FaArrowLeft, FaSave } from "react-icons/fa";
 // import { useNavigate } from "react-router-dom";
+// import { MdCancel } from "react-icons/md";
+// import { FaArrowLeft, FaSave, FaSearch } from "react-icons/fa";
 // import { useState } from "react";
-// import GajiService from "../../services/GajiService";
-// import KaryawanService from "../../services/KaryawanService";
-// import PendapatanService from "../../services/PendapatanService";
-// import PotonganService from "../../services/PotonganService";
+// import GajiDetailService from "../../services/GajiDetailService";
 
-
-// const PenggajianInputPage = () => {
-//   const navigate = useNavigate();
-//   const [gaji, setGaji] = useState({});
-// const getKaryawanByID = (karyawanID) => {
-//   KaryawanService.get(karyawanID)
-//     .then((response) => {
-//       const karyawan = response.data;
-//       const namaKaryawan = karyawan.Nama_Karyawan;
-//       console.log('Nama karyawan:', namaKaryawan);
-  
-//     })
-//     .catch((error) => {
-//       console.error('Terjadi kesalahan saat mengambil data karyawan:', error);
-//     });
+// const initGaji = {
+//   ID_Gaji: null,
+//   Tanggal_Entry: null,
+//   ID_Karyawan: null,
 // };
 
+// const initGajiDetail = {
+//   ID_Gaji: null,
+//   ID_Pendapatan: null,
+//   Jumlah_Pendapatan: 0,
+//  ID_Potongan: null,
+//  Jumlah_Potongan: 0,
+// };
 
-  
-  
-//   const handleInputhitung = (e, index) => {
-//     let name = e.target.name;
-//     let value = e.target.value;
-  
-//     if (["Gaji_Bersih", "Total_Pendapatan", "Total_Potongan", "Jumlah_Pendapatan", "Jumlah_Potongan"].includes(name)) {
-//       value = parseInt(value);
+// const [gaji, setGaji] = useState(initGaji);
+// const [daftarGaji, setDaftarGajiDetail] = useState(initGajiDetail);
+
+// use
+// const PenggajianInputPage = () => {
+
+//   const getCurrentDate = () => {
+//     const currentDate = new Date();
+//     const year = currentDate.getFullYear();
+//     let month = currentDate.getMonth() + 1;
+//     let day = currentDate.getDate();
+
+//     // Add leading zeros if month or day is less than 10
+//     if (month < 10) {
+//       month = `0${month}`;
 //     }
-  
-//     if (name === "Jumlah_Pendapatan") {
-//       setDaftarPendapatan((daftar) => {
-//         const updatedDaftar = [...daftar];
-//         updatedDaftar[index] = { ...updatedDaftar[index], Jumlah_Pendapatan: value };
-//         return updatedDaftar;
-//       });
+//     if (day < 10) {
+//       day = `0${day}`;
 //     }
-  
-//     if (name === "Jumlah_Potongan") {
-//       setDaftarPotongan((daftar) => {
-//         const updatedDaftar = [...daftar];
-//         updatedDaftar[index] = { ...updatedDaftar[index], Jumlah_Potongan: value };
-//         return updatedDaftar;
-//       });
-//     }
-  
-//     setGaji((values) => ({ ...values, [name]: value }));
-//   };
-//   const handleInput = (e) => {
-//     const { name, value } = e.target;
-
-//     if (name === "ID_Karyawan") {
-//       // Dapatkan karyawan berdasarkan ID dari API atau sumber data lainnya
-//       const karyawan = getKaryawanByID(value); // Ganti dengan fungsi yang sesuai
-
-//       if (karyawan) {
-//         setGaji((prevState) => ({
-//           ...prevState,
-//           [name]: value,
-//           Nama_Karyawan: karyawan.nama, // Mengupdate nama karyawan
-//         }));
-//       } else {
-//         setGaji((prevState) => ({
-//           ...prevState,
-//           [name]: value,
-//           Nama_Karyawan: "", // Set nama karyawan menjadi kosong jika ID tidak ditemukan
-//         }));
-//       }
-//     } else {
-//       setGaji((prevState) => ({
-//         ...prevState,
-//         [name]: value,
-//       }));
-//     }
-//   };
-
-
-//   const handleGajiServiceCreate = () => {
-//     GajiService.create(gaji).then((response) => {
-//       alert("Gaji berhasil ditambahkan.");
-//       navigate("/gaji");
-//     });
+//     return `${year}-${month}-${day}`;
 //   };
 
 //   return (
 //     <NavigationWidget
 //       actionTop={
 //         <>
-//           <Button className="me-2" variant="secondary" onClick={() => navigate(-1)}>
-//             <FaArrowLeft /> Kembali
+//           <Button className="me-2" variant="danger" >
+//             <MdCancel /> Batal
 //           </Button>
-//           <Button onClick={handleGajiServiceCreate}>
+//           <Button >
 //             <FaSave /> Simpan
 //           </Button>
 //         </>
 //       }
 //     >
-//       <Card>
+//       <Card style={{ marginBottom: "20px" }}>
 //         <Card.Header>
-//           <h5>Form Penggajian</h5>
+//           <h5>Input Data Penggajian</h5>
 //         </Card.Header>
 //         <Card.Body>
-//           <Form.Group>
-//             <Form.Label>ID Gaji</Form.Label>
-//             <Form.Control name="ID_Gaji"
-//               value={gaji.ID_Gaji || ""}
-//               onChange={handleInput} />
-//           </Form.Group>
-//           <Form.Group className="mt-3">
-//             <Form.Label>Tanggal</Form.Label>
-//             <Form.Control
-//               name="Tanggal"
-//               value={gaji.Tanggal || ""}
-//               onChange={handleInput} />
-//           </Form.Group>
-//           <Form.Group className="mt-3">
-//             <Form.Label>ID Karyawan</Form.Label>
-//             <Form.Control name="ID_Karyawan"
-//               value={gaji.ID_Karyawan || ""}
-//               onChange={handleInput} />
-//           </Form.Group>
-//           <Form.Group className="mt-3">
-//             <Form.Label>Email</Form.Label>
-//             <Form.Control name="email"
-//               value={gaji.email || ""}
-//               onChange={handleInput} />
-//           </Form.Group>
-//           <Form.Group className="mt-3">
-//             <Form.Label>Nama Karyawan</Form.Label>
-//             <Form.Control
-//               name="Nama_Karyawan"
-//               value={gaji.ID_Karyawan ? gaji.Nama_Karyawan : ""}
-//               onChange={handleInput}
-//             />
-//           </Form.Group>
+//           <Row>
+//             <Col md={6}>
+//               <Form.Group>
+//                 <Form.Label>ID Gaji</Form.Label>
+//                 <Form.Control name="ID_Gaji"
+//                   />
+//               </Form.Group>
+//               <Form.Group>
+//                 <Form.Label>Tanggal Entry</Form.Label>
+//                 <Form.Control name="Tanggal_Entry"
+
+//                   defaultValue={getCurrentDate()}
+                 
+//                   disabled />
+//               </Form.Group>
+
+//               <Col md={6}>
+//                 <Form.Group>
+//                   <Form.Label>ID Karyawan</Form.Label>
+//                   <Form.Control name="ID_Karyawan" />
+//                 </Form.Group>
+//                 <Form.Group>
+//                   <Form.Label>Email</Form.Label>
+//                   <Form.Control
+//                     name="email"
+                    
+//                     type="email"               
+//                   />
+//                 </Form.Group>
+//               </Col>
+//             </Col>
+//             <Col md={6}>
+//               <Form.Group>
+//                 <Form.Label>ID Profil</Form.Label>
+//                 <Form.Control name="ID_Profil"
+                
+//                   />
+//               </Form.Group>
+//             </Col>
+//           </Row>
 //         </Card.Body>
-//       </Card>
+//       </Card >
 //       <Card style={{ marginBottom: "20px" }} >
 //         <Card.Header>
 //           <h5>Accounting</h5>
@@ -157,14 +116,13 @@
 //               </tr>
 //             </thead>
 //             <tbody>
-//               {daftarPendapatan.results &&
-//                 daftarPendapatan.results.map((pendapatan, index) => (
-//                   <tr key={pendapatan.ID_Pendapatan}>
+              
+//                   <tr >
 //                     <td style={{ width: "13%" }}>
 //                       <Form.Group>
 //                         <Form.Control
 //                           name="ID_Pendapatan"
-//                           value={pendapatan.ID_Pendapatan}
+                        
 //                           disabled
 //                         />
 //                       </Form.Group>
@@ -173,7 +131,7 @@
 //                       <Form.Group>
 //                         <Form.Control
 //                           name="Nama_Pendapatan"
-//                           value={pendapatan.Nama_Pendapatan}
+                          
 //                           disabled
 //                         />
 //                       </Form.Group>
@@ -182,19 +140,17 @@
 //                       <Form.Group>
 //                         <Form.Control
 //                           name="Jumlah_Pendapatan"
-//           value={pendapatan.Jumlah_Pendapatan}
-//           onChange={(e) => handleInput(e, index)}
+                          
 //                         />
 //                       </Form.Group>
 //                     </td>
 //                   </tr>
-//                 ))}
-//               <Button variant="primary" onClick={calculateTotal}>
-//                 Hitung
-//               </Button>
+
+           
 //             </tbody>
 
 //           </Table>
+
 //           <Table>
 //             <thead>
 //               <tr>
@@ -204,14 +160,13 @@
 //               </tr>
 //             </thead>
 //             <tbody>
-//               {daftarPotongan.results &&
-//                 daftarPotongan.results.map((potongan, index) => (
-//                   <tr key={potongan.ID_Potongan}>
+            
+//                   <tr >
 //                     <td style={{ width: "13%" }}>
 //                       <Form.Group>
 //                         <Form.Control
 //                           name="ID_Potongan"
-//                           value={potongan.ID_Potongan}
+                
 //                           disabled
 //                         />
 //                       </Form.Group>
@@ -220,7 +175,7 @@
 //                       <Form.Group>
 //                         <Form.Control
 //                           name="Nama_Potongan"
-//                           value={potongan.Nama_Potongan}
+                        
 //                           disabled
 //                         />
 //                       </Form.Group>
@@ -229,47 +184,19 @@
 //                       <Form.Group>
 //                         <Form.Control
 //                           name="Jumlah_Potongan"
-//                           value={potongan.Jumlah_Potongan}
-//                           onChange={(e) => handleInput(e, index)}
+                    
 //                         />
 //                       </Form.Group>
 //                     </td>
 //                   </tr>
-//                 ))}
+              
 //             </tbody>
+
 //           </Table>
-//           <Button variant="primary" onClick={calculateTotal}>
-//             Hitung
-//           </Button>
+
 //         </Card.Body>
 //       </Card>
-//       <Card style={{ marginBottom: "20px" }} >
-//         <Card.Header>
-//           <h5>Total</h5>
-//         </Card.Header>
-//         <Row>
-//           <Col>
-//             <Form.Group>
-//               <Form.Label>Total Pendapatan</Form.Label>
-//               <Form.Control
-//                 name="Total_Pendapatan"
-//                 value={totalPendapatan}
-//                 onChange={handleInput}
-//                 disabled
-//               />
-//             </Form.Group>
-//             <Form.Group>
-//               <Form.Label>Total Potongan</Form.Label>
-//               <Form.Control
-//                 name="Total_Potongan"
-//                 value={totalPotongan}
-//                 onChange={handleInput}
-//                 disabled
-//               />
-//             </Form.Group>
-//           </Col>
-//         </Row>
-//       </Card> 
+
 //     </NavigationWidget>
 //   );
 // };

@@ -17,11 +17,20 @@ import GolonganAddPage from "./pages/golongan/GolonganAddPage";
 import PendapatanAddPage from "./pages/pendapatan/PendapatanAddPage";
 import PotonganAddPage from "./pages/potongan/PotonganAddPage";
 import ProfilAddPage from "./pages/profil/ProfilAddPage";
+import KaryawanEditPage from "./pages/karyawan/KaryawanEditPage";
+import JabatanEditPage from "./pages/jabatan/JabatanEditPage";
+import GolonganEditPage from "./pages/golongan/GolonganEditPage";
+import PendapatanEditPage from "./pages/pendapatan/PendapatanEditPage";
+import PotonganEditPage from "./pages/potongan/PotonganEditPage";
+
+
+
+
 
 function App() {
   return (
     <BrowserRouter>
-      <Routes>
+      <Routes>        
         <Route path="/" element={<AuthLoginPage />} />
         <Route path="/user" element={<UserPage />} />
         <Route path="/user/add" element={<UserAddPage />} />
@@ -29,17 +38,21 @@ function App() {
         <Route path="/profil/add" element={<ProfilAddPage />} />
         <Route path="/karyawan" element={<KaryawanPage />} />
         <Route path="/karyawan/add" element={<KaryawanAddPage />} />
+        <Route path="/karyawan/edit/:ID_Karyawan" element={<KaryawanEditPage />} />
         <Route path="/jabatan" element={<JabatanPage />} />
         <Route path="/jabatan/add" element={<JabatanAddPage />} />
+        <Route path="/jabatan/edit/:ID_Jabatan" element={<JabatanEditPage />} />
         <Route path="/golongan" element={<GolonganPage />} />
         <Route path="/golongan/add" element={<GolonganAddPage />} />
+        <Route path="/golongan/edit/:ID_Golongan" element={<GolonganEditPage />} />
         <Route path="/pendapatan" element={<PendapatanPage />} />
         <Route path="/pendapatan/add" element={<PendapatanAddPage />} />
+        <Route path="/pendapatan/edit/:ID_Pendapatan" element={<PendapatanEditPage />} />
         <Route path="/potongan" element={<PotonganPage />} />
         <Route path="/potongan/add" element={<PotonganAddPage />} />
-        <Route path="/laporan" element={<LaporanGajiPage />} />
+        <Route path="/potongan/edit/:ID_Potongan" element={<PotonganEditPage />} />    <Route path="/potongan/add" element={<PotonganAddPage />} />
         <Route path="/penggajian" element={<PenggajianListPage />} />
-        <Route path="/penggajian/add" element={<PenggajianInputPage />} />
+        <Route path="/penggajian/input" element={<PenggajianInputPage />} />
         <Route path="/laporan" element={<LaporanGajiPage />} />
       </Routes>
     </BrowserRouter>

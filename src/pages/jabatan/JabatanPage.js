@@ -5,6 +5,7 @@ import { VscAdd } from "react-icons/vsc";
 import { FaSearch } from "react-icons/fa";
 import { useEffect, useState } from "react";
 import JabatanService from "../../services/JabatanService";
+import Paginator from "../../widgets/commons/PaginatorWidget";
 
 const JabatanPage = () => {
   const navigate = useNavigate();
@@ -48,8 +49,9 @@ const JabatanPage = () => {
       }
     >
       <Card className="mt-2">
-        <Card.Header className="bg-secondary text-light">
+      <Card.Header className="bg-secondary text-light d-flex justify-content-between align-items-center">
           <h5>Jabatan</h5>
+          <Paginator paginate={paginateJabatan} callbackPaginator={callbackPaginator} />
         </Card.Header>
         <Table striped bordered hover size="sm">
           <thead>
@@ -59,13 +61,14 @@ const JabatanPage = () => {
             </tr>
           </thead>
           <tbody>
-          {daftarJabatan.results &&
-              daftarJabatan.results.map((jabatan, index) => (
-                <tr key={index}>
-                  <td>{jabatan.ID_Jabatan}</td>
-                  <td>{jabatan.Nama_Jabatan}</td>
-                </tr>
-              ))}
+            {daftarJabatan.results && daftarJabatan.results.map((jabatan, index) => (
+              <tr
+                key={index}
+                onClick={() => navigate(`/jabatan/edit/${jabatan.ID_Jabatan}`)}>
+                <td>{jabatan.ID_Jabatan}</td>
+                <td>{jabatan.Nama_Jabatan}</td>
+              </tr>
+            ))}
           </tbody>
         </Table>
       </Card>

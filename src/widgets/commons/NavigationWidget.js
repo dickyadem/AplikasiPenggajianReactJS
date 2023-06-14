@@ -17,8 +17,8 @@ const NavigationWidget = ({ children, buttonCreate, actionTop, username, avatar 
 
           <Navbar.Collapse className="justify-content-end">
             <Navbar.Text>Selamat datang! </Navbar.Text>
-            {/* <Navbar.Text>{username}</Navbar.Text>
-            <Navbar.Text>{avatar}</Navbar.Text> */}
+            <Navbar.Text>{username}</Navbar.Text>
+            <Navbar.Text>{avatar}</Navbar.Text>
           </Navbar.Collapse>
         </Container>
       </Navbar>
@@ -26,8 +26,9 @@ const NavigationWidget = ({ children, buttonCreate, actionTop, username, avatar 
         <Row>
           <Col md={2}>
             <Nav className="flex-column">
-              <Nav.Link>
-                <RiDashboardFill /> Dashboard</Nav.Link>
+              {/* <Nav.Link onClick={() => navigate("/dashboard")}>
+                <RiDashboardFill /> Dashboard
+              </Nav.Link> */}
               <Nav.Link disabled>
                 <BsFillDatabaseFill /> MASTER
               </Nav.Link>
@@ -42,7 +43,7 @@ const NavigationWidget = ({ children, buttonCreate, actionTop, username, avatar 
                 <FaCartPlus /> TRANSAKSI
               </Nav.Link>
               <Nav.Link onClick={() => navigate("/penggajian")}>Penggajian</Nav.Link>
-              <Nav.Link onClick={() => navigate("/penggajian/add")}>Penggajian Input</Nav.Link>
+              <Nav.Link onClick={() => navigate("/penggajian/input")}>Penggajian Input</Nav.Link>
               <Nav.Link disabled>
                 <HiDocumentReport /> LAPORAN
               </Nav.Link>

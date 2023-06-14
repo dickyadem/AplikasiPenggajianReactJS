@@ -1,245 +1,204 @@
-import { Button, Card, Col, Form, InputGroup, Row, Table } from "react-bootstrap";
-import NavigationWidget from "../../widgets/commons/NavigationWidget";
-import { useNavigate } from "react-router-dom";
-import { MdCancel } from "react-icons/md";
-import { FaArrowLeft, FaSave, FaSearch } from "react-icons/fa";
-import { useEffect, useState } from "react";
-import PendapatanService from "../../services/PendapatanService";
-import PotonganService from "../../services/PotonganService";
-import GajiService from "../../services/GajiService";
-const initGaji = {
-  ID_Gaji: null,
-  tanggal: null,
-  ID_Karyawan: null,
-  Jumlah_Pendapatan: null,
-  Jumlah_Potongan: null,
-};
+// import { Button, Card, Col, Form, InputGroup, Row, Table } from "react-bootstrap";
+// import NavigationWidget from "../../widgets/commons/NavigationWidget";
+// import { useNavigate } from "react-router-dom";
+// import { MdCancel } from "react-icons/md";
+// import { FaArrowLeft, FaSave, FaSearch } from "react-icons/fa";
+// import { useState } from "react";
+// import GajiDetailService from "../../services/GajiDetailService";
 
-const PenggajianInputPage = () => {
-  const navigate = useNavigate();
-  const [gaji, setGaji] = useState(initGaji);
-  const [daftarGaji, setDaftarGaji] = useState({});
-  const [paginateGaji, setPaginateGaji] = useState([]);
-  const [queryGaji, setQueryGaji] = useState({ page: 1, limit: 10 });
+// const initGaji = {
+//     ID_Gaji: null,
+//     Tanggal_Entry: null,
+//     ID_Karyawan: null,
+// };
 
-  const [daftarPendapatan, setDaftarPendapatan] = useState({});
-  const [queryPendapatan, setQueryPendapatan] = useState({ page: 1, limit: 10 });
-  const [paginatePendapatan, setPaginatePendapatan] = useState([]);
+// const initGajiDetail = {
+//     ID_Gaji: null,
+//     ID_Pendapatan: null,
+//     Jumlah_Pendapatan: 0,
+//     ID_Potongan: null,
+//     Jumlah_Potongan: 0,
+// };
 
-  const [daftarPotongan, setDaftarPotongan] = useState({});
-  const [paginatePotongan, setPaginatePotongan] = useState([]);
-  const [queryPotongan, setQueryPotongan] = useState({ page: 1, limit: 10 });
+// const [gaji, setGaji] = useState(initGaji);
+// const [daftarGaji, setDaftarGajiDetail] = useState(initGajiDetail);
 
 
-  useEffect(() => {
-    PendapatanService.list(daftarPendapatan)
-      .then((response) => {
-        setDaftarPendapatan(response.data);
-        if (response.headers.pagination) {
-          setPaginatePendapatan(JSON.parse(response.headers.pagination));
-        }
-      })
-      .catch((error) => console.log(error));
-  }, [queryPendapatan]);
+// const PenggajianInputPage = () => {
 
-  useEffect(() => {
-    PotonganService.list(daftarPotongan)
-      .then((response) => {
-        setDaftarPotongan(response.data);
-        if (response.headers.pagination) {
-          setPaginatePotongan(JSON.parse(response.headers.pagination));
-        }
-      })
-      .catch((error) => console.log(error));
-  }, [queryPotongan]);
+//     const getCurrentDate = () => {
+//         const currentDate = new Date();
+//         const year = currentDate.getFullYear();
+//         let month = currentDate.getMonth() + 1;
+//         let day = currentDate.getDate();
 
-  const handleInput = (e, index, ID) => {
-    const name = e.target.name;
-    const value = e.target.value;
+//         // Add leading zeros if month or day is less than 10
+//         if (month < 10) {
+//             month = `0${month}`;
+//         }
+//         if (day < 10) {
+//             day = `0${day}`;
+//         }
+//         return `${year}-${month}-${day}`;
+//     };
 
-    const updatedItems = gaji.items.map((item, i) => {
-      if (i === index) {
-        return { ...item, [name]: value };
-      }
-      return item;
-    });
+//     return (
+//         <NavigationWidget
+//             actionTop={
+//                 <>
+//                     <Button className="me-2" variant="danger" >
+//                         <MdCancel /> Batal
+//                     </Button>
+//                     <Button >
+//                         <FaSave /> Simpan
+//                     </Button>
+//                 </>
+//             }
+//         >
+//             <Card style={{ marginBottom: "20px" }}>
+//                 <Card.Header>
+//                     <h5>Input Data Penggajian</h5>
+//                 </Card.Header>
+//                 <Card.Body>
+//                     <Row>
+//                         <Col md={6}>
+//                             <Form.Group>
+//                                 <Form.Label>ID Gaji</Form.Label>
+//                                 <Form.Control name="ID_Gaji"
+//                                 />
+//                             </Form.Group>
+//                             <Form.Group>
+//                                 <Form.Label>Tanggal Entry</Form.Label>
+//                                 <Form.Control name="Tanggal_Entry"
 
-    setGaji((prevState) => ({
-      ...prevState,
-      items: updatedItems
-    }));
-  };
-  function getCurrentDate() {
-    const date = new Date();
-    const year = date.getFullYear();
-    const month = String(date.getMonth() + 1).padStart(2, '0');
-    const day = String(date.getDate()).padStart(2, '0');
-    return `${year}-${month}-${day}`;
-  }
-  const handleGajiServiceCreate = () => {
-    GajiService.create(gaji).then((response) => {
-      alert("Pendapatan berhasil ditambahkan.");
-      navigate("/penggajian");
-    });
-  };
-  return (
-    <NavigationWidget
-      actionTop={
-        <>
-          <Button className="me-2" variant="danger" onClick={() => navigate(-1)}>
-            <MdCancel /> Batal
-          </Button>
-          <Button onClick={handleGajiServiceCreate}>
-            <FaSave /> Simpan
-          </Button>
-        </>
-      }
-    >
-      <Card style={{ marginBottom: "20px" }}>
-        <Card.Header>
-          <h5>Input Data Penggajian</h5>
-        </Card.Header>
-        <Card.Body>
-          <Row>
-            <Col md={6}>
-              <Form.Group>
-                <Form.Label>ID Gaji</Form.Label>
-                <Form.Control name="ID_Gaji"
-                  onChange={handleInput} />
-              </Form.Group>
-              <Form.Group>
-                <Form.Label>Tanggal Entry</Form.Label>
-                <Form.Control name="Tanggal_Entry"
+//                                     defaultValue={getCurrentDate()}
 
-                  defaultValue={getCurrentDate()}
-                  onChange={handleInput}
-                  disabled />
-              </Form.Group>
+//                                     disabled />
+//                             </Form.Group>
 
-              <Form.Group>
-                <Form.Label>ID Karyawan</Form.Label>
-                <Form.Control name="ID Karyawan"
-                  onChange={handleInput} />
-              </Form.Group>
-              <Form.Group>
-                <Form.Label>Email</Form.Label>
-                <Form.Control name="email"
-                  onChange={handleInput}
-                  type="email"
-                  value={gaji.email || ""} />
-              </Form.Group>
-            </Col>
-            <Col md={6}>
-              <Form.Group>
-                <Form.Label>ID Profil</Form.Label>
-                <Form.Control name="ID_Profil"
-                  value={gaji.ID_Profil || ""}
-                  onChange={handleInput} />
-              </Form.Group>
-            </Col>
-          </Row>
-        </Card.Body>
-      </Card >
-      <Card style={{ marginBottom: "20px" }} >
-        <Card.Header>
-          <h5>Accounting</h5>
-        </Card.Header>
-        <Card.Body>
-          <Table>
-            <thead>
-              <tr>
-                <th style={{ width: "13%" }}>ID Pendapatan</th>
-                <th>Nama Pendapatan</th>
-                <th>Jumlah</th>
-              </tr>
-            </thead>
-            <tbody>
-              {daftarPendapatan.results &&
-                daftarPendapatan.results.map((pendapatan, index) => (
-                  <tr key={pendapatan.ID_Pendapatan}>
-                    <td style={{ width: "13%" }}>
-                      <Form.Group>
-                        <Form.Control
-                          name="ID_Pendapatan"
-                          value={pendapatan.ID_Pendapatan}
-                          disabled
-                        />
-                      </Form.Group>
-                    </td>
-                    <td>
-                      <Form.Group>
-                        <Form.Control
-                          name="Nama_Pendapatan"
-                          value={pendapatan.Nama_Pendapatan}
-                          disabled
-                        />
-                      </Form.Group>
-                    </td>
-                    <td>
-                      <Form.Group>
-                        <Form.Control
-                          name="Jumlah_Pendapatan"
-                          onChange={(e) => handleInput(e, index, pendapatan.ID_Pendapatan)}
-                        />
-                      </Form.Group>
-                    </td>
-                  </tr>
+//                             <Col md={6}>
+//                                 <Form.Group>
+//                                     <Form.Label>ID Karyawan</Form.Label>
+//                                     <Form.Control name="ID_Karyawan" />
+//                                 </Form.Group>
+//                                 <Form.Group>
+//                                     <Form.Label>Email</Form.Label>
+//                                     <Form.Control
+//                                         name="email"
 
-                ))}
-            </tbody>
+//                                         type="email"
+//                                     />
+//                                 </Form.Group>
+//                             </Col>
+//                         </Col>
+//                         <Col md={6}>
+//                             <Form.Group>
+//                                 <Form.Label>ID Profil</Form.Label>
+//                                 <Form.Control name="ID_Profil"
 
-          </Table>
+//                                 />
+//                             </Form.Group>
+//                         </Col>
+//                     </Row>
+//                 </Card.Body>
+//             </Card >
+//             <Card style={{ marginBottom: "20px" }} >
+//                 <Card.Header>
+//                     <h5>Accounting</h5>
+//                 </Card.Header>
+//                 <Card.Body>
+//                     <Table>
+//                         <thead>
+//                             <tr>
+//                                 <th style={{ width: "13%" }}>ID Pendapatan</th>
+//                                 <th>Nama Pendapatan</th>
+//                                 <th>Jumlah</th>
+//                             </tr>
+//                         </thead>
+//                         <tbody>
 
-          <Table>
-            <thead>
-              <tr>
-                <th style={{ width: "13%" }}>ID Potongan</th>
-                <th>Nama Potongan</th>
-                <th>Jumlah</th>
-              </tr>
-            </thead>
-            <tbody>
-              {daftarPotongan.results &&
-                daftarPotongan.results.map((potongan, index) => (
-                  <tr key={potongan.ID_Potongan}>
-                    <td style={{ width: "13%" }}>
-                      <Form.Group>
-                        <Form.Control
-                          name="ID_Pendapatan"
-                          value={potongan.ID_Potongan}
-                          disabled
-                        />
-                      </Form.Group>
-                    </td>
-                    <td>
-                      <Form.Group>
-                        <Form.Control
-                          name="Nama_Pendapatan"
-                          value={potongan.Nama_Potongan}
-                          disabled
-                        />
-                      </Form.Group>
-                    </td>
-                    <td>
-                      <Form.Group>
-                        <Form.Control
-                          name="Jumlah_Pendapatan"
-                          onChange={(e) => handleInput(e, index, potongan.ID_Potongan)}
-                        />
-                      </Form.Group>
-                    </td>
-                  </tr>
+//                             <tr >
+//                                 <td style={{ width: "13%" }}>
+//                                     <Form.Group>
+//                                         <Form.Control
+//                                             name="ID_Pendapatan"
 
-                ))}
-            </tbody>
+//                                             disabled
+//                                         />
+//                                     </Form.Group>
+//                                 </td>
+//                                 <td>
+//                                     <Form.Group>
+//                                         <Form.Control
+//                                             name="Nama_Pendapatan"
 
-          </Table>
+//                                             disabled
+//                                         />
+//                                     </Form.Group>
+//                                 </td>
+//                                 <td>
+//                                     <Form.Group>
+//                                         <Form.Control
+//                                             name="Jumlah_Pendapatan"
 
-        </Card.Body>
-      </Card>
+//                                         />
+//                                     </Form.Group>
+//                                 </td>
+//                             </tr>
 
-    </NavigationWidget>
-  );
-};
 
-export default PenggajianInputPage;
+//                         </tbody>
+
+//                     </Table>
+
+//                     <Table>
+//                         <thead>
+//                             <tr>
+//                                 <th style={{ width: "13%" }}>ID Potongan</th>
+//                                 <th>Nama Potongan</th>
+//                                 <th>Jumlah</th>
+//                             </tr>
+//                         </thead>
+//                         <tbody>
+
+//                             <tr >
+//                                 <td style={{ width: "13%" }}>
+//                                     <Form.Group>
+//                                         <Form.Control
+//                                             name="ID_Potongan"
+
+//                                             disabled
+//                                         />
+//                                     </Form.Group>
+//                                 </td>
+//                                 <td>
+//                                     <Form.Group>
+//                                         <Form.Control
+//                                             name="Nama_Potongan"
+
+//                                             disabled
+//                                         />
+//                                     </Form.Group>
+//                                 </td>
+//                                 <td>
+//                                     <Form.Group>
+//                                         <Form.Control
+//                                             name="Jumlah_Potongan"
+
+//                                         />
+//                                     </Form.Group>
+//                                 </td>
+//                             </tr>
+
+//                         </tbody>
+
+//                     </Table>
+
+//                 </Card.Body>
+//             </Card>
+
+//         </NavigationWidget>
+//     );
+// };
+
+// export default PenggajianInputPage;

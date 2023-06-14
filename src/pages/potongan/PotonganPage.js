@@ -5,6 +5,7 @@ import { VscAdd } from "react-icons/vsc";
 import { FaSearch } from "react-icons/fa";
 import { useEffect, useState } from "react";
 import PotonganService from "../../services/PotonganService";
+import Paginator from "../../widgets/commons/PaginatorWidget";
 
 const PotonganPage = () => {
   const navigate = useNavigate();
@@ -23,6 +24,14 @@ const PotonganPage = () => {
       .catch((error) => console.log(error));
   }, [queryPotongan]);
 
+  const callbackPaginator = (page) => {
+    setQueryPotongan((values) => ({ ...values, page }));
+  };
+
+  const callbackPotonganSearchInlineWidget = (query) => {
+    setQueryPotongan((values) => ({ ...values, ...query }));
+  };
+
   return (
     <NavigationWidget
       buttonCreate={
@@ -40,8 +49,9 @@ const PotonganPage = () => {
       }
     >
       <Card className="mt-2">
-        <Card.Header className="bg-secondary text-light">
+        <Card.Header className="bg-secondary text-light d-flex justify-content-between align-items-center">
           <h5>Potongan</h5>
+          <Paginator paginate={paginatePotongan} callbackPaginator={callbackPaginator} />
         </Card.Header>
         <Table striped bordered hover size="sm">
           <thead>
@@ -51,13 +61,14 @@ const PotonganPage = () => {
             </tr>
           </thead>
           <tbody>
-            {daftarPotongan.results &&
-              daftarPotongan.results.map((Potongan, index) => (
-                <tr key={index}>
-                  <td>{Potongan.ID_Potongan}</td>
-                  <td>{Potongan.Nama_Potongan}</td>
-                </tr>
-              ))}
+            {daftarPotongan.results && daftarPotongan.results.map((potongan, index) => (
+              <tr
+                key={index}
+                onClick={() => navigate(`/potongan/edit/${potongan.ID_Potongan}`)}>
+                <td>{potongan.ID_Potongan}</td>
+                <td>{potongan.Nama_Potongan}</td>
+              </tr>
+            ))}
           </tbody>
         </Table>
       </Card>

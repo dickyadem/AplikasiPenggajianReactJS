@@ -1,0 +1,14 @@
+const [daftarGajiDetail, setDaftarGajiDetail] = useState({});
+    const [queryGajiDetail, setQueryGajiDetail] = useState({ page: 1, limit: 10 });
+    const [paginateGajiDetail, setPaginateGajiDetail] = useState([]);
+
+    useEffect(() => {
+        GajiDetailService.list(daftarGajiDetail)
+            .then((response) => {
+                setDaftarGajiDetail(response.data);
+                if (response.headers.pagination) {
+                    setPaginateGajiDetail(JSON.parse(response.headers.pagination));
+                }
+            })
+            .catch((error) => console.log(error));
+    }, [queryGajiDetail]);

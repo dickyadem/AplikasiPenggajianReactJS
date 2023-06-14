@@ -5,6 +5,7 @@ import { VscAdd } from "react-icons/vsc";
 import { FaSearch } from "react-icons/fa";
 import { useEffect, useState } from "react";
 import KaryawanService from "../../services/KaryawanService";
+import Paginator from "../../widgets/commons/PaginatorWidget";
 
 const KaryawanPage = () => {
   const navigate = useNavigate();
@@ -13,11 +14,11 @@ const KaryawanPage = () => {
   const [queryKaryawan, setQueryKaryawan] = useState({ page: 1, limit: 10 });
 
   useEffect(() => {
-    KaryawanService.list(daftarKaryawan)
+    KaryawanService.list(queryKaryawan)
       .then((response) => {
         setDaftarKaryawan(response.data);
         if (response.headers.pagination) {
-          setPaginateKaryawan(JSON.parse(response.headers.pagination));
+          setPaginateKaryawan(JSON.parse(response.headers.pagination))
         }
       })
       .catch((error) => console.log(error));
@@ -32,6 +33,7 @@ const KaryawanPage = () => {
   };
 
   return (
+
     <NavigationWidget
       buttonCreate={
         <Button onClick={() => navigate("/karyawan/add")}>
@@ -48,34 +50,36 @@ const KaryawanPage = () => {
       }
     >
       <Card className="mt-2">
-        <Card.Header className="bg-secondary text-light">
+        <Card.Header className="bg-secondary text-light d-flex justify-content-between align-items-center">
           <h5>Karyawan</h5>
+          <Paginator paginate={paginateKaryawan} callbackPaginator={callbackPaginator} />
         </Card.Header>
         <Table striped bordered hover size="sm">
           <thead>
             <tr>
               <th>ID Karyawan</th>
               <th>Nama Karyawan</th>
-              <th>ID Golongan</th>
-              <th>ID Jabatan</th>
+              <th>Golongan</th>
+              <th>Jabatan</th>
               <th>Divisi</th>
               <th>Status Pernikahan</th>
               <th>Jumlah Anak</th>
             </tr>
           </thead>
           <tbody>
-            {daftarKaryawan.results &&
-              daftarKaryawan.results.map((karyawan, index) => (
-                <tr key={index}>
-                  <td>{karyawan.ID_Karyawan}</td>
-                  <td>{karyawan.Nama_Karyawan}</td>
-                  <td>{karyawan.ID_Golongan}</td>
-                  <td>{karyawan.ID_Jabatan}</td>
-                  <td>{karyawan.Divisi}</td>
-                  <td>{karyawan.Status_Pernikahan}</td>
-                  <td>{karyawan.Jumlah_Anak}</td>
-                </tr>
-              ))}
+            {daftarKaryawan.results && daftarKaryawan.results.map((karyawan, index) => (
+              <tr
+                key={index}
+                onClick={() => navigate(`/karyawan/edit/${karyawan.ID_Karyawan}`)}>
+                <td>{karyawan.ID_Karyawan}</td>
+                <td>{karyawan.Nama_Karyawan}</td>
+                <td>{karyawan.ID_Golongan}</td>
+                <td>{karyawan.ID_Jabatan}</td>
+                <td>{karyawan.Divisi}</td>
+                <td>{karyawan.Status_Pernikahan}</td>
+                <td>{karyawan.Jumlah_Anak}</td>
+              </tr>
+            ))}
           </tbody>
         </Table>
       </Card>

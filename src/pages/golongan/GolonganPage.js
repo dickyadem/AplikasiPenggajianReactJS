@@ -3,8 +3,9 @@ import NavigationWidget from "../../widgets/commons/NavigationWidget";
 import { useNavigate } from "react-router-dom";
 import { VscAdd } from "react-icons/vsc";
 import { FaSearch } from "react-icons/fa";
-import GolonganService from "../../services/GolonganService";
 import { useEffect, useState } from "react";
+import GolonganService from "../../services/GolonganService";
+import Paginator from "../../widgets/commons/PaginatorWidget";
 
 const GolonganPage = () => {
   const navigate = useNavigate();
@@ -35,21 +36,22 @@ const GolonganPage = () => {
     <NavigationWidget
       buttonCreate={
         <Button onClick={() => navigate("/golongan/add")}>
-          <VscAdd /> Tambah
+          <VscAdd />  Tambah
         </Button>
       }
       actionTop={
-        <InputGroup>
+        <InputGroup >
           <Form.Control />
           <Button size="sm" variant="outline-secondary">
-            <FaSearch /> Search
+            <FaSearch />  Search
           </Button>
         </InputGroup>
       }
     >
       <Card className="mt-2">
-        <Card.Header className="bg-secondary text-light">
+        <Card.Header className="bg-secondary text-light d-flex justify-content-between align-items-center">
           <h5>Golongan</h5>
+          <Paginator paginate={paginateGolongan} callbackPaginator={callbackPaginator} />
         </Card.Header>
         <Table striped bordered hover size="sm">
           <thead>
@@ -59,13 +61,14 @@ const GolonganPage = () => {
             </tr>
           </thead>
           <tbody>
-            {daftarGolongan.results &&
-              daftarGolongan.results.map((golongan, index) => (
-                <tr key={index}>
-                  <td>{golongan.ID_Golongan}</td>
-                  <td>{golongan.Nama_Golongan}</td>
-                </tr>
-              ))}
+            {daftarGolongan.results && daftarGolongan.results.map((golongan, index) => (
+              <tr
+                key={index}
+                onClick={() => navigate(`/golongan/edit/${golongan.ID_Golongan}`)}>
+                <td>{golongan.ID_Golongan}</td>
+                <td>{golongan.Nama_Golongan}</td>
+              </tr>
+            ))}
           </tbody>
         </Table>
       </Card>
