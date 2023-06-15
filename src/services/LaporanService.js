@@ -65,7 +65,7 @@ ReportingService.reportBPJS = (data) => {
 ReportingService.reportslipgaji = (data) => {
     return new Promise((resolve, reject) => {
         HTTPService({
-            url: `${config.BASE_URL}/gaji/slip-excel`,
+            url: `${config.BASE_URL}/gaji/:ID_Gaji/slip-excel`,
             method: "POST",
             responseType: "blob",
             headers: {
