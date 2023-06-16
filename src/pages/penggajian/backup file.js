@@ -18,8 +18,10 @@ const initGaji = {
     ID_Karyawan: null,
     ID_Profil: null,
     Keterangan: null,
-    itemsPendapatan: [],
-    itemsPotongan: [],
+    ID_Pendapatan: null,
+    ID_Potongan: null,
+    // Jumlah_Potongan: 0,
+    // Jumlah_Pendapatan: 0,
 };
 
 
@@ -68,63 +70,27 @@ const PenggajianInputPage = () => {
 
         setGaji((values) => ({ ...values, [name]: value }));
     };
-    const handleInputPotongan = (e, index) => {
-        const { name, value } = e.target;
-        setGaji((prevGaji) => ({
-            ...prevGaji,
-            itemsPotongan: {
-                ...prevGaji.itemsPotongan,
-                [index]: {
-                    ...prevGaji.itemsPotongan[index],
-                    [name]: value,
-                    ID_Potongan: daftarPotongan[index].ID_Potongan,
-                },
-            },
-        }));
+    const handleInputPotongan = (e) => {
+        let name = e.target.name;
+        let value = e.target.value;
+
+        setDaftarPotongan((values) => ({ ...values, [name]: value }));
     };
 
-    const handleInputPendapatan = (e, index) => {
-        const { name, value } = e.target;
-        setGaji((prevGaji) => ({
-            ...prevGaji,
-            itemsPendapatan: {
-                ...prevGaji.itemsPendapatan,
-                [index]: {
-                    ...prevGaji.itemsPendapatan[index],
-                    [name]: value,
-                    ID_Pendapatan: daftarPendapatan[index].ID_Pendapatan,
-                },
-            },
-        }));
+    const handleInputPendapatan = (e) => {
+        let name = e.target.name;
+        let value = e.target.value;
+
+        setDaftarPendapatan((values) => ({ ...values, [name]: value }));
     };
-
-
-
-
 
 
     const handleGajiServiceCreate = () => {
-        const { itemsPendapatan, itemsPotongan, ...gajiData } = gaji;
-
-        const formattedItemsPendapatan = Object.values(itemsPendapatan); // Convert to array
-        const formattedItemsPotongan = Object.values(itemsPotongan); // Convert to array
-
-        const updatedGaji = {
-            ...gajiData,
-            itemsPendapatan: formattedItemsPendapatan,
-            itemsPotongan: formattedItemsPotongan,
-        };
-
-        GajiService.create(updatedGaji)
-            .then((response) => {
-                alert("Gaji berhasil ditambahkan.");
-                navigate("/penggajian");
-            })
-            .catch((error) => console.log(error));
+        GajiService.create(gaji).then((response) => {
+            alert("Gaji berhasil ditambahkan.");
+            navigate("/penggajian");
+        });
     };
-
-
-
 
 
     return (
@@ -195,7 +161,7 @@ const PenggajianInputPage = () => {
                 </Card.Body>
             </Card >
             <Card.Body>
-                <Card.Header>
+            <Card.Header>
                     <h5>Accounting</h5>
                 </Card.Header>
                 <Card.Body>
@@ -208,15 +174,15 @@ const PenggajianInputPage = () => {
                             </tr>
                         </thead>
                         <tbody>
-                            {daftarPendapatan.length > 0 && daftarPendapatan.map((pendapatan, index) => (
+                            {daftarPendapatan.length >0 && daftarPendapatan.map((pendapatan, index) => (
                                 <tr key={index}>
-                                    <td>{pendapatan.ID_Pendapatan}</td>
-                                    <td>{pendapatan.Nama_Pendapatan}</td>
+                                <td>{pendapatan.ID_Pendapatan}</td>
+                                <td>{pendapatan.Nama_Pendapatan}</td>
                                     <td>
                                         <Form.Group>
                                             <Form.Control
                                                 name="Jumlah_Pendapatan"
-                                                onChange={(e) => handleInputPendapatan(e, index)}
+                                                onChange={(e) => handleInput(e, index)}
                                             />
                                         </Form.Group>
                                     </td>
@@ -225,35 +191,35 @@ const PenggajianInputPage = () => {
                         </tbody>
 
                     </Table>
-                </Card.Body>
-                <Table>
-                    <thead>
-                        <tr>
-                            <th style={{ width: "13%" }}>ID Potongan</th>
-                            <th>Nama Potongan</th>
-                            <th>Jumlah</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        {daftarPotongan.length > 0 && daftarPotongan.map((potongan, index) => (
-                            <tr key={index}>
-                                <td>{potongan.ID_Potongan}</td>
-                                <td>{potongan.Nama_Potongan}</td>
-                                <td>
-                                    <Form.Control
-                                        name="Jumlah_Potongan"
-
-                                        onChange={(e) => handleInputPotongan(e, index)}
-                                    />
-
-                                </td>
+                    </Card.Body>
+                    <Table>
+                        <thead>
+                            <tr>
+                                <th style={{ width: "13%" }}>ID Potongan</th>
+                                <th>Nama Potongan</th>
+                                <th>Jumlah</th>
                             </tr>
-                        ))}
-                    </tbody>
+                        </thead>
+                        <tbody>
+                            {daftarPotongan.length >0 && daftarPotongan.map((potongan, index) => (
+                                <tr key={index}>
+                                    <td>{potongan.ID_Potongan}</td>
+                                <td>{potongan.Nama_Potongan}</td>
+                                    <td>
+                                        <Form.Control
+                                            name="Jumlah_Potongan"
+                                            
+                                            onChange={(e) => handleInput(e, index)}
+                                        />
 
-                </Table>
+                                    </td>
+                                </tr>
+                            ))}
+                        </tbody>
+
+                    </Table>
             </Card.Body>
-
+           
         </NavigationWidget >
     );
 };

@@ -1,8 +1,14 @@
 const helperDuplicatedInArrayObject = (item, by, array) => {
+    if (!Array.isArray(array)) {
+        console.error('Invalid array');
+        return false;
+    }
+
     let isDuplicate = false;
     for (let obj of array) {
         if (item[by] === obj[by]) {
             isDuplicate = true;
+            break; // Optional: Jika Anda ingin menghentikan pencarian setelah menemukan duplikat pertama
         }
     }
 

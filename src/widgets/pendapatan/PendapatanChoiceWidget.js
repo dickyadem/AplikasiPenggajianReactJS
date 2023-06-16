@@ -81,7 +81,7 @@ const PendapatanChoiceWidget = ({
                         </tr>
                     </thead>
                     <tbody>
-                        {daftarPendapatan.map((pendapatan, index) => (
+                        {daftarPendapatan.length >0 &&  daftarPendapatan.map((pendapatan, index) => (
                             <tr key={index}>
                                 <td>{pendapatan.ID_Pendapatan}</td>
                                 <td>{pendapatan.Nama_Pendapatan}</td>
