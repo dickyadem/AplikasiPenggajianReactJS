@@ -50,7 +50,8 @@ function App() {
         <Route path="/pendapatan/edit/:ID_Pendapatan" element={<PendapatanEditPage />} />
         <Route path="/potongan" element={<PotonganPage />} />
         <Route path="/potongan/add" element={<PotonganAddPage />} />
-        <Route path="/potongan/edit/:ID_Potongan" element={<PotonganEditPage />} />    <Route path="/potongan/add" element={<PotonganAddPage />} />
+        <Route path="/potongan/edit/:ID_Potongan" element={<PotonganEditPage />} />    
+        <Route path="/potongan/add" element={<PotonganAddPage />} />
         <Route path="/penggajian" element={<PenggajianListPage />} />
         <Route path="/penggajian/input" element={<PenggajianInputPage />} />
         <Route path="/laporan" element={<LaporanGajiPage />} />

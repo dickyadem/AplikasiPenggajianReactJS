@@ -27,7 +27,6 @@ const initGaji = {
 const PenggajianInputPage = () => {
     const [gaji, setGaji] = useState(initGaji);
     const [daftarPotongan, setDaftarPotongan] = useState([]);
-
     const [daftarPendapatan, setDaftarPendapatan] = useState([]);
 
 

@@ -1,6 +1,7 @@
 import config from "../config";
 import AuthService from "./AuthService";
 import HTTPService from "./HTTPService";
+import { helperHandlerExportResponse } from "../utils/helpers";
 
 const GajiService = {};
 const CONFIG_HTTP = {
@@ -26,21 +27,22 @@ GajiService.get = (ID_Gaji) => {
     );
 };
 
-GajiService.edit = (ID_Gaji, gaji) => {
-    CONFIG_HTTP.params = null;
-    return HTTPService.put(
-        `${config.BASE_URL}/gaji/${ID_Gaji}`,
-        gaji,
-        CONFIG_HTTP
-    );
+GajiService.ID_GajiPrint = (ID_Gaji) => {
+    CONFIG_HTTP.query = null;
+
+    return new Promise((resolve, reject) => {
+        HTTPService({
+            url: `${config.BASE_URL}/gaji/${ID_Gaji}/slip-excel`,
+            method: "POST",
+            responseType: "blob",
+            headers: CONFIG_HTTP.headers,
+        })
+            .then((response) => {
+                helperHandlerExportResponse(response, resolve, "GAJI");
+            })
+            .catch((error) => reject(error));
+    });
 };
 
-GajiService.delete = (ID_Gaji) => {
-    CONFIG_HTTP.params = null;
-    return HTTPService.delete(
-        `${config.BASE_URL}/gaji/${ID_Gaji}`,
-        CONFIG_HTTP
-    );
-};
 
 export default GajiService;

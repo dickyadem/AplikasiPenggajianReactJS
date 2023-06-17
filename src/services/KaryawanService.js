@@ -20,9 +20,23 @@ KaryawanService.create = (karyawan) => {
 KaryawanService.get = (ID_Karyawan) => {
   CONFIG_HTTP.params = null;
   return HTTPService.get(
-      `${config.BASE_URL}/pemasok/${ID_Karyawan}`,
+      `${config.BASE_URL}/karyawan/${ID_Karyawan}`,
       CONFIG_HTTP
   );
 };
-
+KaryawanService.edit = (ID_Karyawan, karyawan) => {
+  CONFIG_HTTP.params = null;
+  return HTTPService.put(
+    `${config.BASE_URL}/karyawan/${ID_Karyawan}`,
+    karyawan,
+    CONFIG_HTTP
+  );
+};
+KaryawanService.delete = (ID_karyawan) => {
+  CONFIG_HTTP.params = null;
+  return HTTPService.delete(
+    `${config.BASE_URL}/karyawan/${ID_karyawan}`,
+    CONFIG_HTTP
+  );
+};
 export default KaryawanService;

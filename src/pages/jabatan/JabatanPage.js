@@ -39,14 +39,14 @@ const JabatanPage = () => {
           <VscAdd />  Tambah
         </Button>
       }
-      actionTop={
-        <InputGroup >
-          <Form.Control />
-          <Button size="sm" variant="outline-secondary">
-            <FaSearch />  Search
-          </Button>
-        </InputGroup>
-      }
+      // actionTop={
+      //   <InputGroup >
+      //     <Form.Control />
+      //     <Button size="sm" variant="outline-secondary">
+      //       <FaSearch />  Search
+      //     </Button>
+      //   </InputGroup>
+      // }
     >
       <Card className="mt-2">
       <Card.Header className="bg-secondary text-light d-flex justify-content-between align-items-center">

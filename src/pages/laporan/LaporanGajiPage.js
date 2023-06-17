@@ -7,21 +7,34 @@ import KaryawanService from "../../services/KaryawanService";
 import GajiService from "../../services/GajiService";
 import PotonganService from "../../services/PotonganService";
 import GajiDetailService from "../../services/GajiDetailService";
+import PendapatanDetailService from "../../services/pendapatandetail";
+import PotonganDetailService from "../../services/potongandetail";
+
 
 const LaporanPage = () => {
     const [daftarKaryawan, setDaftarKaryawan] = useState({});
     const [paginateKaryawan, setPaginateKaryawan] = useState([]);
     const [queryKaryawan, setQueryKaryawan] = useState({ page: 1, limit: 10 });
+
     const [daftarGaji, setDaftarGaji] = useState({});
     const [queryGaji, setQueryGaji] = useState({ page: 1, limit: 10 });
     const [paginateGaji, setPaginateGaji] = useState([]);
+
     const [daftarPotongan, setDaftarPotongan] = useState({});
     const [paginatePotongan, setPaginatePotongan] = useState([]);
     const [queryPotongan, setQueryPotongan] = useState({ page: 1, limit: 10 });
+
+    const [daftarPendapatanDetail, setDaftarPendapatanDetail] = useState({});
+    const [queryPendapatanDetail, setQueryPendapatanDetail] = useState({ page: 1, limit: 10 });
+
+    const [daftarPotonganDetail, setDaftarPotonganDetail] = useState({});
+    const [queryPotonganDetail, setQueryPotonganDetail] = useState({ page: 1, limit: 10 });
+
     const [daftarGajiDetail, setDaftarGajiDetail] = useState({});
     const [queryGajiDetail, setQueryGajiDetail] = useState({ page: 1, limit: 10 });
     const [paginateGajiDetail, setPaginateGajiDetail] = useState([]);
     const [showTable, setShowTable] = useState(false);
+
     const [showListPenggajian, setShowListPenggajian] = useState(false);
     const [showPotonganBPJS, setShowPotonganBPJS] = useState(false);
     const [showPotonganPPH, setShowPotonganPPH] = useState(false);
@@ -35,7 +48,17 @@ const LaporanPage = () => {
                 }
             })
             .catch((error) => console.log(error));
-    }, [queryGajiDetail]);
+        PendapatanDetailService.list(daftarPendapatanDetail)
+            .then((response) => {
+                setDaftarPendapatanDetail(response.data);
+            })
+            .catch((error) => console.log(error));
+        PotonganDetailService.list(daftarPotonganDetail)
+            .then((response) => {
+                setDaftarPotonganDetail(response.data);
+            })
+            .catch((error) => console.log(error));
+    }, [queryGajiDetail, queryPendapatanDetail, queryPotonganDetail]);
 
 
 
@@ -83,9 +106,6 @@ const LaporanPage = () => {
     }
     const PPH = async () => {
         await ReportingService.reportPPh(reportingGaji);
-    }
-    const SlipGaji = async () => {
-        await ReportingService.reportslipgaji(reportingGaji);
     }
 
     return (
@@ -162,16 +182,16 @@ const LaporanPage = () => {
                                     daftarGaji.results
                                         .filter((gaji) => {
                                             // Filter ID Gaji yang memiliki ID Potongan bernilai 01
-                                            const gajiDetail = daftarGajiDetail.results.find(
+                                            const PotonganDetail = daftarPotonganDetail.results.find(
                                                 (gd) => gd.ID_Gaji === gaji.ID_Gaji && gd.ID_Potongan === "01"
                                             );
-                                            return gajiDetail !== undefined;
+                                            return PotonganDetail !== undefined;
                                         })
                                         .map((gaji, index) => {
                                             const karyawan = daftarKaryawan.results.find(
                                                 (k) => k.ID_Karyawan === gaji.ID_Karyawan
                                             );
-                                            const gajiDetail = daftarGajiDetail.results.find(
+                                            const PotonganDetail = daftarPotonganDetail.results.find(
                                                 (gd) => gd.ID_Gaji === gaji.ID_Gaji && gd.ID_Potongan === "01"
                                             );
 
@@ -180,7 +200,7 @@ const LaporanPage = () => {
                                                     <td>{gaji.ID_Gaji}</td>
                                                     <td>{gaji.ID_Karyawan}</td>
                                                     <td>{karyawan && karyawan.Nama_Karyawan}</td>
-                                                    <td>{gajiDetail && gajiDetail.Jumlah_Potongan}</td>
+                                                    <td>{PotonganDetail && PotonganDetail.Jumlah_Potongan}</td>
                                                 </tr>
                                             );
                                         })}
@@ -211,16 +231,16 @@ const LaporanPage = () => {
                                 {daftarGaji.results &&
                                     daftarGaji.results
                                         .filter((gaji) => {
-                                            const gajiDetail = daftarGajiDetail.results.find(
+                                            const PotonganDetail = daftarPotonganDetail.results.find(
                                                 (gd) => gd.ID_Gaji === gaji.ID_Gaji && gd.ID_Potongan === "02"
                                             );
-                                            return gajiDetail !== undefined;
+                                            return PotonganDetail !== undefined;
                                         })
                                         .map((gaji, index) => {
                                             const karyawan = daftarKaryawan.results.find(
                                                 (k) => k.ID_Karyawan === gaji.ID_Karyawan
                                             );
-                                            const gajiDetail = daftarGajiDetail.results.find(
+                                            const PotonganDetail = daftarPotonganDetail.results.find(
                                                 (gd) => gd.ID_Gaji === gaji.ID_Gaji && gd.ID_Potongan === "02"
                                             );
 
@@ -229,7 +249,7 @@ const LaporanPage = () => {
                                                     <td>{gaji.ID_Gaji}</td>
                                                     <td>{gaji.ID_Karyawan}</td>
                                                     <td>{karyawan && karyawan.Nama_Karyawan}</td>
-                                                    <td>{gajiDetail && gajiDetail.Jumlah_Potongan}</td>
+                                                    <td>{PotonganDetail && PotonganDetail.Jumlah_Potongan}</td>
                                                 </tr>
                                             );
                                         })}
@@ -287,14 +307,6 @@ const LaporanPage = () => {
                             </Card.Body>
                         </Card>
 
-                        <Card className="mb-3">
-                            <Card.Body>
-                                <Card.Title>Cetak Laporan Slip Gaji Karyawan</Card.Title>
-                                <Button onClick={SlipGaji}>
-                                    <FaDownload /> Export
-                                </Button>
-                            </Card.Body>
-                        </Card>
                     </div>
                 </div>
             </div>

@@ -103,6 +103,7 @@ const KaryawanEditPage = () => {
                         <Form.Label>Jumlah Anak</Form.Label>
                         <Form.Control name="Jumlah_Anak"
                             value={karyawan.Jumlah_Anak || ""}
+                            type="number"
                             onChange={handleInput} />
                     </Form.Group>
                 </Card.Body>

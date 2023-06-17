@@ -1,11 +1,13 @@
 import { Button, Card, Col, Form, InputGroup, Row, Table } from "react-bootstrap";
 import NavigationWidget from "../../widgets/commons/NavigationWidget";
 import { MdCancel } from "react-icons/md";
-import { FaSave, FaSearch } from "react-icons/fa";
+import { FaFileExcel, FaSave, FaSearch } from "react-icons/fa";
 import { Navigate, useNavigate } from "react-router-dom";
 import GajiService from "../../services/GajiService";
 import { useEffect, useState } from "react";
 import { VscAdd } from "react-icons/vsc";
+import GajiReviewWidget from "../../widgets/Penggajian/GajiReviewWidget";
+import GajiSearchInlineWidget from "../../widgets/Penggajian/GajiSearchInlineWidget";
 
 const PenggajianListPage = () => {
   const [daftarGaji, setDaftarGaji] = useState({});
@@ -30,25 +32,29 @@ const PenggajianListPage = () => {
     setQueryGaji((values) => ({ ...values, ...query }));
   };
 
+
   return (
     <NavigationWidget
-    buttonCreate={
-      <Button onClick={() => Navigate("/penggajian/add")}>
-        <VscAdd />  Tambah
-      </Button>
-      }
-      actionTop={
-        <InputGroup >
-          <Form.Control />
-          <Button size="sm" variant="outline-secondary">
-            <FaSearch />  Search
-          </Button>
-        </InputGroup>
-      }
+      // buttonCreate={
+      //   <Button onClick={() => Navigate("/penggajian/input")}>
+      //     <VscAdd />  Tambah
+      //   </Button>
+      // }
+    //   actionTop={
+    //     <GajiSearchInlineWidget
+    //     attr={{ variant: "secondary" }}
+    //     isShowGaji={true}
+    //     isShowID_Karyawan={true}
+    //     callbackGajiSearchInlineWidget={
+    //         callbackGajiSearchInlineWidget
+    //     }
+    // />
+    //       }
+      
     >
       <Card className="mt-2">
         <Card.Header className="bg-secondary text-light">
-          <h5>Gaji</h5>
+          <h5>List Penggajian</h5>
         </Card.Header>
         <Table striped bordered hover size="sm">
           <thead>
@@ -60,12 +66,12 @@ const PenggajianListPage = () => {
               <th>Total Potongan</th>
               <th>Gaji Bersih</th>
               <th>Keterangan</th>
-              <th>Email</th>
-              <th>ID Profil</th>
+              {/* <th>Email</th>
+              <th>ID Profil</th> */}
             </tr>
           </thead>
           <tbody>
-          {daftarGaji.results &&
+            {daftarGaji.results &&
               daftarGaji.results.map((gaji, index) => (
                 <tr key={index}>
                   <td>{gaji.ID_Gaji}</td>
@@ -75,9 +81,9 @@ const PenggajianListPage = () => {
                   <td>{gaji.Total_Potongan}</td>
                   <td>{gaji.Gaji_Bersih}</td>
                   <td>{gaji.Keterangan}</td>
-                  <td>{gaji.email}</td>
-                  <td>{gaji.ID_Profil}</td>
-
+                  {/* <td>{gaji.email}</td>
+                  <td>{gaji.ID_Profil}</td> */}
+                  <GajiReviewWidget ID_Gaji={gaji.ID_Gaji} />
                 </tr>
               ))}
           </tbody>
