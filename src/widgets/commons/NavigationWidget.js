@@ -12,7 +12,7 @@ const NavigationWidget = ({ children, buttonCreate, actionTop, username, avatar 
     <>
       <Navbar bg="dark" variant="dark">
         <Container>
-          <Navbar.Brand href="#">PT. KELOMPOK II</Navbar.Brand>
+          <Navbar.Brand href="#">Aplikasi Penggajian</Navbar.Brand>
           <Navbar.Toggle aria-controls="basic-navbar-nav" />
 
           <Navbar.Collapse className="justify-content-end">

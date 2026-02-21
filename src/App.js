@@ -1,5 +1,6 @@
 import { BrowserRouter, Routes, Route } from "react-router-dom";
 import AuthLoginPage from "./pages/auth/AuthLoginPages";
+import AuthRegisterPage from "./pages/auth/AuthRegisterPage";
 import UserPage from "./pages/user/UserPage";
 import UserAddPage from "./pages/user/UserAddPage";
 import ProfilPage from "./pages/profil/ProfilPage";
@@ -30,8 +31,9 @@ import PotonganEditPage from "./pages/potongan/PotonganEditPage";
 function App() {
   return (
     <BrowserRouter>
-      <Routes>        
+      <Routes>
         <Route path="/" element={<AuthLoginPage />} />
+        <Route path="/register" element={<AuthRegisterPage />} />
         <Route path="/user" element={<UserPage />} />
         <Route path="/user/add" element={<UserAddPage />} />
         <Route path="/profil" element={<ProfilPage />} />

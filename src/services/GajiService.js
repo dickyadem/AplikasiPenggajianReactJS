@@ -12,17 +12,17 @@ const CONFIG_HTTP = {
 
 GajiService.list = (query) => {
     CONFIG_HTTP.params = query;
-    return HTTPService.get(`${config.BASE_URL}/gaji`, CONFIG_HTTP);
+    return HTTPService.get(`/gaji`, CONFIG_HTTP);
 };
 
 GajiService.create = (gaji) => {
-    return HTTPService.post(`${config.BASE_URL}/gaji`, gaji, CONFIG_HTTP);
+    return HTTPService.post(`/gaji`, gaji, CONFIG_HTTP);
 };
 
 GajiService.get = (ID_Gaji) => {
     CONFIG_HTTP.params = null;
     return HTTPService.get(
-        `${config.BASE_URL}/gaji/${ID_Gaji}`,
+        `/gaji/${ID_Gaji}`,
         CONFIG_HTTP
     );
 };
@@ -32,7 +32,7 @@ GajiService.ID_GajiPrint = (ID_Gaji) => {
 
     return new Promise((resolve, reject) => {
         HTTPService({
-            url: `${config.BASE_URL}/gaji/${ID_Gaji}/slip-excel`,
+            url: `/gaji/${ID_Gaji}/slip-excel`,
             method: "POST",
             responseType: "blob",
             headers: CONFIG_HTTP.headers,

@@ -11,18 +11,18 @@ const CONFIG_HTTP = {
 
 PendapatanDetailService.list = (query) => {
     CONFIG_HTTP.params = query;
-    return HTTPService.get(`${config.BASE_URL}/pendapatandetail`, CONFIG_HTTP);
+    return HTTPService.get(`/pendapatandetail`, CONFIG_HTTP);
 };
 
 PendapatanDetailService.get = (ID_gaji) => {
     CONFIG_HTTP.params = null;
     return HTTPService.get(
-        `${config.BASE_URL}/pendapatandetail/${ID_gaji}`,
+        `/pendapatandetail/${ID_gaji}`,
         CONFIG_HTTP
     );
 };
 PendapatanDetailService.create = (pendapatandetail) => {
-    return HTTPService.post(`${config.BASE_URL}/pendapatandetail`, pendapatandetail, CONFIG_HTTP);
+    return HTTPService.post(`/pendapatandetail`, pendapatandetail, CONFIG_HTTP);
 };
 
 

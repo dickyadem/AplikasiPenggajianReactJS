@@ -8,7 +8,7 @@ const ReportingService = {};
 ReportingService.reportListGaji = (data) => {
     return new Promise((resolve, reject) => {
         HTTPService({
-            url: `${config.BASE_URL}/gaji/gaji-excel`,
+            url: `/gaji/gaji-excel`,
             method: "POST",
             responseType: "blob",
             headers: {
@@ -27,7 +27,7 @@ ReportingService.reportListGaji = (data) => {
 ReportingService.reportPPh = (data) => {
     return new Promise((resolve, reject) => {
         HTTPService({
-            url: `${config.BASE_URL}/gaji/pph-excel`,
+            url: `/gaji/pph-excel`,
             method: "POST",
             responseType: "blob",
             headers: {
@@ -46,7 +46,7 @@ ReportingService.reportPPh = (data) => {
 ReportingService.reportBPJS = (data) => {
     return new Promise((resolve, reject) => {
         HTTPService({
-            url: `${config.BASE_URL}/gaji/bpjs-excel`,
+            url: `/gaji/bpjs-excel`,
             method: "POST",
             responseType: "blob",
             headers: {
@@ -65,7 +65,7 @@ ReportingService.reportBPJS = (data) => {
 ReportingService.reportslipgaji = (data) => {
     return new Promise((resolve, reject) => {
         HTTPService({
-            url: `${config.BASE_URL}/gaji/:ID_Gaji/slip-excel`,
+            url: `/gaji/:ID_Gaji/slip-excel`,
             method: "POST",
             responseType: "blob",
             headers: {

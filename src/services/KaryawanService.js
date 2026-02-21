@@ -11,23 +11,23 @@ const CONFIG_HTTP = {
 
 KaryawanService.list = (query) => {
   CONFIG_HTTP.params = query;
-  return HTTPService.get(`${config.BASE_URL}/karyawan`, CONFIG_HTTP);
+  return HTTPService.get(`/karyawan`, CONFIG_HTTP);
 };
 
 KaryawanService.create = (karyawan) => {
-  return HTTPService.post (`${config.BASE_URL}/karyawan`, karyawan, CONFIG_HTTP);
+  return HTTPService.post(`/karyawan`, karyawan, CONFIG_HTTP);
 };
 KaryawanService.get = (ID_Karyawan) => {
   CONFIG_HTTP.params = null;
   return HTTPService.get(
-      `${config.BASE_URL}/karyawan/${ID_Karyawan}`,
+      `/karyawan/${ID_Karyawan}`,
       CONFIG_HTTP
   );
 };
 KaryawanService.edit = (ID_Karyawan, karyawan) => {
   CONFIG_HTTP.params = null;
   return HTTPService.put(
-    `${config.BASE_URL}/karyawan/${ID_Karyawan}`,
+    `/karyawan/${ID_Karyawan}`,
     karyawan,
     CONFIG_HTTP
   );
@@ -35,7 +35,7 @@ KaryawanService.edit = (ID_Karyawan, karyawan) => {
 KaryawanService.delete = (ID_karyawan) => {
   CONFIG_HTTP.params = null;
   return HTTPService.delete(
-    `${config.BASE_URL}/karyawan/${ID_karyawan}`,
+    `/karyawan/${ID_karyawan}`,
     CONFIG_HTTP
   );
 };

@@ -24,10 +24,26 @@ const KaryawanEditPage = () => {
     }, [ID_Karyawan]);
 
     const handleKaryawanServiceEdit = () => {
-        KaryawanService.edit(ID_Karyawan, karyawan).then((response) => {
-            alert(`Berhasil mengubah data karyawan ${ID_Karyawan}`);
-            navigate("/karyawan");
-        });
+        // Siapkan data yang akan dikirim (filter field yang kosong)
+        const dataToSend = { ...karyawan };
+        
+        // Jika email kosong, jangan kirim field email (untuk menghindari error backend)
+        if (!dataToSend.email || dataToSend.email.trim() === "") {
+            delete dataToSend.email;
+        }
+
+        KaryawanService.edit(ID_Karyawan, dataToSend)
+            .then((response) => {
+                alert(`Berhasil mengubah data karyawan ${ID_Karyawan}`);
+                navigate("/karyawan");
+            })
+            .catch((error) => {
+                console.error("Error detail:", error);
+                const errorMsg = error.response?.data?.message || 
+                                error.response?.data?.errors?.map(e => e.msg).join(", ") ||
+                                "Gagal mengupdate data karyawan. Periksa koneksi atau data Anda.";
+                alert(errorMsg);
+            });
     };
 
     const handleKaryawanServiceDelete = () => {
@@ -74,6 +90,14 @@ const KaryawanEditPage = () => {
                             name="Nama_Karyawan"
                             value={karyawan.Nama_Karyawan || ""}
                             onChange={handleInput} />
+                    </Form.Group>
+                    <Form.Group className="mt-3">
+                        <Form.Label>Email</Form.Label>
+                        <Form.Control
+                            name="email"
+                            value={karyawan.email || ""}
+                            onChange={handleInput}
+                            type="email" />
                     </Form.Group>
                     <Form.Group className="mt-3">
                         <Form.Label>ID Golongan</Form.Label>

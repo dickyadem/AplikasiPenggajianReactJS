@@ -2,7 +2,7 @@ import { useEffect, useState } from "react";
 import NavigationWidget from "../../widgets/commons/NavigationWidget";
 import { FaDownload } from "react-icons/fa";
 import ReportingService from "../../services/LaporanService";
-import { Button, Card, Form, InputGroup, Table } from "react-bootstrap";
+import { Button, Card, Col, Form, InputGroup, Row, Table } from "react-bootstrap";
 import KaryawanService from "../../services/KaryawanService";
 import GajiService from "../../services/GajiService";
 import PotonganService from "../../services/PotonganService";
@@ -38,6 +38,23 @@ const LaporanPage = () => {
     const [showListPenggajian, setShowListPenggajian] = useState(false);
     const [showPotonganBPJS, setShowPotonganBPJS] = useState(false);
     const [showPotonganPPH, setShowPotonganPPH] = useState(false);
+    
+    // Filter states
+    const [filterTanggalFrom, setFilterTanggalFrom] = useState("");
+    const [filterTanggalTo, setFilterTanggalTo] = useState("");
+    const [filterJabatan, setFilterJabatan] = useState("");
+    const [filterDivisi, setFilterDivisi] = useState("");
+
+    // Format Rupiah
+    const formatRupiah = (value) => {
+        if (!value && value !== 0) return "Rp 0";
+        const numeric = value.toString().replace(/[^0-9]/g, "");
+        return new Intl.NumberFormat("id-ID", {
+            style: "currency",
+            currency: "IDR",
+            minimumFractionDigits: 0,
+        }).format(numeric);
+    };
 
     useEffect(() => {
         GajiDetailService.list(daftarGajiDetail)
@@ -110,13 +127,106 @@ const LaporanPage = () => {
 
     return (
         <NavigationWidget>
-
-
+            {/* Filter Section */}
+            <Card className="mt-3">
+                <Card.Header className="bg-primary text-white">
+                    <h5 className="mb-0">📊 Filter Laporan</h5>
+                </Card.Header>
+                <Card.Body>
+                    <Row>
+                        <Col md={3}>
+                            <Form.Group>
+                                <Form.Label>Dari Tanggal</Form.Label>
+                                <Form.Control
+                                    type="date"
+                                    value={filterTanggalFrom}
+                                    onChange={(e) => setFilterTanggalFrom(e.target.value)}
+                                />
+                            </Form.Group>
+                        </Col>
+                        <Col md={3}>
+                            <Form.Group>
+                                <Form.Label>Sampai Tanggal</Form.Label>
+                                <Form.Control
+                                    type="date"
+                                    value={filterTanggalTo}
+                                    onChange={(e) => setFilterTanggalTo(e.target.value)}
+                                />
+                            </Form.Group>
+                        </Col>
+                        <Col md={3}>
+                            <Form.Group>
+                                <Form.Label>Jabatan</Form.Label>
+                                <Form.Control
+                                    type="text"
+                                    placeholder="Semua jabatan"
+                                    value={filterJabatan}
+                                    onChange={(e) => setFilterJabatan(e.target.value)}
+                                />
+                            </Form.Group>
+                        </Col>
+                        <Col md={3}>
+                            <Form.Group>
+                                <Form.Label>Divisi</Form.Label>
+                                <Form.Control
+                                    type="text"
+                                    placeholder="Semua divisi"
+                                    value={filterDivisi}
+                                    onChange={(e) => setFilterDivisi(e.target.value)}
+                                />
+                            </Form.Group>
+                        </Col>
+                    </Row>
+                    <Row className="mt-3">
+                        <Col>
+                            <Button
+                                variant="success"
+                                onClick={() => {
+                                    setShowListPenggajian(true);
+                                    setShowPotonganBPJS(false);
+                                    setShowPotonganPPH(false);
+                                }}
+                            >
+                                📋 Laporan List Penggajian
+                            </Button>
+                            <Button
+                                variant="info"
+                                className="ms-2"
+                                onClick={() => {
+                                    setShowPotonganBPJS(true);
+                                    setShowListPenggajian(false);
+                                    setShowPotonganPPH(false);
+                                }}
+                            >
+                                🏥 Laporan BPJS
+                            </Button>
+                            <Button
+                                variant="warning"
+                                className="ms-2"
+                                onClick={() => {
+                                    setShowPotonganPPH(true);
+                                    setShowListPenggajian(false);
+                                    setShowPotonganBPJS(false);
+                                }}
+                            >
+                                📝 Laporan PPh
+                            </Button>
+                            <Button
+                                variant="danger"
+                                className="ms-2"
+                                onClick={GajiList}
+                            >
+                                <FaDownload /> Export Excel
+                            </Button>
+                        </Col>
+                    </Row>
+                </Card.Body>
+            </Card>
 
             {showListPenggajian && (
-                <Card className="mt-10">
+                <Card className="mt-3">
                     <Card.Header className="bg-secondary text-light">
-                        <h5>Laporan List Penggajian </h5>
+                        <h5>Laporan List Penggajian</h5>
                     </Card.Header>
                     <Table striped bordered hover size="sm">
                         <thead>
@@ -131,28 +241,50 @@ const LaporanPage = () => {
                             </tr>
                         </thead>
                         <tbody>
-
                             {daftarGaji.results &&
-                                daftarGaji.results.map((gaji, index) => {
-                                    const karyawan = daftarKaryawan.results.find(
-                                        (k) => k.ID_Karyawan === gaji.ID_Karyawan
-                                    );
-                                    const potongan = daftarPotongan.results.find(
-                                        (p) => p.ID_Potongan
-                                    );
-
-                                    return (
-                                        <tr key={index}>
-                                            <td>{gaji.ID_Gaji}</td>
-                                            <td>{gaji.Tanggal}</td>
-                                            <td>{karyawan && karyawan.Nama_Karyawan}</td>
-                                            <td>{karyawan && karyawan.Divisi}</td>
-                                            <td>{gaji.Total_Pendapatan}</td>
-                                            <td>{gaji.Total_Potongan}</td>
-                                            <td>{gaji.Gaji_Bersih}</td>
-                                        </tr>
-                                    );
-                                })}
+                                daftarGaji.results
+                                    .filter((gaji) => {
+                                        // Filter by tanggal
+                                        if (filterTanggalFrom && gaji.Tanggal < filterTanggalFrom) {
+                                            return false;
+                                        }
+                                        if (filterTanggalTo && gaji.Tanggal > filterTanggalTo) {
+                                            return false;
+                                        }
+                                        
+                                        const karyawan = daftarKaryawan.results?.find(
+                                            (k) => k.ID_Karyawan === gaji.ID_Karyawan
+                                        );
+                                        
+                                        // Filter by jabatan
+                                        if (filterJabatan && karyawan?.ID_Jabatan !== filterJabatan) {
+                                            return false;
+                                        }
+                                        
+                                        // Filter by divisi
+                                        if (filterDivisi && karyawan?.Divisi !== filterDivisi) {
+                                            return false;
+                                        }
+                                        
+                                        return true;
+                                    })
+                                    .map((gaji, index) => {
+                                        const karyawan = daftarKaryawan.results?.find(
+                                            (k) => k.ID_Karyawan === gaji.ID_Karyawan
+                                        );
+                                        
+                                        return (
+                                            <tr key={index}>
+                                                <td>{gaji.ID_Gaji}</td>
+                                                <td>{gaji.Tanggal}</td>
+                                                <td>{karyawan?.Nama_Karyawan || "-"}</td>
+                                                <td>{karyawan?.Divisi || "-"}</td>
+                                                <td>{formatRupiah((gaji.TotalPendapatan || gaji.Total_Pendapatan || 0).toString())}</td>
+                                                <td>{formatRupiah((gaji.TotalPotongan || gaji.Total_Potongan || 0).toString())}</td>
+                                                <td>{formatRupiah((gaji.GajiBersih || gaji.Gaji_Bersih || 0).toString())}</td>
+                                            </tr>
+                                        );
+                                    })}
                         </tbody>
                     </Table>
                 </Card>

@@ -11,18 +11,18 @@ const CONFIG_HTTP = {
 
 GajiDetailService.list = (query) => {
     CONFIG_HTTP.params = query;
-    return HTTPService.get(`${config.BASE_URL}/gajidetail`, CONFIG_HTTP);
+    return HTTPService.get(`/gajidetail`, CONFIG_HTTP);
 };
 
 GajiDetailService.get = (ID_gaji) => {
     CONFIG_HTTP.params = null;
     return HTTPService.get(
-        `${config.BASE_URL}/gajidetail/${ID_gaji}`,
+        `/gajidetail/${ID_gaji}`,
         CONFIG_HTTP
     );
 };
 GajiDetailService.create = (gajidetail) => {
-    return HTTPService.post(`${config.BASE_URL}/gajidetail`, gajidetail, CONFIG_HTTP);
+    return HTTPService.post(`/gajidetail`, gajidetail, CONFIG_HTTP);
 };
 
 

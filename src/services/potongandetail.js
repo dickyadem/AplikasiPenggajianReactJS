@@ -11,18 +11,18 @@ const CONFIG_HTTP = {
 
 PotonganDetailService.list = (query) => {
     CONFIG_HTTP.params = query;
-    return HTTPService.get(`${config.BASE_URL}/potongandetail`, CONFIG_HTTP);
+    return HTTPService.get(`/potongandetail`, CONFIG_HTTP);
 };
 
 PotonganDetailService.get = (ID_gaji) => {
     CONFIG_HTTP.params = null;
     return HTTPService.get(
-        `${config.BASE_URL}/potongandetail/${ID_gaji}`,
+        `/potongandetail/${ID_gaji}`,
         CONFIG_HTTP
     );
 };
 PotonganDetailService.create = (potongandetail) => {
-    return HTTPService.post(`${config.BASE_URL}/potongandetail`, potongandetail, CONFIG_HTTP);
+    return HTTPService.post(`/potongandetail`, potongandetail, CONFIG_HTTP);
 };
 
 
