@@ -4,10 +4,12 @@ import { Button, Card, Form } from "react-bootstrap";
 import { FaArrowLeft, FaSave, FaTrash } from "react-icons/fa";
 import KaryawanService from "../../services/KaryawanService";
 import NavigationWidget from "../../widgets/commons/NavigationWidget";
+import { useToast } from "../../widgets/commons/ToastProvider";
 
 const KaryawanEditPage = () => {
     const navigate = useNavigate();
     const { ID_Karyawan } = useParams();
+    const { success, error } = useToast();
     const [karyawan, setKaryawan] = useState({});
 
     const handleInput = (e) => {
@@ -34,15 +36,20 @@ const KaryawanEditPage = () => {
 
         KaryawanService.edit(ID_Karyawan, dataToSend)
             .then((response) => {
-                alert(`Berhasil mengubah data karyawan ${ID_Karyawan}`);
-                navigate("/karyawan");
+                success(`Berhasil mengubah data karyawan ${ID_Karyawan}`);
+                setTimeout(() => {
+                    navigate("/karyawan");
+                }, 1000);
             })
             .catch((error) => {
                 console.error("Error detail:", error);
-                const errorMsg = error.response?.data?.message || 
+                const errorMsg = error.response?.data?.message ||
                                 error.response?.data?.errors?.map(e => e.msg).join(", ") ||
                                 "Gagal mengupdate data karyawan. Periksa koneksi atau data Anda.";
-                alert(errorMsg);
+                error(errorMsg);
+                setTimeout(() => {
+                    navigate("/karyawan");
+                }, 1000);
             });
     };
 
@@ -50,8 +57,12 @@ const KaryawanEditPage = () => {
         let isDelete = window.confirm(`Delete karyawan ${ID_Karyawan}?`)
         if (isDelete) {
             KaryawanService.delete(ID_Karyawan, karyawan).then(() => {
-                alert(`Berhasil mengubah data karyawan ${ID_Karyawan}`);
-                navigate("/karyawan");
+                success(`Berhasil menghapus data karyawan ${ID_Karyawan}`);
+                setTimeout(() => {
+                    navigate("/karyawan");
+                }, 1000);
+            }).catch((err) => {
+                error(err.response?.data?.message || "Gagal menghapus data karyawan");
             });
         }
 

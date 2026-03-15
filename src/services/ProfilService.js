@@ -1,43 +1,21 @@
-import config from "../config";
-import AuthService from "./AuthService";
 import HTTPService from "./HTTPService";
 
 const ProfilService = {};
-const CONFIG_HTTP = {
-  headers: {
-    "x-access-token": AuthService.getToken(),
-  },
-};
 
 ProfilService.list = (query) => {
-  CONFIG_HTTP.params = query;
-  return HTTPService.get(`/profil`, CONFIG_HTTP);
+  return HTTPService.get(`/profil`, { params: query });
 };
 
 ProfilService.create = (profil) => {
-  return HTTPService.post(`/profil`, profil, CONFIG_HTTP);
+  return HTTPService.post(`/profil`, profil);
 };
 
 ProfilService.get = (ID_Profil) => {
-  CONFIG_HTTP.params = null;
-  return HTTPService.get(`/profil/${ID_Profil}`, CONFIG_HTTP);
+  return HTTPService.get(`/profil/${ID_Profil}`);
 };
 
 ProfilService.edit = (ID_Profil, profil) => {
-  CONFIG_HTTP.params = null;
-  return HTTPService.put(
-    `/profil/${ID_Profil}`,
-    profil,
-    CONFIG_HTTP
-  );
+  return HTTPService.put(`/profil/${ID_Profil}`, profil);
 };
-
-// ProfilService.delete = (ID_Profil) => {
-//   CONFIG_HTTP.params = null;
-//   return HTTPService.delete(
-//     `/profil/${ID_Profil}`,
-//     CONFIG_HTTP
-//   );
-// };
 
 export default ProfilService;

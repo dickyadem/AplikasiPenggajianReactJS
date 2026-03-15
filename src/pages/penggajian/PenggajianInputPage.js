@@ -1,15 +1,16 @@
-import { Button, Card, Col, Form, InputGroup, Row, Table } from "react-bootstrap";
+import { Button, Card, Col, Form, InputGroup, Row, Table, Spinner, Badge } from "react-bootstrap";
 import NavigationWidget from "../../widgets/commons/NavigationWidget";
 import { useNavigate } from "react-router-dom";
-import { MdCancel } from "react-icons/md";
-import { FaArrowLeft, FaSave, FaSearch, FaTrash } from "react-icons/fa";
+import { FaArrowLeft, FaSave, FaCalculator, FaUser, FaBuilding, FaMoneyBillWave } from "react-icons/fa";
 import { useEffect, useState } from "react";
-import GajiDetailService from "../../services/GajiDetailService";
 import PendapatanService from "../../services/PendapatanService";
 import PotonganService from "../../services/PotonganService";
 import GajiService from "../../services/GajiService";
 import KaryawanService from "../../services/KaryawanService";
 import ProfilService from "../../services/ProfilService";
+import { hitungPPh21Bulanan, formatRupiah as formatRupiahPPh } from "../../utils/PPh21Calculator";
+import { helperReadableCurrency } from "../../utils/helpers";
+import "./PenggajianInput.css";
 
 const initGaji = {
     ID_Gaji: "",
@@ -35,6 +36,7 @@ const PenggajianInputPage = () => {
     const [totalPendapatan, setTotalPendapatan] = useState(0);
     const [totalPotongan, setTotalPotongan] = useState(0);
     const [gajiBersih, setGajiBersih] = useState(0);
+    const [pPhCalculation, setPPhCalculation] = useState(null);
 
     const [queryPendapatan, setQueryPendapatan] = useState({ page: 1, limit: 10 });
     const [paginatePendapatan, setPaginatePendapatan] = useState([]);
@@ -246,15 +248,104 @@ const PenggajianInputPage = () => {
         const totalPend = Object.values(gaji.itemsPendapatan).reduce((sum, item) => {
             return sum + (parseInt(item.Jumlah_Pendapatan) || 0);
         }, 0);
-        
+
         const totalPot = Object.values(gaji.itemsPotongan).reduce((sum, item) => {
             return sum + (parseInt(item.Jumlah_Potongan) || 0);
         }, 0);
-        
+
         setTotalPendapatan(totalPend);
         setTotalPotongan(totalPot);
         setGajiBersih(totalPend - totalPot);
     }, [gaji.itemsPendapatan, gaji.itemsPotongan]);
+
+    // Fungsi untuk menghitung PPh 21 otomatis
+    const handleCalculatePPh21 = () => {
+        if (!gaji.ID_Karyawan) {
+            alert("Pilih karyawan terlebih dahulu!");
+            return;
+        }
+
+        const selectedKaryawan = daftarKaryawan.find(k => k.ID_Karyawan === gaji.ID_Karyawan);
+        if (!selectedKaryawan) {
+            alert("Data karyawan tidak ditemukan!");
+            return;
+        }
+
+        // Ambil data dari itemsPendapatan
+        const pendapatanValues = Object.values(gaji.itemsPendapatan);
+        
+        // Cari komponen penghasilan
+        const gajiPokokItem = pendapatanValues.find(p => 
+            p.Nama_Pendapatan?.toLowerCase().includes('gaji pokok') || 
+            p.Nama_Pendapatan?.toLowerCase().includes('gaji')
+        );
+        
+        const tunjanganItem = pendapatanValues.find(p => 
+            p.Nama_Pendapatan?.toLowerCase().includes('tunjangan')
+        );
+        
+        const bonusItem = pendapatanValues.find(p => 
+            p.Nama_Pendapatan?.toLowerCase().includes('bonus')
+        );
+        
+        const thrItem = pendapatanValues.find(p => 
+            p.Nama_Pendapatan?.toLowerCase().includes('thr')
+        );
+
+        // Cari iuran BPJS dari potongan
+        const bpjsItem = Object.values(gaji.itemsPotongan).find(p => 
+            p.Nama_Potongan?.toLowerCase().includes('bpjs') ||
+            p.ID_Potongan === '01'
+        );
+
+        const gajiPokok = parseFloat(gajiPokokItem?.Jumlah_Pendapatan) || 0;
+        const tunjangan = parseFloat(tunjanganItem?.Jumlah_Pendapatan) || 0;
+        const bonus = parseFloat(bonusItem?.Jumlah_Pendapatan) || 0;
+        const thr = parseFloat(thrItem?.Jumlah_Pendapatan) || 0;
+        const iuranBPJS = parseFloat(bpjsItem?.Jumlah_Potongan) || 0;
+
+        // Hitung PPh 21
+        const result = hitungPPh21Bulanan({
+            gajiPokok,
+            tunjangan,
+            bonus,
+            thr,
+            iuranPensiun: 0,
+            iuranBPJS,
+            statusPernikahan: selectedKaryawan.Status_Pernikahan || 'TIDAK_KAWIN',
+            jumlahAnak: selectedKaryawan.Jumlah_Anak || 0,
+        });
+
+        setPPhCalculation(result);
+
+        // Auto-fill PPh ke itemsPotongan jika ada potongan PPh
+        const pphIndex = filteredPotongan.findIndex(p => 
+            p.ID_Potongan === '02' || 
+            p.Nama_Potongan?.toLowerCase().includes('pph') ||
+            p.Nama_Potongan?.toLowerCase().includes('pajak')
+        );
+
+        if (pphIndex !== -1 && result.pph21Bulanan > 0) {
+            const pphAmount = result.pph21Bulanan.toString();
+            setGaji((prev) => ({
+                ...prev,
+                itemsPotongan: {
+                    ...prev.itemsPotongan,
+                    [pphIndex]: {
+                        ...prev.itemsPotongan[pphIndex],
+                        ID_Potongan: filteredPotongan[pphIndex].ID_Potongan,
+                        Nama_Potongan: filteredPotongan[pphIndex].Nama_Potongan,
+                        Jumlah_Potongan: pphAmount,
+                    }
+                }
+            }));
+            alert(`PPh 21 berhasil dihitung: ${formatRupiahPPh(result.pph21Bulanan)}\n\nDetail:\n- PKP: ${formatRupiahPPh(result.pkp)}\n- PTKP (${result.statusPTKP}): ${formatRupiahPPh(result.ptkp)}\n- PPh Setahun: ${formatRupiahPPh(result.pphTerutangSetahun)}`);
+        } else if (result.pph21Bulanan <= 0) {
+            alert(`Penghasilan tidak kena pajak (PKP = 0)\nPTKP (${result.statusPTKP}): ${formatRupiahPPh(result.ptkp)}\nPenghasilan Netto: ${formatRupiahPPh(result.penghasilanNettoPerTahun)}`);
+        } else {
+            alert(`PPh 21: ${formatRupiahPPh(result.pph21Bulanan)}\n\nSilakan isi manual di kolom Potongan PPh.`);
+        }
+    };
 
 
 
@@ -465,8 +556,17 @@ const PenggajianInputPage = () => {
             </Card>
 
             <Card style={{ marginBottom: "20px" }}>
-                <Card.Header>
-                    <h5>Accounting - Potongan</h5>
+                <Card.Header className="d-flex justify-content-between align-items-center">
+                    <h5 className="mb-0">Accounting - Potongan</h5>
+                    <Button
+                        variant="warning"
+                        size="sm"
+                        onClick={handleCalculatePPh21}
+                        disabled={!gaji.ID_Karyawan}
+                        title="Hitung PPh 21 otomatis berdasarkan penghasilan dan status karyawan"
+                    >
+                        <FaCalculator /> Hitung PPh 21 Otomatis
+                    </Button>
                 </Card.Header>
                 <Card.Body>
                     <Table responsive bordered hover>
@@ -507,6 +607,71 @@ const PenggajianInputPage = () => {
                     </Table>
                 </Card.Body>
             </Card>
+
+            {/* PPh 21 Calculation Result Display */}
+            {pPhCalculation && (
+                <Card style={{ marginBottom: "20px" }} className="bg-light">
+                    <Card.Header className="bg-warning text-dark">
+                        <h5 className="mb-0">📊 Detail Perhitungan PPh 21</h5>
+                    </Card.Header>
+                    <Card.Body>
+                        <Row>
+                            <Col md={6}>
+                                <Table size="sm" bordered>
+                                    <tbody>
+                                        <tr>
+                                            <th width="50%">Penghasilan Bruto/Bulan</th>
+                                            <td>{formatRupiah(pPhCalculation.penghasilanBrutoPerBulan.toString())}</td>
+                                        </tr>
+                                        <tr>
+                                            <th>Penghasilan Bruto/Tahun</th>
+                                            <td>{formatRupiah(pPhCalculation.penghasilanBrutoPerTahun.toString())}</td>
+                                        </tr>
+                                        <tr>
+                                            <th>Biaya Jabatan (5%, max 6jt/thn)</th>
+                                            <td>{formatRupiah(pPhCalculation.biayaJabatan.toString())}</td>
+                                        </tr>
+                                        <tr>
+                                            <th>Total Iuran (BPJS+Pensiun)/Tahun</th>
+                                            <td>{formatRupiah(pPhCalculation.totalIuranPerTahun.toString())}</td>
+                                        </tr>
+                                        <tr>
+                                            <th>Penghasilan Netto/Tahun</th>
+                                            <td className="text-success fw-bold">{formatRupiah(pPhCalculation.penghasilanNettoPerTahun.toString())}</td>
+                                        </tr>
+                                    </tbody>
+                                </Table>
+                            </Col>
+                            <Col md={6}>
+                                <Table size="sm" bordered>
+                                    <tbody>
+                                        <tr>
+                                            <th width="50%">Status PTKP</th>
+                                            <td>{pPhCalculation.statusPTKP}</td>
+                                        </tr>
+                                        <tr>
+                                            <th>PTKP (Penghasilan Tidak Kena Pajak)</th>
+                                            <td className="text-info fw-bold">{formatRupiah(pPhCalculation.ptkp.toString())}</td>
+                                        </tr>
+                                        <tr>
+                                            <th>PKP (Penghasilan Kena Pajak)</th>
+                                            <td className="text-warning fw-bold">{formatRupiah(pPhCalculation.pkp.toString())}</td>
+                                        </tr>
+                                        <tr>
+                                            <th>PPh Terutang Setahun</th>
+                                            <td className="text-danger fw-bold">{formatRupiah(pPhCalculation.pphTerutangSetahun.toString())}</td>
+                                        </tr>
+                                        <tr>
+                                            <th>PPh 21 Bulanan</th>
+                                            <td className="text-danger fw-bold fs-5">{formatRupiah(pPhCalculation.pph21Bulanan.toString())}</td>
+                                        </tr>
+                                    </tbody>
+                                </Table>
+                            </Col>
+                        </Row>
+                    </Card.Body>
+                </Card>
+            )}
 
             {/* Summary Section */}
             <Card>

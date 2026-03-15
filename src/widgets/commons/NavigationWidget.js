@@ -1,63 +1,122 @@
-import { Container, Nav, Navbar, Col, Row, Stack } from "react-bootstrap";
-import { FaCartPlus } from "react-icons/fa";
-import { BsFillDatabaseFill } from "react-icons/bs";
-import { RiDashboardFill } from "react-icons/ri";
-import { HiDocumentReport } from "react-icons/hi";
+import { useState, useEffect } from "react";
+import { Container, Navbar, Stack, Button, Dropdown, Badge } from "react-bootstrap";
 import { useNavigate } from "react-router-dom";
+import { FaBell, FaUserCircle, FaCog, FaSignOutAlt, FaBars, FaUser } from "react-icons/fa";
+import AuthService from "../../services/AuthService";
+import "./NavigationWidget.css";
 
-const NavigationWidget = ({ children, buttonCreate, actionTop, username, avatar }) => {
+const NavigationWidget = ({ children, buttonCreate, actionTop }) => {
   const navigate = useNavigate();
+  const [user, setUser] = useState(null);
+
+  useEffect(() => {
+    const userInfo = AuthService.getUser();
+    setUser(userInfo);
+  }, []);
+
+  const handleLogout = () => {
+    AuthService.logout();
+    navigate("/");
+  };
+
+  const displayName = user?.username || user?.NamaLengkap || "User";
+  const displayRole = (user?.role || "user").toUpperCase();
+  const displayEmail = user?.email || "";
 
   return (
     <>
-      <Navbar bg="dark" variant="dark">
-        <Container>
-          <Navbar.Brand href="#">Aplikasi Penggajian</Navbar.Brand>
-          <Navbar.Toggle aria-controls="basic-navbar-nav" />
+      <Navbar className="top-navbar" expand="lg">
+        <Container fluid>
+          <div className="navbar-left">
+            <Button
+              variant="link"
+              className="mobile-toggle d-lg-none"
+              onClick={() => document.querySelector('.sidebar')?.classList.toggle('mobile-open')}
+            >
+              <FaBars />
+            </Button>
+            <div className="navbar-brand-section">
+              <span className="brand-icon">💼</span>
+              <div className="brand-text">
+                <h4 className="brand-title">Sistem Penggajian</h4>
+                <p className="brand-subtitle">Payroll Management System</p>
+              </div>
+            </div>
+          </div>
 
-          <Navbar.Collapse className="justify-content-end">
-            <Navbar.Text>Selamat datang! </Navbar.Text>
-            <Navbar.Text>{username}</Navbar.Text>
-            <Navbar.Text>{avatar}</Navbar.Text>
-          </Navbar.Collapse>
+          <div className="navbar-right">
+            <Button variant="link" className="nav-action-btn">
+              <FaBell />
+              <Badge bg="danger" className="notification-badge">3</Badge>
+            </Button>
+
+            <div className="navbar-divider"></div>
+
+            <Dropdown className="user-dropdown" align="end">
+              <Dropdown.Toggle variant="link" className="user-toggle">
+                <FaUserCircle className="user-icon" />
+                <div className="user-info">
+                  <span className="user-name">{displayName}</span>
+                  <span className="user-role">{displayRole}</span>
+                </div>
+              </Dropdown.Toggle>
+
+              <Dropdown.Menu className="user-menu">
+                {/* User Header */}
+                <div className="dropdown-user-header">
+                  <div className="dropdown-avatar">
+                    <FaUserCircle />
+                  </div>
+                  <div className="dropdown-user-detail">
+                    <span className="dropdown-user-name">{displayName}</span>
+                    <span className="dropdown-user-email">{displayEmail}</span>
+                    <Badge className="dropdown-role-badge">{displayRole}</Badge>
+                  </div>
+                </div>
+
+                <div className="dropdown-menu-divider"></div>
+
+                {/* Menu Items */}
+                <Dropdown.Item onClick={() => navigate('/profile')} className="dropdown-menu-item">
+                  <div className="dropdown-item-icon profile-icon"><FaUser /></div>
+                  <span className="dropdown-item-label">Profile</span>
+                </Dropdown.Item>
+
+                <Dropdown.Item onClick={() => navigate('/settings')} className="dropdown-menu-item">
+                  <div className="dropdown-item-icon settings-icon"><FaCog /></div>
+                  <span className="dropdown-item-label">Settings</span>
+                </Dropdown.Item>
+
+                <div className="dropdown-menu-divider"></div>
+
+                <Dropdown.Item onClick={handleLogout} className="dropdown-menu-item logout-item">
+                  <div className="dropdown-item-icon logout-icon"><FaSignOutAlt /></div>
+                  <span className="dropdown-item-label">Logout</span>
+                </Dropdown.Item>
+              </Dropdown.Menu>
+            </Dropdown>
+
+            {buttonCreate && (
+              <div className="create-button-wrapper">
+                {buttonCreate}
+              </div>
+            )}
+          </div>
         </Container>
       </Navbar>
-      <Container className="mt-2">
-        <Row>
-          <Col md={2}>
-            <Nav className="flex-column">
-              {/* <Nav.Link onClick={() => navigate("/dashboard")}>
-                <RiDashboardFill /> Dashboard
-              </Nav.Link> */}
-              <Nav.Link disabled>
-                <BsFillDatabaseFill /> MASTER
-              </Nav.Link>
-              <Nav.Link onClick={() => navigate("/user")}>User</Nav.Link>
-              <Nav.Link onClick={() => navigate("/profil")}>Profil</Nav.Link>
-              <Nav.Link onClick={() => navigate("/karyawan")}>Karyawan</Nav.Link>
-              <Nav.Link onClick={() => navigate("/jabatan")}>Jabatan</Nav.Link>
-              <Nav.Link onClick={() => navigate("/golongan")}>Golongan</Nav.Link>
-              <Nav.Link onClick={() => navigate("/pendapatan")}>Pendapatan</Nav.Link>
-              <Nav.Link onClick={() => navigate("/potongan")}>Potongan</Nav.Link>
-              <Nav.Link disabled>
-                <FaCartPlus /> TRANSAKSI
-              </Nav.Link>
-              <Nav.Link onClick={() => navigate("/penggajian")}>Penggajian</Nav.Link>
-              <Nav.Link onClick={() => navigate("/penggajian/input")}>Penggajian Input</Nav.Link>
-              <Nav.Link disabled>
-                <HiDocumentReport /> LAPORAN
-              </Nav.Link>
-              <Nav.Link onClick={() => navigate("/laporan")}>Laporan Gaji</Nav.Link>
-            </Nav>
-          </Col>
-          <Col md={10}>
-            <Stack direction="horizontal" gap={3} className="my-2">
-              <div>{buttonCreate}</div>
-              <div className="ms-auto">{actionTop}</div>
+
+      {actionTop && (
+        <div className="action-bar">
+          <Container fluid>
+            <Stack direction="horizontal" gap={3} className="justify-content-end">
+              {actionTop}
             </Stack>
-            {children}
-          </Col>
-        </Row>
+          </Container>
+        </div>
+      )}
+
+      <Container fluid className="page-content">
+        {children}
       </Container>
     </>
   );

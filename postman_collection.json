@@ -1,0 +1,513 @@
+{
+  "info": {
+    "name": "Sistem Penggajian - RBAC Testing",
+    "description": "Postman collection untuk testing RBAC backend API",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+  },
+  "item": [
+    {
+      "name": "🔐 Authentication",
+      "item": [
+        {
+          "name": "Login - Admin",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "if (pm.response.code === 200) {",
+                  "    var jsonData = pm.response.json();",
+                  "    if (jsonData.token) {",
+                  "        pm.collectionVariables.set('auth_token', jsonData.token);",
+                  "        console.log('Token saved:', jsonData.token);",
+                  "    }",
+                  "    if (jsonData.user && jsonData.user.role) {",
+                  "        pm.collectionVariables.set('user_role', jsonData.user.role);",
+                  "        console.log('User role:', jsonData.user.role);",
+                  "    }",
+                  "}"
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ],
+          "request": {
+            "auth": {
+              "type": "noauth"
+            },
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"email\": \"adem@gmail.com\",\n  \"password\": \"your_password_here\"\n}"
+            },
+            "url": {
+              "raw": "{{base_url}}/user/login",
+              "host": ["{{base_url}}"],
+              "path": ["user", "login"]
+            },
+            "description": "Login sebagai Admin"
+          },
+          "response": []
+        },
+        {
+          "name": "Login - HR Staff",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "if (pm.response.code === 200) {",
+                  "    var jsonData = pm.response.json();",
+                  "    if (jsonData.token) {",
+                  "        pm.collectionVariables.set('auth_token', jsonData.token);",
+                  "    }",
+                  "}"
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"email\": \"hr@perusahaan.com\",\n  \"password\": \"hr123\"\n}"
+            },
+            "url": {
+              "raw": "{{base_url}}/user/login",
+              "host": ["{{base_url}}"],
+              "path": ["user", "login"]
+            },
+            "description": "Login sebagai HR Staff"
+          },
+          "response": []
+        },
+        {
+          "name": "Login - Finance",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "if (pm.response.code === 200) {",
+                  "    var jsonData = pm.response.json();",
+                  "    if (jsonData.token) {",
+                  "        pm.collectionVariables.set('auth_token', jsonData.token);",
+                  "    }",
+                  "}"
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"email\": \"finance@perusahaan.com\",\n  \"password\": \"finance123\"\n}"
+            },
+            "url": {
+              "raw": "{{base_url}}/user/login",
+              "host": ["{{base_url}}"],
+              "path": ["user", "login"]
+            },
+            "description": "Login sebagai Finance"
+          },
+          "response": []
+        },
+        {
+          "name": "Check Token (Hello World)",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "x-access-token",
+                "value": "{{auth_token}}"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{}"
+            },
+            "url": {
+              "raw": "{{base_url}}/hello/world",
+              "host": ["{{base_url}}"],
+              "path": ["hello", "world"]
+            },
+            "description": "Test token verification"
+          },
+          "response": []
+        }
+      ]
+    },
+    {
+      "name": "🔐 RBAC - Roles & Permissions",
+      "item": [
+        {
+          "name": "Get All Roles",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "x-access-token",
+                "value": "{{auth_token}}"
+              }
+            ],
+            "url": {
+              "raw": "{{base_url}}/rbac/roles",
+              "host": ["{{base_url}}"],
+              "path": ["rbac", "roles"]
+            },
+            "description": "Get all available roles"
+          },
+          "response": []
+        },
+        {
+          "name": "Get All Permissions",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "x-access-token",
+                "value": "{{auth_token}}"
+              }
+            ],
+            "url": {
+              "raw": "{{base_url}}/rbac/permissions",
+              "host": ["{{base_url}}"],
+              "path": ["rbac", "permissions"]
+            },
+            "description": "Get all available permissions"
+          },
+          "response": []
+        },
+        {
+          "name": "Get User Role",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "x-access-token",
+                "value": "{{auth_token}}"
+              }
+            ],
+            "url": {
+              "raw": "{{base_url}}/rbac/users/{{user_email}}/role",
+              "host": ["{{base_url}}"],
+              "path": ["rbac", "users", "{{user_email}}", "role"]
+            },
+            "description": "Get role for specific user"
+          },
+          "response": []
+        },
+        {
+          "name": "Assign Role to User",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "x-access-token",
+                "value": "{{auth_token}}"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"ID_Role\": \"ADMIN\"\n}"
+            },
+            "url": {
+              "raw": "{{base_url}}/rbac/users/{{user_email}}/role",
+              "host": ["{{base_url}}"],
+              "path": ["rbac", "users", "{{user_email}}", "role"]
+            },
+            "description": "Assign role to user"
+          },
+          "response": []
+        }
+      ]
+    },
+    {
+      "name": "👥 Users",
+      "item": [
+        {
+          "name": "Get All Users",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "x-access-token",
+                "value": "{{auth_token}}"
+              }
+            ],
+            "url": {
+              "raw": "{{base_url}}/user",
+              "host": ["{{base_url}}"],
+              "path": ["user"]
+            },
+            "description": "Get all users (Admin only)"
+          },
+          "response": []
+        },
+        {
+          "name": "Create User",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "x-access-token",
+                "value": "{{auth_token}}"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"email\": \"newuser@perusahaan.com\",\n  \"password\": \"password123\",\n  \"NamaLengkap\": \"New User\",\n  \"Status\": \"Active\",\n  \"role\": \"employee\",\n  \"department\": \"IT\"\n}"
+            },
+            "url": {
+              "raw": "{{base_url}}/user",
+              "host": ["{{base_url}}"],
+              "path": ["user"]
+            },
+            "description": "Create new user (Admin only)"
+          },
+          "response": []
+        }
+      ]
+    },
+    {
+      "name": "👥 Karyawan",
+      "item": [
+        {
+          "name": "Get All Karyawan",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "x-access-token",
+                "value": "{{auth_token}}"
+              }
+            ],
+            "url": {
+              "raw": "{{base_url}}/karyawan",
+              "host": ["{{base_url}}"],
+              "path": ["karyawan"]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Create Karyawan",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "x-access-token",
+                "value": "{{auth_token}}"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"ID_Karyawan\": \"EMP-TEST-001\",\n  \"Nama_Karyawan\": \"Test Employee\",\n  \"email\": \"test@perusahaan.com\",\n  \"ID_Golongan\": \"G001\",\n  \"ID_Jabatan\": \"J001\",\n  \"Divisi\": \"IT\",\n  \"Status_Pernikahan\": \"Belum Menikah\",\n  \"Jumlah_Anak\": 0\n}"
+            },
+            "url": {
+              "raw": "{{base_url}}/karyawan",
+              "host": ["{{base_url}}"],
+              "path": ["karyawan"]
+            }
+          },
+          "response": []
+        }
+      ]
+    },
+    {
+      "name": "💰 Penggajian",
+      "item": [
+        {
+          "name": "Get All Penggajian",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "x-access-token",
+                "value": "{{auth_token}}"
+              }
+            ],
+            "url": {
+              "raw": "{{base_url}}/gaji",
+              "host": ["{{base_url}}"],
+              "path": ["gaji"]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Get Gaji Detail",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "x-access-token",
+                "value": "{{auth_token}}"
+              }
+            ],
+            "url": {
+              "raw": "{{base_url}}/gajidetail/GJI-2602-1787",
+              "host": ["{{base_url}}"],
+              "path": ["gajidetail", "GJI-2602-1787"]
+            }
+          },
+          "response": []
+        }
+      ]
+    },
+    {
+      "name": "📊 Laporan",
+      "item": [
+        {
+          "name": "Get Laporan Gaji",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "x-access-token",
+                "value": "{{auth_token}}"
+              }
+            ],
+            "url": {
+              "raw": "{{base_url}}/laporan",
+              "host": ["{{base_url}}"],
+              "path": ["laporan"]
+            }
+          },
+          "response": []
+        }
+      ]
+    },
+    {
+      "name": "⚙️ Master Data",
+      "item": [
+        {
+          "name": "Get All Jabatan",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "x-access-token",
+                "value": "{{auth_token}}"
+              }
+            ],
+            "url": {
+              "raw": "{{base_url}}/jabatan",
+              "host": ["{{base_url}}"],
+              "path": ["jabatan"]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Get All Golongan",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "x-access-token",
+                "value": "{{auth_token}}"
+              }
+            ],
+            "url": {
+              "raw": "{{base_url}}/golongan",
+              "host": ["{{base_url}}"],
+              "path": ["golongan"]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Get All Pendapatan",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "x-access-token",
+                "value": "{{auth_token}}"
+              }
+            ],
+            "url": {
+              "raw": "{{base_url}}/pendapatan",
+              "host": ["{{base_url}}"],
+              "path": ["pendapatan"]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Get All Potongan",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "x-access-token",
+                "value": "{{auth_token}}"
+              }
+            ],
+            "url": {
+              "raw": "{{base_url}}/potongan",
+              "host": ["{{base_url}}"],
+              "path": ["potongan"]
+            }
+          },
+          "response": []
+        }
+      ]
+    }
+  ],
+  "variable": [
+    {
+      "key": "base_url",
+      "value": "http://localhost:4000",
+      "type": "string"
+    },
+    {
+      "key": "auth_token",
+      "value": "",
+      "type": "string"
+    },
+    {
+      "key": "user_email",
+      "value": "adem@gmail.com",
+      "type": "string"
+    }
+  ]
+}

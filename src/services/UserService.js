@@ -1,46 +1,29 @@
-import config from "../config";
-import AuthService from "./AuthService";
 import HTTPService from "./HTTPService";
 
 const UserService = {};
-const CONFIG_HTTP = {
-  headers: {
-    "x-access-token": AuthService.getToken(),
-  },
-};
 
 UserService.list = (query) => {
-  CONFIG_HTTP.params = query;
-  return HTTPService.get(`/user`, CONFIG_HTTP);
+  return HTTPService.get(`/user`, { params: query });
 };
 
 UserService.create = (user) => {
-  return HTTPService.post(`/user/register`, user, CONFIG_HTTP);
+  return HTTPService.post(`/user/register`, user);
 };
 
 UserService.get = (email) => {
-  CONFIG_HTTP.params = null;
-  return HTTPService.get(
-    `/user/${email}`,
-    CONFIG_HTTP
-  );
+  return HTTPService.get(`/user/${email}`);
 };
 
 UserService.edit = (email, user) => {
-  CONFIG_HTTP.params = null;
-  return HTTPService.put(
-    `/user/${email}`,
-    user,
-    CONFIG_HTTP
-  );
+  return HTTPService.put(`/user/${email}`, user);
 };
 
 UserService.delete = (email) => {
-  CONFIG_HTTP.params = null;
-  return HTTPService.delete(
-    `/user/${email}`,
-    CONFIG_HTTP
-  );
+  return HTTPService.delete(`/user/${email}`);
+};
+
+UserService.resetPassword = (email, newPassword) => {
+  return HTTPService.put(`/user/reset-password/${email}`, { newPassword });
 };
 
 export default UserService;

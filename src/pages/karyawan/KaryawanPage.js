@@ -1,13 +1,13 @@
-import { Button, Card, Form, InputGroup, Table, Spinner } from "react-bootstrap";
+import { Button, Card, Spinner } from "react-bootstrap";
 import NavigationWidget from "../../widgets/commons/NavigationWidget";
 import { useNavigate } from "react-router-dom";
 import { VscAdd } from "react-icons/vsc";
-import { FaSearch } from "react-icons/fa";
 import { useEffect, useState } from "react";
 import KaryawanService from "../../services/KaryawanService";
 import Paginator from "../../widgets/commons/PaginatorWidget";
 import ToastWidget from "../../widgets/commons/ToastWidget";
 import useToast from "../../hooks/useToast";
+import AdvancedTable from "../../widgets/commons/AdvancedTable";
 
 const KaryawanPage = () => {
   const navigate = useNavigate();
@@ -40,16 +40,106 @@ const KaryawanPage = () => {
     setQueryKaryawan((values) => ({ ...values, page }));
   };
 
-  const callbackKaryawanSearchInlineWidget = (query) => {
-    setQueryKaryawan((values) => ({ ...values, ...query }));
+  // Table columns definition
+  const karyawanColumns = [
+    {
+      header: 'ID Karyawan',
+      accessor: 'ID_Karyawan',
+      style: { minWidth: '120px' }
+    },
+    {
+      header: 'Nama Karyawan',
+      accessor: 'Nama_Karyawan',
+      style: { minWidth: '200px' }
+    },
+    {
+      header: 'Email',
+      accessor: 'email',
+      render: (row) => row.email || '-'
+    },
+    {
+      header: 'Golongan',
+      accessor: 'ID_Golongan',
+      style: { minWidth: '100px' }
+    },
+    {
+      header: 'Jabatan',
+      accessor: 'ID_Jabatan',
+      style: { minWidth: '100px' }
+    },
+    {
+      header: 'Divisi',
+      accessor: 'Divisi',
+      style: { minWidth: '120px' }
+    },
+    {
+      header: 'Status',
+      accessor: 'Status_Pernikahan',
+      render: (row) => (
+        <span className="table-badge success">
+          {row.Status_Pernikahan || '-'}
+        </span>
+      )
+    }
+  ];
+
+  // Filter options
+  const karyawanFilters = [
+    {
+      key: 'divisi',
+      label: 'Divisi',
+      placeholder: 'Semua Divisi',
+      options: [
+        { value: 'IT', label: 'IT' },
+        { value: 'HR', label: 'HR' },
+        { value: 'Finance', label: 'Finance' },
+        { value: 'Operational', label: 'Operational' }
+      ]
+    },
+    {
+      key: 'status',
+      label: 'Status Pernikahan',
+      placeholder: 'Semua Status',
+      options: [
+        { value: 'KAWIN', label: 'Kawin' },
+        { value: 'TIDAK_KAWIN', label: 'Tidak Kawin' }
+      ]
+    }
+  ];
+
+  // Handlers
+  const handleSearch = (term) => {
+    console.log('Search:', term);
+    // Implement search logic here
   };
 
-  const handleRowClick = (id) => {
-    // Blur any focused element to prevent text cursor
-    if (document.activeElement && document.activeElement.blur) {
-      document.activeElement.blur();
+  const handleFilter = (filters) => {
+    console.log('Filters:', filters);
+    // Implement filter logic here
+  };
+
+  const handleEdit = (row) => {
+    navigate(`/karyawan/edit/${row.ID_Karyawan}`);
+  };
+
+  const handleDelete = (row) => {
+    const confirmed = window.confirm(`Hapus karyawan ${row.Nama_Karyawan}?`);
+    if (confirmed) {
+      // Implement delete logic here
+      success(`Berhasil menghapus ${row.Nama_Karyawan}`);
     }
-    navigate(`/karyawan/edit/${id}`);
+  };
+
+  const handleBulkDelete = (ids) => {
+    console.log('Bulk delete:', ids);
+    // Implement bulk delete logic here
+    success(`Berhasil menghapus ${ids.length} data`);
+  };
+
+  const handleExport = () => {
+    console.log('Export to Excel');
+    // Implement export logic here
+    success('Data sedang diexport...');
   };
 
   return (
@@ -71,45 +161,32 @@ const KaryawanPage = () => {
               <Spinner animation="border" variant="primary" />
             </div>
           ) : (
-            <Table striped bordered hover size="sm">
-              <thead>
-                <tr>
-                  <th>ID Karyawan</th>
-                  <th>Nama Karyawan</th>
-                  <th>Email</th>
-                  <th>Golongan</th>
-                  <th>Jabatan</th>
-                  <th>Divisi</th>
-                  <th>Status Pernikahan</th>
-                  <th>Jumlah Anak</th>
-                </tr>
-              </thead>
-              <tbody>
-                {daftarKaryawan.results && daftarKaryawan.results.length > 0 ? (
-                  daftarKaryawan.results.map((karyawan, index) => (
-                    <tr
-                      key={index}
-                      onClick={() => handleRowClick(karyawan.ID_Karyawan)}
-                      style={{ cursor: 'pointer' }}>
-                      <td>{karyawan.ID_Karyawan}</td>
-                      <td>{karyawan.Nama_Karyawan}</td>
-                      <td>{karyawan.email || "-"}</td>
-                      <td>{karyawan.ID_Golongan}</td>
-                      <td>{karyawan.ID_Jabatan}</td>
-                      <td>{karyawan.Divisi}</td>
-                      <td>{karyawan.Status_Pernikahan}</td>
-                      <td>{karyawan.Jumlah_Anak}</td>
-                    </tr>
-                  ))
-                ) : (
-                  <tr>
-                    <td colSpan="7" className="text-center">
-                      Tidak ada data karyawan
-                    </td>
-                  </tr>
-                )}
-              </tbody>
-            </Table>
+            <AdvancedTable
+              columns={karyawanColumns}
+              data={daftarKaryawan.results || []}
+              loading={loading}
+              searchable={true}
+              selectable={true}
+              exportable={true}
+              deletable={true}
+              filters={karyawanFilters}
+              onSearch={handleSearch}
+              onFilter={handleFilter}
+              onEdit={handleEdit}
+              onDelete={handleDelete}
+              onBulkDelete={handleBulkDelete}
+              onExport={handleExport}
+              pagination={{
+                currentPage: queryKaryawan.page,
+                total: daftarKaryawan.total || 0,
+                from: (queryKaryawan.page - 1) * queryKaryawan.limit + 1,
+                to: queryKaryawan.page * queryKaryawan.limit,
+                lastPage: Math.ceil((daftarKaryawan.total || 0) / queryKaryawan.limit)
+              }}
+              onPageChange={(page, limit) => {
+                setQueryKaryawan((values) => ({ ...values, page, limit }));
+              }}
+            />
           )}
         </Card>
       </NavigationWidget>

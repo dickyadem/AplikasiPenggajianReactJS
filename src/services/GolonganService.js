@@ -1,46 +1,25 @@
-import config from "../config";
-import AuthService from "./AuthService";
 import HTTPService from "./HTTPService";
 
 const GolonganService = {};
-const CONFIG_HTTP = {
-  headers: {
-    "x-access-token": AuthService.getToken(),
-  },
-};
 
 GolonganService.list = (query) => {
-  CONFIG_HTTP.params = query;
-  return HTTPService.get(`/golongan`, CONFIG_HTTP);
+  return HTTPService.get(`/golongan`, { params: query });
 };
 
 GolonganService.create = (golongan) => {
-  return HTTPService.post(`/golongan`, golongan, CONFIG_HTTP);
+  return HTTPService.post(`/golongan`, golongan);
 };
 
 GolonganService.get = (ID_Golongan) => {
-  CONFIG_HTTP.params = null;
-  return HTTPService.get(
-    `/golongan/${ID_Golongan}`,
-    CONFIG_HTTP
-  );
+  return HTTPService.get(`/golongan/${ID_Golongan}`);
 };
 
 GolonganService.edit = (ID_Golongan, golongan) => {
-  CONFIG_HTTP.params = null;
-  return HTTPService.put(
-    `/golongan/${ID_Golongan}`,
-    golongan,
-    CONFIG_HTTP
-  );
+  return HTTPService.put(`/golongan/${ID_Golongan}`, golongan);
 };
 
 GolonganService.delete = (ID_Golongan) => {
-  CONFIG_HTTP.params = null;
-  return HTTPService.delete(
-    `/golongan/${ID_Golongan}`,
-    CONFIG_HTTP
-  );
+  return HTTPService.delete(`/golongan/${ID_Golongan}`);
 };
 
 export default GolonganService;

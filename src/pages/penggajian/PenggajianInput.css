@@ -1,0 +1,350 @@
+/* Penggajian Input Page Styles */
+.penggajian-input-page {
+    padding: 20px;
+}
+
+/* Card Headers */
+.penggajian-card .card-header {
+    background: linear-gradient(135deg, #0ea5e9 0%, #6366f1 100%);
+    color: #fff;
+    font-weight: 600;
+    font-size: 16px;
+    padding: 16px 20px;
+    border-radius: 10px 10px 0 0;
+}
+
+.penggajian-card {
+    border: none;
+    border-radius: 12px;
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
+    margin-bottom: 24px;
+    overflow: hidden;
+}
+
+.penggajian-card .card-body {
+    padding: 24px;
+}
+
+/* Form Groups */
+.form-group-modern {
+    margin-bottom: 20px;
+}
+
+.form-group-modern .form-label {
+    font-weight: 600;
+    color: #475569;
+    font-size: 14px;
+    margin-bottom: 8px;
+}
+
+.form-group-modern .form-control,
+.form-group-modern .form-select {
+    border: 2px solid #e2e8f0;
+    border-radius: 10px;
+    padding: 12px 16px;
+    font-size: 15px;
+    transition: all 0.2s ease;
+}
+
+.form-group-modern .form-control:focus,
+.form-group-modern .form-select:focus {
+    border-color: #0ea5e9;
+    box-shadow: 0 0 0 4px rgba(14, 165, 233, 0.1);
+}
+
+/* Input Group Modern */
+.input-group-modern {
+    border: 2px solid #e2e8f0;
+    border-radius: 10px;
+    overflow: hidden;
+    transition: all 0.2s ease;
+}
+
+.input-group-modern:focus-within {
+    border-color: #0ea5e9;
+    box-shadow: 0 0 0 4px rgba(14, 165, 233, 0.1);
+}
+
+.input-group-modern .input-group-text {
+    background: #f8fafc;
+    border: none;
+    color: #64748b;
+    font-size: 16px;
+    padding: 12px 16px;
+}
+
+.input-group-modern .form-control {
+    border: none;
+    padding: 12px 16px;
+}
+
+/* Summary Cards */
+.summary-card {
+    border-radius: 12px;
+    border: none;
+    overflow: hidden;
+    transition: all 0.3s ease;
+}
+
+.summary-card:hover {
+    transform: translateY(-4px);
+    box-shadow: 0 12px 24px rgba(0, 0, 0, 0.1);
+}
+
+.summary-card .card-body {
+    padding: 20px;
+}
+
+.summary-card .summary-label {
+    font-size: 14px;
+    font-weight: 600;
+    color: #64748b;
+    margin-bottom: 8px;
+}
+
+.summary-card .summary-value {
+    font-size: 24px;
+    font-weight: 700;
+    margin: 0;
+}
+
+.summary-card.total-pendapatan {
+    background: linear-gradient(135deg, #10b981 0%, #059669 100%);
+    color: #fff;
+}
+
+.summary-card.total-pendapatan .summary-label,
+.summary-card.total-pendapatan .summary-value {
+    color: #fff;
+}
+
+.summary-card.total-potongan {
+    background: linear-gradient(135deg, #ef4444 0%, #dc2626 100%);
+    color: #fff;
+}
+
+.summary-card.total-potongan .summary-label,
+.summary-card.total-potongan .summary-value {
+    color: #fff;
+}
+
+.summary-card.gaji-bersih {
+    background: linear-gradient(135deg, #0ea5e9 0%, #6366f1 100%);
+    color: #fff;
+}
+
+.summary-card.gaji-bersih .summary-label,
+.summary-card.gaji-bersih .summary-value {
+    color: #fff;
+}
+
+/* Table Modern */
+.table-modern {
+    border-radius: 10px;
+    overflow: hidden;
+}
+
+.table-modern thead {
+    background: linear-gradient(135deg, #0ea5e9 0%, #6366f1 100%);
+    color: #fff;
+}
+
+.table-modern thead th {
+    font-weight: 600;
+    text-transform: uppercase;
+    font-size: 13px;
+    letter-spacing: 0.5px;
+    padding: 14px 16px;
+    border: none;
+}
+
+.table-modern tbody tr {
+    transition: all 0.2s ease;
+}
+
+.table-modern tbody tr:hover {
+    background: #f8fafc;
+    transform: scale(1.01);
+}
+
+.table-modern tbody td {
+    padding: 14px 16px;
+    vertical-align: middle;
+    font-size: 14px;
+    border-bottom: 1px solid #e2e8f0;
+}
+
+/* Buttons */
+.btn-modern {
+    padding: 12px 24px;
+    font-size: 15px;
+    font-weight: 600;
+    border-radius: 10px;
+    transition: all 0.3s ease;
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+}
+
+.btn-modern-primary {
+    background: linear-gradient(135deg, #0ea5e9 0%, #6366f1 100%);
+    border: none;
+    color: #fff;
+    box-shadow: 0 4px 15px rgba(14, 165, 233, 0.4);
+}
+
+.btn-modern-primary:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 8px 25px rgba(14, 165, 233, 0.5);
+}
+
+.btn-modern-success {
+    background: linear-gradient(135deg, #10b981 0%, #059669 100%);
+    border: none;
+    color: #fff;
+    box-shadow: 0 4px 15px rgba(16, 185, 129, 0.4);
+}
+
+.btn-modern-success:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 8px 25px rgba(16, 185, 129, 0.5);
+}
+
+.btn-modern-danger {
+    background: linear-gradient(135deg, #ef4444 0%, #dc2626 100%);
+    border: none;
+    color: #fff;
+    box-shadow: 0 4px 15px rgba(239, 68, 68, 0.4);
+}
+
+.btn-modern-danger:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 8px 25px rgba(239, 68, 68, 0.5);
+}
+
+.btn-modern-secondary {
+    background: linear-gradient(135deg, #64748b 0%, #475569 100%);
+    border: none;
+    color: #fff;
+    box-shadow: 0 4px 15px rgba(100, 116, 139, 0.4);
+}
+
+.btn-modern-secondary:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 8px 25px rgba(100, 116, 139, 0.5);
+}
+
+/* PPh Calculator Section */
+.pph-calculator-section {
+    background: linear-gradient(135deg, #fef3c7 0%, #fde68a 100%);
+    border-radius: 12px;
+    padding: 20px;
+    margin-bottom: 24px;
+    border: 2px solid #f59e0b;
+}
+
+.pph-calculator-section .section-title {
+    font-size: 16px;
+    font-weight: 700;
+    color: #92400e;
+    margin-bottom: 16px;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+
+/* Karyawan Info Card */
+.karyawan-info-card {
+    background: linear-gradient(135deg, #dbeafe 0%, #bfdbfe 100%);
+    border-radius: 12px;
+    padding: 20px;
+    margin-bottom: 24px;
+    border-left: 4px solid #0ea5e9;
+}
+
+.karyawan-info-card .info-row {
+    display: flex;
+    justify-content: space-between;
+    padding: 8px 0;
+    border-bottom: 1px solid rgba(59, 130, 246, 0.2);
+}
+
+.karyawan-info-card .info-row:last-child {
+    border-bottom: none;
+}
+
+.karyawan-info-card .info-label {
+    font-weight: 600;
+    color: #1e40af;
+}
+
+.karyawan-info-card .info-value {
+    color: #1e3a8a;
+    font-weight: 500;
+}
+
+/* Responsive */
+@media (max-width: 768px) {
+    .summary-card .summary-value {
+        font-size: 18px;
+    }
+
+    .table-modern {
+        font-size: 12px;
+    }
+
+    .btn-modern {
+        padding: 10px 16px;
+        font-size: 14px;
+    }
+}
+
+/* Animations */
+@keyframes slideIn {
+    from {
+        opacity: 0;
+        transform: translateY(20px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+.penggajian-card {
+    animation: slideIn 0.4s ease-out;
+}
+
+/* Loading State */
+.loading-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(0, 0, 0, 0.5);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    z-index: 9999;
+}
+
+.loading-content {
+    background: #fff;
+    padding: 40px;
+    border-radius: 16px;
+    text-align: center;
+}
+
+.loading-content .spinner-border {
+    width: 48px;
+    height: 48px;
+    color: #0ea5e9;
+}
+
+.loading-content p {
+    margin-top: 16px;
+    font-size: 16px;
+    font-weight: 600;
+    color: #475569;
+}

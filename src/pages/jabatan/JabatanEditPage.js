@@ -4,10 +4,12 @@ import { Button, Card, Form } from "react-bootstrap";
 import { FaArrowLeft, FaSave, FaTrash } from "react-icons/fa";
 import NavigationWidget from "../../widgets/commons/NavigationWidget";
 import JabatanService from "../../services/JabatanService";
+import { useToast } from "../../widgets/commons/ToastProvider";
 
 const JabatanEditPage = () => {
     const navigate = useNavigate();
     const { ID_Jabatan } = useParams();
+    const { success, error } = useToast();
     const [jabatan, setJabatan] = useState({});
 
     const handleInput = (e) => {
@@ -25,8 +27,12 @@ const JabatanEditPage = () => {
 
     const handleJabatanServiceEdit = () => {
         JabatanService.edit(ID_Jabatan, jabatan).then((response) => {
-            alert(`Berhasil mengubah data jabatan ${ID_Jabatan}`);
-            navigate("/jabatan");
+            success(`Berhasil mengubah data jabatan ${ID_Jabatan}`);
+            setTimeout(() => {
+                navigate("/jabatan");
+            }, 1000);
+        }).catch((err) => {
+            error(err.response?.data?.message || "Gagal mengubah data jabatan");
         });
     };
 
@@ -34,8 +40,12 @@ const JabatanEditPage = () => {
         let isDelete = window.confirm(`Delete jabatan ${ID_Jabatan}?`)
         if (isDelete) {
             JabatanService.delete(ID_Jabatan, jabatan).then(() => {
-                alert(`Berhasil mengubah data jabatan ${ID_Jabatan}`);
-                navigate("/jabatan");
+                success(`Berhasil menghapus data jabatan ${ID_Jabatan}`);
+                setTimeout(() => {
+                    navigate("/jabatan");
+                }, 1000);
+            }).catch((err) => {
+                error(err.response?.data?.message || "Gagal menghapus data jabatan");
             });
         }
 

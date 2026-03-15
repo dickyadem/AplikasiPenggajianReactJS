@@ -1,46 +1,25 @@
-import config from "../config";
-import AuthService from "./AuthService";
 import HTTPService from "./HTTPService";
 
 const PendapatanService = {};
-const CONFIG_HTTP = {
-  headers: {
-    "x-access-token": AuthService.getToken(),
-  },
-};
 
 PendapatanService.list = (query) => {
-  CONFIG_HTTP.params = query;
-  return HTTPService.get(`/pendapatan`, CONFIG_HTTP);
+  return HTTPService.get(`/pendapatan`, { params: query });
 };
 
 PendapatanService.create = (pendapatan) => {
-  return HTTPService.post(`/pendapatan`, pendapatan, CONFIG_HTTP);
+  return HTTPService.post(`/pendapatan`, pendapatan);
 };
 
 PendapatanService.get = (ID_Pendapatan) => {
-  CONFIG_HTTP.params = null;
-  return HTTPService.get(
-    `/pendapatan/${ID_Pendapatan}`,
-    CONFIG_HTTP
-  );
+  return HTTPService.get(`/pendapatan/${ID_Pendapatan}`);
 };
 
 PendapatanService.edit = (ID_Pendapatan, pendapatan) => {
-  CONFIG_HTTP.params = null;
-  return HTTPService.put(
-    `/pendapatan/${ID_Pendapatan}`,
-    pendapatan,
-    CONFIG_HTTP
-  );
+  return HTTPService.put(`/pendapatan/${ID_Pendapatan}`, pendapatan);
 };
 
 PendapatanService.delete = (ID_Pendapatan) => {
-  CONFIG_HTTP.params = null;
-  return HTTPService.delete(
-    `/pendapatan/${ID_Pendapatan}`,
-    CONFIG_HTTP
-  );
+  return HTTPService.delete(`/pendapatan/${ID_Pendapatan}`);
 };
 
 export default PendapatanService;

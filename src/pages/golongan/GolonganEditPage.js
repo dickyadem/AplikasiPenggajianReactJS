@@ -4,10 +4,12 @@ import { Button, Card, Form } from "react-bootstrap";
 import { FaArrowLeft, FaSave, FaTrash } from "react-icons/fa";
 import NavigationWidget from "../../widgets/commons/NavigationWidget";
 import GolonganService from "../../services/GolonganService";
+import { useToast } from "../../widgets/commons/ToastProvider";
 
 const GolonganEditPage = () => {
     const navigate = useNavigate();
     const { ID_Golongan } = useParams();
+    const { success, error } = useToast();
     const [golongan, setGolongan] = useState({});
 
     const handleInput = (e) => {
@@ -25,8 +27,12 @@ const GolonganEditPage = () => {
 
     const handleGolonganServiceEdit = () => {
         GolonganService.edit(ID_Golongan, golongan).then((response) => {
-            alert(`Berhasil mengubah data golongan ${ID_Golongan}`);
-            navigate("/golongan");
+            success(`Berhasil mengubah data golongan ${ID_Golongan}`);
+            setTimeout(() => {
+                navigate("/golongan");
+            }, 1000);
+        }).catch((err) => {
+            error(err.response?.data?.message || "Gagal mengubah data golongan");
         });
     };
 
@@ -34,8 +40,12 @@ const GolonganEditPage = () => {
         let isDelete = window.confirm(`Delete golongan ${ID_Golongan}?`)
         if (isDelete) {
             GolonganService.delete(ID_Golongan, golongan).then(() => {
-                alert(`Berhasil mengubah data golongan ${ID_Golongan}`);
-                navigate("/golongan");
+                success(`Berhasil menghapus data golongan ${ID_Golongan}`);
+                setTimeout(() => {
+                    navigate("/golongan");
+                }, 1000);
+            }).catch((err) => {
+                error(err.response?.data?.message || "Gagal menghapus data golongan");
             });
         }
 

@@ -1,13 +1,13 @@
-import { Button, Card, Form, InputGroup, Table, Spinner } from "react-bootstrap";
+import { Button, Card, Spinner } from "react-bootstrap";
 import NavigationWidget from "../../widgets/commons/NavigationWidget";
 import { useNavigate } from "react-router-dom";
 import { VscAdd } from "react-icons/vsc";
-import { FaSearch } from "react-icons/fa";
 import { useEffect, useState } from "react";
 import GolonganService from "../../services/GolonganService";
 import Paginator from "../../widgets/commons/PaginatorWidget";
 import ToastWidget from "../../widgets/commons/ToastWidget";
 import useToast from "../../hooks/useToast";
+import AdvancedTable from "../../widgets/commons/AdvancedTable";
 
 const GolonganPage = () => {
   const navigate = useNavigate();
@@ -40,15 +40,38 @@ const GolonganPage = () => {
     setQueryGolongan((values) => ({ ...values, page }));
   };
 
-  const callbackGolonganSearchInlineWidget = (query) => {
-    setQueryGolongan((values) => ({ ...values, ...query }));
+  // Table columns
+  const golonganColumns = [
+    {
+      header: 'ID Golongan',
+      accessor: 'ID_Golongan',
+      style: { minWidth: '120px' }
+    },
+    {
+      header: 'Nama Golongan',
+      accessor: 'Nama_Golongan',
+      style: { minWidth: '250px' }
+    }
+  ];
+
+  // Handlers
+  const handleSearch = (term) => {
+    console.log('Search:', term);
   };
 
-  const handleRowClick = (id) => {
-    if (document.activeElement && document.activeElement.blur) {
-      document.activeElement.blur();
+  const handleEdit = (row) => {
+    navigate(`/golongan/edit/${row.ID_Golongan}`);
+  };
+
+  const handleDelete = (row) => {
+    const confirmed = window.confirm(`Hapus golongan ${row.Nama_Golongan}?`);
+    if (confirmed) {
+      success(`Berhasil menghapus ${row.Nama_Golongan}`);
     }
-    navigate(`/golongan/edit/${id}`);
+  };
+
+  const handleExport = () => {
+    success('Data sedang diexport...');
   };
 
   return (
@@ -70,33 +93,28 @@ const GolonganPage = () => {
               <Spinner animation="border" variant="primary" />
             </div>
           ) : (
-            <Table striped bordered hover size="sm">
-              <thead>
-                <tr>
-                  <th>ID Golongan</th>
-                  <th>Nama Golongan</th>
-                </tr>
-              </thead>
-              <tbody>
-                {daftarGolongan.results && daftarGolongan.results.length > 0 ? (
-                  daftarGolongan.results.map((golongan, index) => (
-                    <tr
-                      key={index}
-                      onClick={() => handleRowClick(golongan.ID_Golongan)}
-                      style={{ cursor: 'pointer' }}>
-                      <td>{golongan.ID_Golongan}</td>
-                      <td>{golongan.Nama_Golongan}</td>
-                    </tr>
-                  ))
-                ) : (
-                  <tr>
-                    <td colSpan="2" className="text-center">
-                      Tidak ada data golongan
-                    </td>
-                  </tr>
-                )}
-              </tbody>
-            </Table>
+            <AdvancedTable
+              columns={golonganColumns}
+              data={daftarGolongan.results || []}
+              loading={loading}
+              searchable={true}
+              selectable={true}
+              exportable={true}
+              onSearch={handleSearch}
+              onEdit={handleEdit}
+              onDelete={handleDelete}
+              onExport={handleExport}
+              pagination={{
+                currentPage: queryGolongan.page,
+                total: daftarGolongan.total || 0,
+                from: (queryGolongan.page - 1) * queryGolongan.limit + 1,
+                to: queryGolongan.page * queryGolongan.limit,
+                lastPage: Math.ceil((daftarGolongan.total || 0) / queryGolongan.limit)
+              }}
+              onPageChange={(page, limit) => {
+                setQueryGolongan((values) => ({ ...values, page, limit }));
+              }}
+            />
           )}
         </Card>
       </NavigationWidget>

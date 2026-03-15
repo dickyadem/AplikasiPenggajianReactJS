@@ -26,7 +26,7 @@ const helperHandlerExportResponse = (response, resolve, filename) => {
     const href = URL.createObjectURL(response.data);
     const link = document.createElement("a");
     link.href = href;
-    link.setAttribute("donwload", `${filename}-${new Date().getTime()}.xlsx`);
+    link.setAttribute("download", `${filename}-${new Date().getTime()}.xlsx`);
     document.body.appendChild(link);
     link.click();
 

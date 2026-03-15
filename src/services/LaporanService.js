@@ -1,6 +1,4 @@
-import config from "../config";
 import { helperHandlerExportResponse } from "../utils/helpers";
-import AuthService from "./AuthService";
 import HTTPService from "./HTTPService";
 
 const ReportingService = {};
@@ -11,70 +9,61 @@ ReportingService.reportListGaji = (data) => {
             url: `/gaji/gaji-excel`,
             method: "POST",
             responseType: "blob",
-            headers: {
-                "x-access-token": AuthService.getToken(),
-            },
             data,
         })
             .then((response) => {
-                helperHandlerExportResponse(response, resolve, "REPORTING-PEMBELIAN");
+                helperHandlerExportResponse(response, resolve, "LAPORAN-GAJI");
             })
             .catch((error) => {
                 reject(error);
             });
     });
 };
+
 ReportingService.reportPPh = (data) => {
     return new Promise((resolve, reject) => {
         HTTPService({
             url: `/gaji/pph-excel`,
             method: "POST",
             responseType: "blob",
-            headers: {
-                "x-access-token": AuthService.getToken(),
-            },
             data,
         })
             .then((response) => {
-                helperHandlerExportResponse(response, resolve, "REPORTING-PEMBELIAN");
+                helperHandlerExportResponse(response, resolve, "LAPORAN-PPH");
             })
             .catch((error) => {
                 reject(error);
             });
     });
 };
+
 ReportingService.reportBPJS = (data) => {
     return new Promise((resolve, reject) => {
         HTTPService({
             url: `/gaji/bpjs-excel`,
             method: "POST",
             responseType: "blob",
-            headers: {
-                "x-access-token": AuthService.getToken(),
-            },
             data,
         })
             .then((response) => {
-                helperHandlerExportResponse(response, resolve, "REPORTING-PEMBELIAN");
+                helperHandlerExportResponse(response, resolve, "LAPORAN-BPJS");
             })
             .catch((error) => {
                 reject(error);
             });
     });
 };
-ReportingService.reportslipgaji = (data) => {
+
+ReportingService.reportslipgaji = (ID_Gaji, data) => {
     return new Promise((resolve, reject) => {
         HTTPService({
-            url: `/gaji/:ID_Gaji/slip-excel`,
+            url: `/gaji/${ID_Gaji}/slip-excel`,
             method: "POST",
             responseType: "blob",
-            headers: {
-                "x-access-token": AuthService.getToken(),
-            },
             data,
         })
             .then((response) => {
-                helperHandlerExportResponse(response, resolve, "REPORTING-PEMBELIAN");
+                helperHandlerExportResponse(response, resolve, "SLIP-GAJI");
             })
             .catch((error) => {
                 reject(error);
@@ -83,4 +72,3 @@ ReportingService.reportslipgaji = (data) => {
 };
 
 export default ReportingService;
-

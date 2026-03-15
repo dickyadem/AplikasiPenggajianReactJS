@@ -1,4 +1,4 @@
-import { Button, Card, Form, InputGroup, Table, Spinner } from "react-bootstrap";
+import { Button, Card, Spinner } from "react-bootstrap";
 import NavigationWidget from "../../widgets/commons/NavigationWidget";
 import { useNavigate } from "react-router-dom";
 import { useEffect, useState } from "react";
@@ -6,6 +6,9 @@ import ProfilService from "../../services/ProfilService";
 import { VscAdd } from "react-icons/vsc";
 import ToastWidget from "../../widgets/commons/ToastWidget";
 import useToast from "../../hooks/useToast";
+import AdvancedTable from "../../widgets/commons/AdvancedTable";
+import Paginator from "../../widgets/commons/PaginatorWidget";
+import { exportToExcel } from "../../utils/exportToExcel";
 
 const ProfilPage = () => {
   const navigate = useNavigate();
@@ -13,7 +16,7 @@ const ProfilPage = () => {
   const [isProfileDataExist, setIsProfileDataExist] = useState(false);
   const [daftarProfil, setDaftarProfil] = useState([]);
   const [paginateProfil, setPaginateProfil] = useState(null);
-  const [queryProfil, setQueryProfil] = useState("");
+  const [queryProfil, setQueryProfil] = useState({ page: 1, limit: 10 });
   const [loading, setLoading] = useState(false);
 
   useEffect(() => {
@@ -25,7 +28,7 @@ const ProfilPage = () => {
           setPaginateProfil(JSON.parse(response.headers.pagination));
         }
 
-        setIsProfileDataExist(response.data.length > 0);
+        setIsProfileDataExist(response.data.results && response.data.results.length > 0);
       })
       .catch((err) => {
         const errorMsg = err.response?.data?.message || "Gagal memuat data profil.";
@@ -41,16 +44,79 @@ const ProfilPage = () => {
     setQueryProfil((values) => ({ ...values, page }));
   };
 
-  const callbackProfilSearchInlineWidget = (query) => {
-    setQueryProfil((values) => ({ ...values, ...query }));
+  // Table columns
+  const profilColumns = [
+    {
+      header: 'Kode',
+      accessor: 'ID_Profil',
+      style: { minWidth: '100px' }
+    },
+    {
+      header: 'Nama Perusahaan',
+      accessor: 'Nama',
+      style: { minWidth: '250px' },
+      render: (row) => (
+        <span className="fw-bold text-primary">{row.Nama}</span>
+      )
+    },
+    {
+      header: 'Alamat',
+      accessor: 'Alamat',
+      style: { minWidth: '300px' }
+    },
+    {
+      header: 'Telepon',
+      accessor: 'Telepon',
+      style: { minWidth: '120px' }
+    },
+    {
+      header: 'Email',
+      accessor: 'Email',
+      style: { minWidth: '180px' },
+      render: (row) => (
+        <a href={`mailto:${row.Email}`} className="text-decoration-none">
+          {row.Email}
+        </a>
+      )
+    },
+    {
+      header: 'Website',
+      accessor: 'Website',
+      style: { minWidth: '180px' },
+      render: (row) => (
+        row.Website ? (
+          <a href={row.Website} target="_blank" rel="noopener noreferrer" className="text-decoration-none">
+            {row.Website}
+          </a>
+        ) : '-'
+      )
+    }
+  ];
+
+  // Handlers
+  const handleSearch = (term) => {
+    console.log('Search:', term);
   };
 
-  const handleRowClick = (id) => {
-    if (document.activeElement && document.activeElement.blur) {
-      document.activeElement.blur();
+  const handleEdit = (row) => {
+    navigate(`/profil/edit/${row.ID_Profil}`);
+  };
+
+  const handleDelete = (row) => {
+    const confirmed = window.confirm(`Hapus profil ${row.Nama}?`);
+    if (confirmed) {
+      success(`Berhasil menghapus ${row.Nama}`);
     }
-    // Navigate to edit or view profil
-    navigate(`/profil/edit/${id}`);
+  };
+
+  const handleExport = async (data, columns) => {
+    try {
+      await exportToExcel(data, 'Data-Perusahaan', profilColumns);
+      success('Data berhasil diexport ke Excel!');
+    } catch (error) {
+      error('Gagal export data.');
+      console.error('Export error:', error);
+    }
   };
 
   return (
@@ -58,54 +124,45 @@ const ProfilPage = () => {
       <NavigationWidget buttonCreate={
         <Button
           onClick={() => navigate("/profil/add")}
-          disabled={isProfileDataExist}
+          variant="primary"
         >
-          <VscAdd /> Tambah
+          <VscAdd /> Tambah Data Perusahaan
         </Button>
       }>
         <Card className="mt-2">
-          <Card.Header className="bg-secondary text-light">
+          <Card.Header className="bg-secondary text-light d-flex justify-content-between align-items-center">
             <h5>Data Perusahaan</h5>
+            {paginateProfil && (
+              <Paginator paginate={paginateProfil} callbackPaginator={callbackPaginator} />
+            )}
           </Card.Header>
           {loading ? (
             <div className="d-flex justify-content-center p-5">
               <Spinner animation="border" variant="primary" />
             </div>
           ) : (
-            <Table striped bordered hover size="sm">
-              <thead>
-                <tr>
-                  <th>Kode</th>
-                  <th>Nama Perusahaan</th>
-                  <th>Alamat</th>
-                  <th>Telepon</th>
-                  <th>Fax</th>
-                  <th>Email</th>
-                  <th>Website</th>
-                </tr>
-              </thead>
-              <tbody>
-                {daftarProfil.results && daftarProfil.results.length > 0 ? (
-                  daftarProfil.results.map((profil, index) => (
-                    <tr key={index} style={{ cursor: 'pointer' }}>
-                      <td>{profil.ID_Profil}</td>
-                      <td>{profil.Nama}</td>
-                      <td>{profil.Alamat}</td>
-                      <td>{profil.Telepon}</td>
-                      <td>{profil.Fax}</td>
-                      <td>{profil.Email}</td>
-                      <td>{profil.Website}</td>
-                    </tr>
-                  ))
-                ) : (
-                  <tr>
-                    <td colSpan="7" className="text-center">
-                      Tidak ada data perusahaan
-                    </td>
-                  </tr>
-                )}
-              </tbody>
-            </Table>
+            <AdvancedTable
+              columns={profilColumns}
+              data={daftarProfil.results || []}
+              loading={loading}
+              searchable={true}
+              selectable={true}
+              exportable={true}
+              onSearch={handleSearch}
+              onEdit={handleEdit}
+              onDelete={handleDelete}
+              onExport={handleExport}
+              pagination={{
+                currentPage: queryProfil.page,
+                total: daftarProfil.total || 0,
+                from: (queryProfil.page - 1) * queryProfil.limit + 1,
+                to: queryProfil.page * queryProfil.limit,
+                lastPage: Math.ceil((daftarProfil.total || 0) / queryProfil.limit)
+              }}
+              onPageChange={(page, limit) => {
+                setQueryProfil((values) => ({ ...values, page, limit }));
+              }}
+            />
           )}
         </Card>
       </NavigationWidget>

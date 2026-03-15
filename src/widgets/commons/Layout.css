@@ -1,0 +1,28 @@
+.app-layout {
+    display: flex;
+    min-height: 100vh;
+    background: #f1f5f9;
+}
+
+.main-content {
+    flex: 1;
+    margin-left: 260px;
+    padding: 0;
+    transition: margin-left 0.3s ease;
+    min-height: 100vh;
+    background: #f1f5f9;
+    overflow-x: hidden;
+}
+
+/* Collapsed sidebar state */
+.main-content.sidebar-collapsed {
+    margin-left: 70px;
+}
+
+/* Mobile responsive */
+@media (max-width: 992px) {
+    .main-content {
+        margin-left: 0;
+        padding: 0;
+    }
+}

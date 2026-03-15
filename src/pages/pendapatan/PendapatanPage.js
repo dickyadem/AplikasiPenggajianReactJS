@@ -1,15 +1,14 @@
-import { Button, Card, Form, InputGroup, Table, Spinner } from "react-bootstrap";
+import { Button, Card, Spinner } from "react-bootstrap";
 import NavigationWidget from "../../widgets/commons/NavigationWidget";
 import { useNavigate } from "react-router-dom";
 import { VscAdd } from "react-icons/vsc";
-import { FiEdit } from "react-icons/fi";
-import { RiDeleteBin5Fill } from "react-icons/ri";
-import { FaSearch } from "react-icons/fa";
 import { useEffect, useState } from "react";
 import PendapatanService from "../../services/PendapatanService";
 import Paginator from "../../widgets/commons/PaginatorWidget";
 import ToastWidget from "../../widgets/commons/ToastWidget";
 import useToast from "../../hooks/useToast";
+import AdvancedTable from "../../widgets/commons/AdvancedTable";
+import { helperReadableCurrency } from "../../utils/helpers";
 
 
 const PendapatanPage = () => {
@@ -44,8 +43,52 @@ const PendapatanPage = () => {
     setQueryPendapatan((values) => ({ ...values, page }));
   };
 
-  const callbackPendapatanSearchInlineWidget = (query) => {
-    setQueryPendapatan((values) => ({ ...values, ...query }));
+  // Table columns
+  const pendapatanColumns = [
+    {
+      header: 'ID Pendapatan',
+      accessor: 'ID_Pendapatan',
+      style: { minWidth: '120px' }
+    },
+    {
+      header: 'Nama Pendapatan',
+      accessor: 'Nama_Pendapatan',
+      style: { minWidth: '250px' }
+    },
+    {
+      header: 'Jenis',
+      accessor: 'Jenis',
+      style: { minWidth: '120px' }
+    },
+    {
+      header: 'Nominal',
+      accessor: 'Nominal',
+      render: (row) => (
+        <span className="text-success fw-bold">
+          {helperReadableCurrency((row.Nominal || 0).toString())}
+        </span>
+      )
+    }
+  ];
+
+  // Handlers
+  const handleSearch = (term) => {
+    console.log('Search:', term);
+  };
+
+  const handleEdit = (row) => {
+    navigate(`/pendapatan/edit/${row.ID_Pendapatan}`);
+  };
+
+  const handleDelete = (row) => {
+    const confirmed = window.confirm(`Hapus pendapatan ${row.Nama_Pendapatan}?`);
+    if (confirmed) {
+      success(`Berhasil menghapus ${row.Nama_Pendapatan}`);
+    }
+  };
+
+  const handleExport = () => {
+    success('Data sedang diexport...');
   };
 
   const formatRupiah = (value) => {
@@ -84,50 +127,28 @@ const PendapatanPage = () => {
               <Spinner animation="border" variant="primary" />
             </div>
           ) : (
-            <Table striped bordered hover size="sm">
-              <thead>
-                <tr>
-                  <th>ID Pendapatan</th>
-                  <th>Nama Pendapatan</th>
-                  <th>Jabatan</th>
-                  <th>Nominal</th>
-                  <th>Aksi</th>
-                </tr>
-              </thead>
-              <tbody>
-                {daftarPendapatan.results && daftarPendapatan.results.length > 0 ? (
-                  daftarPendapatan.results.map((pendapatan, index) => (
-                    <tr
-                      key={index}
-                      onClick={() => handleRowClick(pendapatan.ID_Pendapatan)}
-                      style={{ cursor: 'pointer' }}>
-                      <td>{pendapatan.ID_Pendapatan}</td>
-                      <td>{pendapatan.Nama_Pendapatan}</td>
-                      <td>{pendapatan.ID_Jabatan ? pendapatan.ID_Jabatan : <span className="text-muted">Semua Jabatan</span>}</td>
-                      <td>{formatRupiah((pendapatan.Nominal || 0).toString())}</td>
-                      <td>
-                        <Button
-                          size="sm"
-                          variant="outline-primary"
-                          onClick={(e) => {
-                            e.stopPropagation();
-                            handleRowClick(pendapatan.ID_Pendapatan);
-                          }}
-                        >
-                          <FiEdit /> Edit
-                        </Button>
-                      </td>
-                    </tr>
-                  ))
-                ) : (
-                  <tr>
-                    <td colSpan="5" className="text-center">
-                      Tidak ada data pendapatan
-                    </td>
-                  </tr>
-                )}
-              </tbody>
-            </Table>
+            <AdvancedTable
+              columns={pendapatanColumns}
+              data={daftarPendapatan.results || []}
+              loading={loading}
+              searchable={true}
+              selectable={true}
+              exportable={true}
+              onSearch={handleSearch}
+              onEdit={handleEdit}
+              onDelete={handleDelete}
+              onExport={handleExport}
+              pagination={{
+                currentPage: queryPendapatan.page,
+                total: daftarPendapatan.total || 0,
+                from: (queryPendapatan.page - 1) * queryPendapatan.limit + 1,
+                to: queryPendapatan.page * queryPendapatan.limit,
+                lastPage: Math.ceil((daftarPendapatan.total || 0) / queryPendapatan.limit)
+              }}
+              onPageChange={(page, limit) => {
+                setQueryPendapatan((values) => ({ ...values, page, limit }));
+              }}
+            />
           )}
         </Card>
       </NavigationWidget>

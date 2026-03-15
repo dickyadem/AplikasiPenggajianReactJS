@@ -1,51 +1,63 @@
 import { useEffect, useState } from "react";
+import { useLocation, useNavigate } from "react-router-dom";
 import NavigationWidget from "../../widgets/commons/NavigationWidget";
-import { FaDownload } from "react-icons/fa";
+import { FaDownload, FaFileExcel, FaHospital, FaFileAlt, FaFilter, FaRedo } from "react-icons/fa";
 import ReportingService from "../../services/LaporanService";
-import { Button, Card, Col, Form, InputGroup, Row, Table } from "react-bootstrap";
+import { Button, Card, Col, Form, Row, Spinner, Badge, Table } from "react-bootstrap";
 import KaryawanService from "../../services/KaryawanService";
 import GajiService from "../../services/GajiService";
-import PotonganService from "../../services/PotonganService";
 import GajiDetailService from "../../services/GajiDetailService";
-import PendapatanDetailService from "../../services/pendapatandetail";
-import PotonganDetailService from "../../services/potongandetail";
-
+import { useToast } from "../../widgets/commons/ToastProvider";
+import { helperReadableCurrency } from "../../utils/helpers";
+import { exportToExcel } from "../../utils/exportToExcel";
+import "./Laporan.css";
 
 const LaporanPage = () => {
+    const location = useLocation();
+    const navigate = useNavigate();
+    const { success, error } = useToast();
     const [daftarKaryawan, setDaftarKaryawan] = useState({});
-    const [paginateKaryawan, setPaginateKaryawan] = useState([]);
-    const [queryKaryawan, setQueryKaryawan] = useState({ page: 1, limit: 10 });
-
     const [daftarGaji, setDaftarGaji] = useState({});
-    const [queryGaji, setQueryGaji] = useState({ page: 1, limit: 10 });
-    const [paginateGaji, setPaginateGaji] = useState([]);
-
-    const [daftarPotongan, setDaftarPotongan] = useState({});
-    const [paginatePotongan, setPaginatePotongan] = useState([]);
-    const [queryPotongan, setQueryPotongan] = useState({ page: 1, limit: 10 });
-
-    const [daftarPendapatanDetail, setDaftarPendapatanDetail] = useState({});
-    const [queryPendapatanDetail, setQueryPendapatanDetail] = useState({ page: 1, limit: 10 });
-
-    const [daftarPotonganDetail, setDaftarPotonganDetail] = useState({});
-    const [queryPotonganDetail, setQueryPotonganDetail] = useState({ page: 1, limit: 10 });
-
-    const [daftarGajiDetail, setDaftarGajiDetail] = useState({});
-    const [queryGajiDetail, setQueryGajiDetail] = useState({ page: 1, limit: 10 });
-    const [paginateGajiDetail, setPaginateGajiDetail] = useState([]);
-    const [showTable, setShowTable] = useState(false);
+    const [daftarGajiDetail, setDaftarGajiDetail] = useState([]);
+    const [loadingLaporan, setLoadingLaporan] = useState(false);
 
     const [showListPenggajian, setShowListPenggajian] = useState(false);
     const [showPotonganBPJS, setShowPotonganBPJS] = useState(false);
     const [showPotonganPPH, setShowPotonganPPH] = useState(false);
-    
-    // Filter states
+
     const [filterTanggalFrom, setFilterTanggalFrom] = useState("");
     const [filterTanggalTo, setFilterTanggalTo] = useState("");
     const [filterJabatan, setFilterJabatan] = useState("");
     const [filterDivisi, setFilterDivisi] = useState("");
 
-    // Format Rupiah
+    // Auto-open report based on URL query parameter
+    useEffect(() => {
+        const params = new URLSearchParams(location.search);
+        const filter = params.get('filter');
+        const autoOpenReport = sessionStorage.getItem('autoOpenReport');
+        
+        if (filter || autoOpenReport) {
+            const reportType = filter || autoOpenReport;
+            
+            if (reportType === 'bpjs') {
+                setShowPotonganBPJS(true);
+                setShowListPenggajian(false);
+                setShowPotonganPPH(false);
+            } else if (reportType === 'pph') {
+                setShowPotonganPPH(true);
+                setShowListPenggajian(false);
+                setShowPotonganBPJS(false);
+            } else {
+                setShowListPenggajian(true);
+                setShowPotonganBPJS(false);
+                setShowPotonganPPH(false);
+            }
+            
+            // Clear autoOpenReport
+            sessionStorage.removeItem('autoOpenReport');
+        }
+    }, [location.search]);
+
     const formatRupiah = (value) => {
         if (!value && value !== 0) return "Rp 0";
         const numeric = value.toString().replace(/[^0-9]/g, "");
@@ -56,394 +68,489 @@ const LaporanPage = () => {
         }).format(numeric);
     };
 
+    // Load data
     useEffect(() => {
-        GajiDetailService.list(daftarGajiDetail)
-            .then((response) => {
-                setDaftarGajiDetail(response.data);
-                if (response.headers.pagination) {
-                    setPaginateGajiDetail(JSON.parse(response.headers.pagination));
-                }
-            })
-            .catch((error) => console.log(error));
-        PendapatanDetailService.list(daftarPendapatanDetail)
-            .then((response) => {
-                setDaftarPendapatanDetail(response.data);
-            })
-            .catch((error) => console.log(error));
-        PotonganDetailService.list(daftarPotonganDetail)
-            .then((response) => {
-                setDaftarPotonganDetail(response.data);
-            })
-            .catch((error) => console.log(error));
-    }, [queryGajiDetail, queryPendapatanDetail, queryPotonganDetail]);
-
-
-
-    useEffect(() => {
-        PotonganService.list(daftarPotongan)
-            .then((response) => {
-                setDaftarPotongan(response.data);
-                if (response.headers.pagination) {
-                    setPaginatePotongan(JSON.parse(response.headers.pagination));
-                }
-            })
-            .catch((error) => console.log(error));
-    }, [queryPotongan]);
-
-    useEffect(() => {
-        GajiService.list(daftarGaji)
-            .then((response) => {
-                setDaftarGaji(response.data);
-                if (response.headers.pagination) {
-                    setPaginateGaji(JSON.parse(response.headers.pagination));
-                }
-            })
-            .catch((error) => console.log(error));
-    }, [queryGaji]);
-    useEffect(() => {
-        KaryawanService.list(daftarKaryawan)
+        setLoadingLaporan(true);
+        
+        // Load karyawan
+        KaryawanService.list({ page: 1, limit: 1000 })
             .then((response) => {
                 setDaftarKaryawan(response.data);
-                if (response.headers.pagination) {
-                    setPaginateKaryawan(JSON.parse(response.headers.pagination));
-                }
             })
-            .catch((error) => console.log(error));
-    }, [queryKaryawan]);
+            .catch((err) => {
+                console.error("Error loading karyawan:", err);
+            });
 
-    const [reportingGaji, setReportingGaji] = useState({
+        // Load gaji
+        GajiService.list({ page: 1, limit: 1000 })
+            .then((response) => {
+                setDaftarGaji(response.data);
+            })
+            .catch((err) => {
+                console.error("Error loading gaji:", err);
+            })
+            .finally(() => {
+                setLoadingLaporan(false);
+            });
+    }, []);
+
+    // Load gaji detail for BPJS & PPh
+    useEffect(() => {
+        if (showPotonganBPJS || showPotonganPPH) {
+            setLoadingLaporan(true);
+            
+            // Load all gaji data first
+            GajiService.list({ page: 1, limit: 1000 })
+                .then((response) => {
+                    const gajiList = response.data.results || response.data || [];
+                    
+                    // Load detail for each gaji
+                    const detailPromises = gajiList.map((gaji) => 
+                        GajiDetailService.get(gaji.ID_Gaji)
+                            .then((res) => res.data)
+                            .catch(() => ({ ...gaji, itemsPotongan: [] }))
+                    );
+                    
+                    return Promise.all(detailPromises);
+                })
+                .then((detailedData) => {
+                    console.log("=== LOADED GAJI DETAIL ===", detailedData);
+                    setDaftarGajiDetail(detailedData);
+                })
+                .catch((err) => {
+                    console.error("Error loading gaji detail:", err);
+                    error("Gagal memuat data laporan.");
+                })
+                .finally(() => {
+                    setLoadingLaporan(false);
+                });
+        }
+    }, [showPotonganBPJS, showPotonganPPH, error]);
+
+    // Build filter payload from current filter state
+    const buildFilterPayload = () => ({
+        startDate: filterTanggalFrom || undefined,
+        endDate: filterTanggalTo || undefined,
+        terms: filterJabatan || filterDivisi || undefined,
     });
 
-
-    const GajiList = async () => {
-        await ReportingService.reportListGaji(reportingGaji);
+    // Export handlers
+    const handleExportListGaji = async () => {
+        try {
+            await ReportingService.reportListGaji(buildFilterPayload());
+            success('Laporan berhasil diexport!');
+        } catch (err) {
+            error('Gagal export laporan.');
+        }
     };
-    const BPJS = async () => {
-        await ReportingService.reportBPJS(reportingGaji);
-    }
-    const PPH = async () => {
-        await ReportingService.reportPPh(reportingGaji);
-    }
+
+    const handleExportBPJS = async () => {
+        try {
+            await ReportingService.reportBPJS(buildFilterPayload());
+            success('Laporan BPJS berhasil diexport!');
+        } catch (err) {
+            error('Gagal export laporan BPJS.');
+        }
+    };
+
+    const handleExportPPh = async () => {
+        try {
+            await ReportingService.reportPPh(buildFilterPayload());
+            success('Laporan PPh berhasil diexport!');
+        } catch (err) {
+            error('Gagal export laporan PPh.');
+        }
+    };
+
+    // Filter gaji data
+    const filteredGaji = (daftarGaji.results || []).filter((gaji) => {
+        if (filterTanggalFrom && gaji.Tanggal < filterTanggalFrom) return false;
+        if (filterTanggalTo && gaji.Tanggal > filterTanggalTo) return false;
+
+        const karyawan = daftarKaryawan.results?.find(
+            (k) => k.ID_Karyawan === gaji.ID_Karyawan
+        );
+
+        if (filterJabatan && karyawan?.ID_Jabatan !== filterJabatan) return false;
+        if (filterDivisi && karyawan?.Divisi !== filterDivisi) return false;
+
+        return true;
+    });
+
+    // Get BPJS data - Filter semua potongan KECUALI PPh (ID berakhiran -02)
+    const bpjsData = (daftarGajiDetail || []).filter((gajiDetail) => {
+        console.log("=== CHECKING BPJS FOR ===", gajiDetail.ID_Gaji, gajiDetail.itemsPotongan);
+        const itemsPotongan = gajiDetail.itemsPotongan || gajiDetail.ItemsPotongan || [];
+        const hasBPJS = itemsPotongan.some(
+            (item) => {
+                const idPot = item.ID_Potongan || '';
+                const namaPot = (item.Nama_Potongan || '').toLowerCase();
+                const jumlahPot = parseInt(item.Jumlah_Potongan) || 0;
+                
+                // PPh biasanya ID berakhiran -02 atau mengandung "02"
+                const isPPh = (
+                    idPot === "02" ||
+                    idPot === "PTG-02" ||
+                    idPot.endsWith('-02') ||
+                    idPot.includes('PPh') ||
+                    namaPot.includes('pph') ||
+                    namaPot.includes('pajak penghasilan')
+                );
+                
+                // BPJS adalah semua potongan KECUALI PPh
+                const isBPJS = !isPPh && jumlahPot > 0;
+                
+                console.log("=== CHECKING ITEM ===", { idPot, namaPot, jumlahPot, isPPh, isBPJS });
+                return isBPJS;
+            }
+        );
+        return hasBPJS;
+    });
+
+    // Get PPh data
+    const pphData = (daftarGajiDetail || []).filter((gajiDetail) => {
+        console.log("=== CHECKING PPH FOR ===", gajiDetail.ID_Gaji, gajiDetail.itemsPotongan);
+        const itemsPotongan = gajiDetail.itemsPotongan || gajiDetail.ItemsPotongan || [];
+        const hasPPh = itemsPotongan.some(
+            (item) => {
+                const idPot = item.ID_Potongan || '';
+                const namaPot = (item.Nama_Potongan || '').toLowerCase();
+                const jumlahPot = parseInt(item.Jumlah_Potongan) || 0;
+                
+                const isPPh = (
+                    idPot === "02" ||
+                    idPot === "PTG-02" ||
+                    idPot.endsWith('-02') ||
+                    namaPot.includes('pph') ||
+                    namaPot.includes('pajak penghasilan')
+                ) && jumlahPot > 0;
+                
+                console.log("=== CHECKING PPH ITEM ===", { idPot, namaPot, jumlahPot, isPPh });
+                return isPPh;
+            }
+        );
+        return hasPPh;
+    });
 
     return (
         <NavigationWidget>
-            {/* Filter Section */}
-            <Card className="mt-3">
-                <Card.Header className="bg-primary text-white">
-                    <h5 className="mb-0">📊 Filter Laporan</h5>
-                </Card.Header>
-                <Card.Body>
-                    <Row>
-                        <Col md={3}>
-                            <Form.Group>
-                                <Form.Label>Dari Tanggal</Form.Label>
-                                <Form.Control
-                                    type="date"
-                                    value={filterTanggalFrom}
-                                    onChange={(e) => setFilterTanggalFrom(e.target.value)}
-                                />
-                            </Form.Group>
-                        </Col>
-                        <Col md={3}>
-                            <Form.Group>
-                                <Form.Label>Sampai Tanggal</Form.Label>
-                                <Form.Control
-                                    type="date"
-                                    value={filterTanggalTo}
-                                    onChange={(e) => setFilterTanggalTo(e.target.value)}
-                                />
-                            </Form.Group>
-                        </Col>
-                        <Col md={3}>
-                            <Form.Group>
-                                <Form.Label>Jabatan</Form.Label>
-                                <Form.Control
-                                    type="text"
-                                    placeholder="Semua jabatan"
-                                    value={filterJabatan}
-                                    onChange={(e) => setFilterJabatan(e.target.value)}
-                                />
-                            </Form.Group>
-                        </Col>
-                        <Col md={3}>
-                            <Form.Group>
-                                <Form.Label>Divisi</Form.Label>
-                                <Form.Control
-                                    type="text"
-                                    placeholder="Semua divisi"
-                                    value={filterDivisi}
-                                    onChange={(e) => setFilterDivisi(e.target.value)}
-                                />
-                            </Form.Group>
-                        </Col>
-                    </Row>
-                    <Row className="mt-3">
-                        <Col>
-                            <Button
-                                variant="success"
-                                onClick={() => {
-                                    setShowListPenggajian(true);
-                                    setShowPotonganBPJS(false);
-                                    setShowPotonganPPH(false);
-                                }}
-                            >
-                                📋 Laporan List Penggajian
-                            </Button>
-                            <Button
-                                variant="info"
-                                className="ms-2"
-                                onClick={() => {
-                                    setShowPotonganBPJS(true);
-                                    setShowListPenggajian(false);
-                                    setShowPotonganPPH(false);
-                                }}
-                            >
-                                🏥 Laporan BPJS
-                            </Button>
-                            <Button
-                                variant="warning"
-                                className="ms-2"
-                                onClick={() => {
-                                    setShowPotonganPPH(true);
-                                    setShowListPenggajian(false);
-                                    setShowPotonganBPJS(false);
-                                }}
-                            >
-                                📝 Laporan PPh
-                            </Button>
-                            <Button
-                                variant="danger"
-                                className="ms-2"
-                                onClick={GajiList}
-                            >
-                                <FaDownload /> Export Excel
-                            </Button>
-                        </Col>
-                    </Row>
-                </Card.Body>
-            </Card>
-
-            {showListPenggajian && (
-                <Card className="mt-3">
-                    <Card.Header className="bg-secondary text-light">
-                        <h5>Laporan List Penggajian</h5>
+            <div className="laporan-page">
+                {/* Filter Card */}
+                <Card className="filter-card no-print">
+                    <Card.Header>
+                        <FaFilter /> Filter Laporan
                     </Card.Header>
-                    <Table striped bordered hover size="sm">
-                        <thead>
-                            <tr>
-                                <th>ID Gaji</th>
-                                <th>Tanggal</th>
-                                <th>Nama Karyawan</th>
-                                <th>Divisi</th>
-                                <th>Total Pendapatan</th>
-                                <th>Total Potongan</th>
-                                <th>Gaji Bersih</th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                            {daftarGaji.results &&
-                                daftarGaji.results
-                                    .filter((gaji) => {
-                                        // Filter by tanggal
-                                        if (filterTanggalFrom && gaji.Tanggal < filterTanggalFrom) {
-                                            return false;
-                                        }
-                                        if (filterTanggalTo && gaji.Tanggal > filterTanggalTo) {
-                                            return false;
-                                        }
-                                        
-                                        const karyawan = daftarKaryawan.results?.find(
-                                            (k) => k.ID_Karyawan === gaji.ID_Karyawan
-                                        );
-                                        
-                                        // Filter by jabatan
-                                        if (filterJabatan && karyawan?.ID_Jabatan !== filterJabatan) {
-                                            return false;
-                                        }
-                                        
-                                        // Filter by divisi
-                                        if (filterDivisi && karyawan?.Divisi !== filterDivisi) {
-                                            return false;
-                                        }
-                                        
-                                        return true;
-                                    })
-                                    .map((gaji, index) => {
-                                        const karyawan = daftarKaryawan.results?.find(
-                                            (k) => k.ID_Karyawan === gaji.ID_Karyawan
-                                        );
-                                        
-                                        return (
-                                            <tr key={index}>
-                                                <td>{gaji.ID_Gaji}</td>
-                                                <td>{gaji.Tanggal}</td>
-                                                <td>{karyawan?.Nama_Karyawan || "-"}</td>
-                                                <td>{karyawan?.Divisi || "-"}</td>
-                                                <td>{formatRupiah((gaji.TotalPendapatan || gaji.Total_Pendapatan || 0).toString())}</td>
-                                                <td>{formatRupiah((gaji.TotalPotongan || gaji.Total_Potongan || 0).toString())}</td>
-                                                <td>{formatRupiah((gaji.GajiBersih || gaji.Gaji_Bersih || 0).toString())}</td>
-                                            </tr>
-                                        );
-                                    })}
-                        </tbody>
-                    </Table>
+                    <Card.Body>
+                        <Row>
+                            <Col md={3}>
+                                <Form.Group>
+                                    <Form.Label className="form-label-modern">Dari Tanggal</Form.Label>
+                                    <Form.Control
+                                        type="date"
+                                        className="form-control-modern"
+                                        value={filterTanggalFrom}
+                                        onChange={(e) => setFilterTanggalFrom(e.target.value)}
+                                    />
+                                </Form.Group>
+                            </Col>
+                            <Col md={3}>
+                                <Form.Group>
+                                    <Form.Label className="form-label-modern">Sampai Tanggal</Form.Label>
+                                    <Form.Control
+                                        type="date"
+                                        className="form-control-modern"
+                                        value={filterTanggalTo}
+                                        onChange={(e) => setFilterTanggalTo(e.target.value)}
+                                    />
+                                </Form.Group>
+                            </Col>
+                            <Col md={3}>
+                                <Form.Group>
+                                    <Form.Label className="form-label-modern">Jabatan</Form.Label>
+                                    <Form.Control
+                                        type="text"
+                                        className="form-control-modern"
+                                        placeholder="Semua jabatan"
+                                        value={filterJabatan}
+                                        onChange={(e) => setFilterJabatan(e.target.value)}
+                                    />
+                                </Form.Group>
+                            </Col>
+                            <Col md={3}>
+                                <Form.Group>
+                                    <Form.Label className="form-label-modern">Divisi</Form.Label>
+                                    <Form.Control
+                                        type="text"
+                                        className="form-control-modern"
+                                        placeholder="Semua divisi"
+                                        value={filterDivisi}
+                                        onChange={(e) => setFilterDivisi(e.target.value)}
+                                    />
+                                </Form.Group>
+                            </Col>
+                        </Row>
+                        <Row className="mt-3">
+                            <Col>
+                                <Button
+                                    className="action-btn action-btn-success"
+                                    onClick={() => {
+                                        setShowListPenggajian(true);
+                                        setShowPotonganBPJS(false);
+                                        setShowPotonganPPH(false);
+                                    }}
+                                >
+                                    <FaFileAlt /> Laporan List Penggajian
+                                </Button>
+                                <Button
+                                    className="action-btn action-btn-info"
+                                    onClick={() => {
+                                        setShowPotonganBPJS(true);
+                                        setShowListPenggajian(false);
+                                        setShowPotonganPPH(false);
+                                    }}
+                                >
+                                    <FaHospital /> Laporan BPJS
+                                </Button>
+                                <Button
+                                    className="action-btn action-btn-warning"
+                                    onClick={() => {
+                                        setShowPotonganPPH(true);
+                                        setShowListPenggajian(false);
+                                        setShowPotonganBPJS(false);
+                                    }}
+                                >
+                                    <FaFileAlt /> Laporan PPh
+                                </Button>
+                                <Button
+                                    className="action-btn action-btn-danger"
+                                    onClick={handleExportListGaji}
+                                >
+                                    <FaDownload /> Export Excel
+                                </Button>
+                            </Col>
+                        </Row>
+                    </Card.Body>
                 </Card>
 
-            )}
-
-
-
-            {showPotonganBPJS && (
-                <>
-                    {/* //laporan BPJS */}
-                    <Card className="mt-10">
-                        <Card.Header className="bg-secondary text-light">
-                            <h5>Laporan Potongan BPJS </h5>
-                        </Card.Header>
-                        <Table striped bordered hover size="sm">
-                            <thead>
-                                <tr>
-                                    <th>ID Gaji</th>
-                                    <th>ID Karyawan</th>
-                                    <th>Nama Karyawan</th>
-                                    <th>Jumlah Potongan</th>
-                                </tr>
-                            </thead>
-                            <tbody>
-                                {daftarGaji.results &&
-                                    daftarGaji.results
-                                        .filter((gaji) => {
-                                            // Filter ID Gaji yang memiliki ID Potongan bernilai 01
-                                            const PotonganDetail = daftarPotonganDetail.results.find(
-                                                (gd) => gd.ID_Gaji === gaji.ID_Gaji && gd.ID_Potongan === "01"
-                                            );
-                                            return PotonganDetail !== undefined;
-                                        })
-                                        .map((gaji, index) => {
-                                            const karyawan = daftarKaryawan.results.find(
-                                                (k) => k.ID_Karyawan === gaji.ID_Karyawan
-                                            );
-                                            const PotonganDetail = daftarPotonganDetail.results.find(
-                                                (gd) => gd.ID_Gaji === gaji.ID_Gaji && gd.ID_Potongan === "01"
-                                            );
-
-                                            return (
-                                                <tr key={index}>
-                                                    <td>{gaji.ID_Gaji}</td>
-                                                    <td>{gaji.ID_Karyawan}</td>
-                                                    <td>{karyawan && karyawan.Nama_Karyawan}</td>
-                                                    <td>{PotonganDetail && PotonganDetail.Jumlah_Potongan}</td>
-                                                </tr>
-                                            );
-                                        })}
-                            </tbody>
-                        </Table>
-                    </Card>
-                </>
-            )}
-
-
-            {showPotonganPPH && (
-                <>
-                    {/* Laporan PPh */}
-                    <Card className="mt-10">
-                        <Card.Header className="bg-secondary text-light">
-                            <h5>Laporan Potongan PPH </h5>
-                        </Card.Header>
-                        <Table striped bordered hover size="sm">
-                            <thead>
-                                <tr>
-                                    <th>ID Gaji</th>
-                                    <th>ID Karyawan</th>
-                                    <th>Nama Karyawan</th>
-                                    <th>Jumlah Potongan</th>
-                                </tr>
-                            </thead>
-                            <tbody>
-                                {daftarGaji.results &&
-                                    daftarGaji.results
-                                        .filter((gaji) => {
-                                            const PotonganDetail = daftarPotonganDetail.results.find(
-                                                (gd) => gd.ID_Gaji === gaji.ID_Gaji && gd.ID_Potongan === "02"
-                                            );
-                                            return PotonganDetail !== undefined;
-                                        })
-                                        .map((gaji, index) => {
-                                            const karyawan = daftarKaryawan.results.find(
-                                                (k) => k.ID_Karyawan === gaji.ID_Karyawan
-                                            );
-                                            const PotonganDetail = daftarPotonganDetail.results.find(
-                                                (gd) => gd.ID_Gaji === gaji.ID_Gaji && gd.ID_Potongan === "02"
-                                            );
-
-                                            return (
-                                                <tr key={index}>
-                                                    <td>{gaji.ID_Gaji}</td>
-                                                    <td>{gaji.ID_Karyawan}</td>
-                                                    <td>{karyawan && karyawan.Nama_Karyawan}</td>
-                                                    <td>{PotonganDetail && PotonganDetail.Jumlah_Potongan}</td>
-                                                </tr>
-                                            );
-                                        })}
-                            </tbody>
-                        </Table>
-                    </Card>
-                </>
-            )}
-
-
-            {/* 
-            Eksport Laporan */}
-            <Card className="mt-5">
-                <Card.Header className="bg-secondary text-light">
-                    <h5>Laporan Karyawan</h5>
-                </Card.Header>
-            </Card>
-
-            <div className="mt-4 d-flex justify-content-between">
-                <div className="container">
-                    <div className="d-flex flex-column">
-                        <Card className="mb-3">
-                            <Card.Body>
-                                <Card.Title>Cetak Laporan Penggajian Karyawan</Card.Title>
-                                <Button onClick={GajiList} style={{ margin: '0 10px' }}>
-                                    <FaDownload /> Export
-                                </Button>
-                                <Button onClick={() => setShowListPenggajian(!showListPenggajian)}>
-                                    {showListPenggajian ? 'Hide List Penggajian' : 'View List Penggajian'}
-                                </Button>
-                            </Card.Body>
-                        </Card>
-
-                        <Card className="mb-3">
-                            <Card.Body>
-                                <Card.Title>Cetak Laporan Potongan BPJS</Card.Title>
-                                <Button onClick={BPJS} style={{ margin: '0 10px' }}>
-                                    <FaDownload /> Export
-                                </Button>
-                                <Button onClick={() => setShowPotonganBPJS(!showPotonganBPJS)}>
-                                    {showPotonganBPJS ? 'Hide Potongan BPJS' : 'View Potongan BPJS'}
-                                </Button>
-                            </Card.Body>
-                        </Card>
-
-                        <Card className="mb-3">
-                            <Card.Body>
-                                <Card.Title>Cetak Laporan Potongan PPh</Card.Title>
-                                <Button onClick={PPH} style={{ margin: '0 10px' }} >
-                                    <FaDownload /> Export
-                                </Button>
-                                <Button onClick={() => setShowPotonganPPH(!showPotonganPPH)}>
-                                    {showPotonganPPH ? 'Hide Potongan PPH' : 'View Potongan PPH'}
-                                </Button>
-                            </Card.Body>
-                        </Card>
-
+                {/* Loading State */}
+                {loadingLaporan && (
+                    <div className="loading-container">
+                        <Spinner animation="border" variant="primary" />
+                        <p>Memuat data laporan...</p>
                     </div>
-                </div>
-            </div>
+                )}
 
+                {/* List Penggajian Report */}
+                {showListPenggajian && !loadingLaporan && (
+                    <Card className="report-card">
+                        <Card.Header>
+                            <FaFileAlt /> Laporan List Penggajian
+                        </Card.Header>
+                        <Card.Body>
+                            <Table striped bordered hover responsive className="table-modern">
+                                <thead>
+                                    <tr>
+                                        <th>ID Gaji</th>
+                                        <th>Tanggal</th>
+                                        <th>Nama Karyawan</th>
+                                        <th>Divisi</th>
+                                        <th>Total Pendapatan</th>
+                                        <th>Total Potongan</th>
+                                        <th>Gaji Bersih</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    {filteredGaji.length > 0 ? (
+                                        filteredGaji.map((gaji, index) => {
+                                            const karyawan = daftarKaryawan.results?.find(
+                                                (k) => k.ID_Karyawan === gaji.ID_Karyawan
+                                            );
+                                            return (
+                                                <tr key={index}>
+                                                    <td>{gaji.ID_Gaji}</td>
+                                                    <td>{gaji.Tanggal ? new Date(gaji.Tanggal).toLocaleDateString('id-ID') : '-'}</td>
+                                                    <td>{karyawan?.Nama_Karyawan || "-"}</td>
+                                                    <td>{karyawan?.Divisi || "-"}</td>
+                                                    <td>{formatRupiah((gaji.TotalPendapatan || gaji.Total_Pendapatan || 0).toString())}</td>
+                                                    <td>{formatRupiah((gaji.TotalPotongan || gaji.Total_Potongan || 0).toString())}</td>
+                                                    <td>
+                                                        <Badge bg="success">
+                                                            {formatRupiah((gaji.GajiBersih || gaji.Gaji_Bersih || 0).toString())}
+                                                        </Badge>
+                                                    </td>
+                                                </tr>
+                                            );
+                                        })
+                                    ) : (
+                                        <tr>
+                                            <td colSpan="7" className="text-center">
+                                                Tidak ada data penggajian
+                                            </td>
+                                        </tr>
+                                    )}
+                                </tbody>
+                            </Table>
+                        </Card.Body>
+                    </Card>
+                )}
+
+                {/* BPJS Report */}
+                {showPotonganBPJS && !loadingLaporan && (
+                    <Card className="report-card bpjs">
+                        <Card.Header>
+                            <FaHospital /> Laporan Potongan BPJS
+                        </Card.Header>
+                        <Card.Body>
+                            <Table striped bordered hover responsive className="table-modern">
+                                <thead>
+                                    <tr>
+                                        <th>ID Gaji</th>
+                                        <th>Tanggal</th>
+                                        <th>ID Karyawan</th>
+                                        <th>Nama Karyawan</th>
+                                        <th>Jumlah Potongan BPJS</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    {bpjsData.length > 0 ? (
+                                        bpjsData.map((gajiDetail, index) => {
+                                            const karyawan = daftarKaryawan.results?.find(
+                                                (k) => k.ID_Karyawan === gajiDetail.ID_Karyawan
+                                            );
+                                            const itemsPotongan = gajiDetail.itemsPotongan || [];
+                                            
+                                            // Get ALL non-PPh items (BPJS)
+                                            const bpjsItems = itemsPotongan.filter((item) => {
+                                                const idPot = item.ID_Potongan || '';
+                                                const namaPot = (item.Nama_Potongan || '').toLowerCase();
+                                                const jumlahPot = parseInt(item.Jumlah_Potongan) || 0;
+                                                
+                                                const isPPh = (
+                                                    idPot === "02" ||
+                                                    idPot === "PTG-02" ||
+                                                    idPot.endsWith('-02') ||
+                                                    namaPot.includes('pph')
+                                                );
+                                                
+                                                return !isPPh && jumlahPot > 0;
+                                            });
+                                            
+                                            // Sum all BPJS items
+                                            const totalBPJS = bpjsItems.reduce((sum, item) => {
+                                                return sum + (parseInt(item.Jumlah_Potongan) || 0);
+                                            }, 0);
+
+                                            return (
+                                                <tr key={index}>
+                                                    <td>{gajiDetail.ID_Gaji}</td>
+                                                    <td>{gajiDetail.Tanggal ? new Date(gajiDetail.Tanggal).toLocaleDateString('id-ID') : '-'}</td>
+                                                    <td>{gajiDetail.ID_Karyawan}</td>
+                                                    <td>{karyawan?.Nama_Karyawan || "-"}</td>
+                                                    <td className="text-success fw-bold">
+                                                        {formatRupiah(totalBPJS.toString())}
+                                                    </td>
+                                                </tr>
+                                            );
+                                        })
+                                    ) : (
+                                        <tr>
+                                            <td colSpan="5" className="text-center">
+                                                Tidak ada data potongan BPJS
+                                            </td>
+                                        </tr>
+                                    )}
+                                </tbody>
+                            </Table>
+                        </Card.Body>
+                    </Card>
+                )}
+
+                {/* PPh Report */}
+                {showPotonganPPH && !loadingLaporan && (
+                    <Card className="report-card pph">
+                        <Card.Header>
+                            <FaFileAlt /> Laporan Potongan PPh
+                        </Card.Header>
+                        <Card.Body>
+                            <Table striped bordered hover responsive className="table-modern">
+                                <thead>
+                                    <tr>
+                                        <th>ID Gaji</th>
+                                        <th>Tanggal</th>
+                                        <th>ID Karyawan</th>
+                                        <th>Nama Karyawan</th>
+                                        <th>Jumlah Potongan PPh</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    {pphData.length > 0 ? (
+                                        pphData.map((gajiDetail, index) => {
+                                            const karyawan = daftarKaryawan.results?.find(
+                                                (k) => k.ID_Karyawan === gajiDetail.ID_Karyawan
+                                            );
+                                            const itemsPotongan = gajiDetail.itemsPotongan || [];
+                                            
+                                            // Get ALL PPh items
+                                            const pphItems = itemsPotongan.filter((item) => {
+                                                const idPot = item.ID_Potongan || '';
+                                                const namaPot = (item.Nama_Potongan || '').toLowerCase();
+                                                const jumlahPot = parseInt(item.Jumlah_Potongan) || 0;
+                                                
+                                                const isPPh = (
+                                                    idPot === "02" ||
+                                                    idPot === "PTG-02" ||
+                                                    idPot.endsWith('-02') ||
+                                                    namaPot.includes('pph')
+                                                ) && jumlahPot > 0;
+                                                
+                                                return isPPh;
+                                            });
+                                            
+                                            // Sum all PPh items
+                                            const totalPPh = pphItems.reduce((sum, item) => {
+                                                return sum + (parseInt(item.Jumlah_Potongan) || 0);
+                                            }, 0);
+
+                                            return (
+                                                <tr key={index}>
+                                                    <td>{gajiDetail.ID_Gaji}</td>
+                                                    <td>{gajiDetail.Tanggal ? new Date(gajiDetail.Tanggal).toLocaleDateString('id-ID') : '-'}</td>
+                                                    <td>{gajiDetail.ID_Karyawan}</td>
+                                                    <td>{karyawan?.Nama_Karyawan || "-"}</td>
+                                                    <td className="text-danger fw-bold">
+                                                        {formatRupiah(totalPPh.toString())}
+                                                    </td>
+                                                </tr>
+                                            );
+                                        })
+                                    ) : (
+                                        <tr>
+                                            <td colSpan="5" className="text-center">
+                                                Tidak ada data potongan PPh
+                                            </td>
+                                        </tr>
+                                    )}
+                                </tbody>
+                            </Table>
+                        </Card.Body>
+                    </Card>
+                )}
+
+                {/* Empty State */}
+                {!showListPenggajian && !showPotonganBPJS && !showPotonganPPH && !loadingLaporan && (
+                    <Card className="report-card">
+                        <Card.Body className="empty-state">
+                            <div className="empty-state-icon">📊</div>
+                            <h5 className="empty-state-title">Pilih Laporan</h5>
+                            <p className="empty-state-text">
+                                Silakan pilih jenis laporan yang ingin ditampilkan dari filter di atas
+                            </p>
+                        </Card.Body>
+                    </Card>
+                )}
+            </div>
         </NavigationWidget>
     );
 };
+
 export default LaporanPage;

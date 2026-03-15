@@ -1,46 +1,25 @@
-import config from "../config";
-import AuthService from "./AuthService";
 import HTTPService from "./HTTPService";
 
 const JabatanService = {};
-const CONFIG_HTTP = {
-  headers: {
-    "x-access-token": AuthService.getToken(),
-  },
-};
 
 JabatanService.list = (query) => {
-  CONFIG_HTTP.params = query;
-  return HTTPService.get(`/jabatan`, CONFIG_HTTP);
+  return HTTPService.get(`/jabatan`, { params: query });
 };
 
 JabatanService.create = (jabatan) => {
-  return HTTPService.post(`/jabatan`, jabatan, CONFIG_HTTP);
+  return HTTPService.post(`/jabatan`, jabatan);
 };
 
 JabatanService.get = (ID_Jabatan) => {
-  CONFIG_HTTP.params = null;
-  return HTTPService.get(
-    `/jabatan/${ID_Jabatan}`,
-    CONFIG_HTTP
-  );
+  return HTTPService.get(`/jabatan/${ID_Jabatan}`);
 };
 
 JabatanService.edit = (ID_Jabatan, jabatan) => {
-  CONFIG_HTTP.params = null;
-  return HTTPService.put(
-    `/jabatan/${ID_Jabatan}`,
-    jabatan,
-    CONFIG_HTTP
-  );
+  return HTTPService.put(`/jabatan/${ID_Jabatan}`, jabatan);
 };
 
 JabatanService.delete = (ID_Jabatan) => {
-  CONFIG_HTTP.params = null;
-  return HTTPService.delete(
-    `/jabatan/${ID_Jabatan}`,
-    CONFIG_HTTP
-  );
+  return HTTPService.delete(`/jabatan/${ID_Jabatan}`);
 };
 
 export default JabatanService;

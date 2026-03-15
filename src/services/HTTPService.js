@@ -65,6 +65,11 @@ HTTPService.interceptors.response.use(
           error.message = data?.message || "Data sudah ada.";
           break;
 
+        case 429:
+          // Too Many Requests (rate limiting)
+          error.message = data?.error || "Terlalu banyak request. Silakan tunggu beberapa saat.";
+          break;
+
         case 500:
           // Internal Server Error
           error.message = "Terjadi kesalahan pada server. Silakan coba lagi nanti.";

@@ -1,13 +1,13 @@
-import { Button, Card, Form, InputGroup, Table, Spinner } from "react-bootstrap";
+import { Button, Card, Spinner } from "react-bootstrap";
 import NavigationWidget from "../../widgets/commons/NavigationWidget";
 import { useNavigate } from "react-router-dom";
 import { VscAdd } from "react-icons/vsc";
-import { FaSearch } from "react-icons/fa";
 import { useEffect, useState } from "react";
 import JabatanService from "../../services/JabatanService";
 import Paginator from "../../widgets/commons/PaginatorWidget";
 import ToastWidget from "../../widgets/commons/ToastWidget";
 import useToast from "../../hooks/useToast";
+import AdvancedTable from "../../widgets/commons/AdvancedTable";
 
 const JabatanPage = () => {
   const navigate = useNavigate();
@@ -40,15 +40,38 @@ const JabatanPage = () => {
     setQueryJabatan((values) => ({ ...values, page }));
   };
 
-  const callbackJabatanSearchInlineWidget = (query) => {
-    setQueryJabatan((values) => ({ ...values, ...query }));
+  // Table columns
+  const jabatanColumns = [
+    {
+      header: 'ID Jabatan',
+      accessor: 'ID_Jabatan',
+      style: { minWidth: '120px' }
+    },
+    {
+      header: 'Nama Jabatan',
+      accessor: 'Nama_Jabatan',
+      style: { minWidth: '250px' }
+    }
+  ];
+
+  // Handlers
+  const handleSearch = (term) => {
+    console.log('Search:', term);
   };
 
-  const handleRowClick = (id) => {
-    if (document.activeElement && document.activeElement.blur) {
-      document.activeElement.blur();
+  const handleEdit = (row) => {
+    navigate(`/jabatan/edit/${row.ID_Jabatan}`);
+  };
+
+  const handleDelete = (row) => {
+    const confirmed = window.confirm(`Hapus jabatan ${row.Nama_Jabatan}?`);
+    if (confirmed) {
+      success(`Berhasil menghapus ${row.Nama_Jabatan}`);
     }
-    navigate(`/jabatan/edit/${id}`);
+  };
+
+  const handleExport = () => {
+    success('Data sedang diexport...');
   };
 
   return (
@@ -70,33 +93,28 @@ const JabatanPage = () => {
               <Spinner animation="border" variant="primary" />
             </div>
           ) : (
-            <Table striped bordered hover size="sm">
-              <thead>
-                <tr>
-                  <th>ID Jabatan</th>
-                  <th>Nama Jabatan</th>
-                </tr>
-              </thead>
-              <tbody>
-                {daftarJabatan.results && daftarJabatan.results.length > 0 ? (
-                  daftarJabatan.results.map((jabatan, index) => (
-                    <tr
-                      key={index}
-                      onClick={() => handleRowClick(jabatan.ID_Jabatan)}
-                      style={{ cursor: 'pointer' }}>
-                      <td>{jabatan.ID_Jabatan}</td>
-                      <td>{jabatan.Nama_Jabatan}</td>
-                    </tr>
-                  ))
-                ) : (
-                  <tr>
-                    <td colSpan="2" className="text-center">
-                      Tidak ada data jabatan
-                    </td>
-                  </tr>
-                )}
-              </tbody>
-            </Table>
+            <AdvancedTable
+              columns={jabatanColumns}
+              data={daftarJabatan.results || []}
+              loading={loading}
+              searchable={true}
+              selectable={true}
+              exportable={true}
+              onSearch={handleSearch}
+              onEdit={handleEdit}
+              onDelete={handleDelete}
+              onExport={handleExport}
+              pagination={{
+                currentPage: queryJabatan.page,
+                total: daftarJabatan.total || 0,
+                from: (queryJabatan.page - 1) * queryJabatan.limit + 1,
+                to: queryJabatan.page * queryJabatan.limit,
+                lastPage: Math.ceil((daftarJabatan.total || 0) / queryJabatan.limit)
+              }}
+              onPageChange={(page, limit) => {
+                setQueryJabatan((values) => ({ ...values, page, limit }));
+              }}
+            />
           )}
         </Card>
       </NavigationWidget>

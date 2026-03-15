@@ -1,46 +1,25 @@
-import config from "../config";
-import AuthService from "./AuthService";
 import HTTPService from "./HTTPService";
 
 const PotonganService = {};
-const CONFIG_HTTP = {
-  headers: {
-    "x-access-token": AuthService.getToken(),
-  },
-};
 
 PotonganService.list = (query) => {
-  CONFIG_HTTP.params = query;
-  return HTTPService.get(`/potongan`, CONFIG_HTTP);
+  return HTTPService.get(`/potongan`, { params: query });
 };
 
 PotonganService.create = (potongan) => {
-  return HTTPService.post(`/potongan`, potongan, CONFIG_HTTP);
+  return HTTPService.post(`/potongan`, potongan);
 };
 
 PotonganService.get = (ID_Potongan) => {
-  CONFIG_HTTP.params = null;
-  return HTTPService.get(
-    `/potongan/${ID_Potongan}`,
-    CONFIG_HTTP
-  );
+  return HTTPService.get(`/potongan/${ID_Potongan}`);
 };
 
 PotonganService.edit = (ID_Potongan, potongan) => {
-  CONFIG_HTTP.params = null;
-  return HTTPService.put(
-    `/potongan/${ID_Potongan}`,
-    potongan,
-    CONFIG_HTTP
-  );
+  return HTTPService.put(`/potongan/${ID_Potongan}`, potongan);
 };
 
 PotonganService.delete = (ID_Potongan) => {
-  CONFIG_HTTP.params = null;
-  return HTTPService.delete(
-    `/potongan/${ID_Potongan}`,
-    CONFIG_HTTP
-  );
+  return HTTPService.delete(`/potongan/${ID_Potongan}`);
 };
 
 export default PotonganService;
