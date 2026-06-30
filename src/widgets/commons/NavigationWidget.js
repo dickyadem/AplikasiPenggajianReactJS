@@ -31,7 +31,7 @@ const NavigationWidget = ({ children, buttonCreate, actionTop }) => {
             <Button
               variant="link"
               className="mobile-toggle d-lg-none"
-              onClick={() => document.querySelector('.sidebar')?.classList.toggle('mobile-open')}
+              onClick={() => window.dispatchEvent(new CustomEvent('toggleSidebar'))}
             >
               <FaBars />
             </Button>

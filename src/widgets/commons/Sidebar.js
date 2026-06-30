@@ -66,6 +66,13 @@ const Sidebar = ({ onCollapse }) => {
         setUser(userInfo);
     }, []);
 
+    // Listen for toggle event from NavigationWidget
+    useEffect(() => {
+        const handler = () => setIsMobileOpen(prev => !prev);
+        window.addEventListener('toggleSidebar', handler);
+        return () => window.removeEventListener('toggleSidebar', handler);
+    }, []);
+
     // Notify parent when sidebar collapses
     const handleCollapse = () => {
         const newState = !isCollapsed;
@@ -109,17 +116,9 @@ const Sidebar = ({ onCollapse }) => {
 
     return (
         <>
-            {/* Mobile Toggle */}
-            <Button 
-                className="mobile-sidebar-toggle"
-                onClick={() => setIsMobileOpen(!isMobileOpen)}
-            >
-                {isMobileOpen ? <FaTimes /> : <FaBars />}
-            </Button>
-
             {/* Sidebar Overlay for Mobile */}
             {isMobileOpen && (
-                <div 
+                <div
                     className="sidebar-overlay"
                     onClick={() => setIsMobileOpen(false)}
                 />

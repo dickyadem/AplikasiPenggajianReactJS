@@ -1,8 +1,8 @@
-import { Button, Card, Spinner } from "react-bootstrap";
+import { Button, Card } from "react-bootstrap";
 import NavigationWidget from "../../widgets/commons/NavigationWidget";
 import { useNavigate } from "react-router-dom";
 import { VscAdd } from "react-icons/vsc";
-import { useEffect, useState } from "react";
+import { useEffect, useState, useCallback } from "react";
 import KaryawanService from "../../services/KaryawanService";
 import Paginator from "../../widgets/commons/PaginatorWidget";
 import ToastWidget from "../../widgets/commons/ToastWidget";
@@ -16,10 +16,14 @@ const KaryawanPage = () => {
   const [paginateKaryawan, setPaginateKaryawan] = useState([]);
   const [queryKaryawan, setQueryKaryawan] = useState({ page: 1, limit: 10 });
   const [loading, setLoading] = useState(false);
+  const [activeFilters, setActiveFilters] = useState({});
+  const [searchKeyword, setSearchKeyword] = useState("");
 
   useEffect(() => {
+    // Kirim ke API hanya page & limit — filter dilakukan client-side
+    const { Divisi, Status_Pernikahan, search, ...apiQuery } = queryKaryawan;
     setLoading(true);
-    KaryawanService.list(queryKaryawan)
+    KaryawanService.list(apiQuery)
       .then((response) => {
         setDaftarKaryawan(response.data);
         if (response.headers.pagination) {
@@ -34,7 +38,27 @@ const KaryawanPage = () => {
       .finally(() => {
         setLoading(false);
       });
-  }, [queryKaryawan]);
+  }, [queryKaryawan.page, queryKaryawan.limit]); // eslint-disable-line react-hooks/exhaustive-deps
+
+  // Client-side filter + search
+  const filteredData = (daftarKaryawan.results || []).filter((row) => {
+    if (activeFilters.Divisi) {
+      const rowDiv = row.Divisi?.toLowerCase() || "";
+      const filterDiv = activeFilters.Divisi.toLowerCase();
+      // cocokkan jika salah satu mengandung yang lain (handle "Hrd" vs "HR", "HRD" vs "HR", dll)
+      if (!rowDiv.includes(filterDiv) && !filterDiv.includes(rowDiv)) return false;
+    }
+    if (activeFilters.Status_Pernikahan && row.Status_Pernikahan?.toLowerCase() !== activeFilters.Status_Pernikahan.toLowerCase()) return false;
+    if (searchKeyword) {
+      const kw = searchKeyword.toLowerCase();
+      return (
+        row.ID_Karyawan?.toLowerCase().includes(kw) ||
+        row.Nama_Karyawan?.toLowerCase().includes(kw) ||
+        row.email?.toLowerCase().includes(kw)
+      );
+    }
+    return true;
+  });
 
   const callbackPaginator = (page) => {
     setQueryKaryawan((values) => ({ ...values, page }));
@@ -86,37 +110,41 @@ const KaryawanPage = () => {
   // Filter options
   const karyawanFilters = [
     {
-      key: 'divisi',
+      key: 'Divisi',
       label: 'Divisi',
       placeholder: 'Semua Divisi',
       options: [
-        { value: 'IT', label: 'IT' },
-        { value: 'HR', label: 'HR' },
-        { value: 'Finance', label: 'Finance' },
-        { value: 'Operational', label: 'Operational' }
+        { value: 'IT', label: 'IT - Information Technology' },
+        { value: 'HR', label: 'HR - Human Resources' },
+        { value: 'FN', label: 'FN - Finance' },
+        { value: 'MK', label: 'MK - Marketing' },
+        { value: 'OP', label: 'OP - Operations' },
+        { value: 'GD', label: 'GD - General Affairs' },
       ]
     },
     {
-      key: 'status',
+      key: 'Status_Pernikahan',
       label: 'Status Pernikahan',
       placeholder: 'Semua Status',
       options: [
-        { value: 'KAWIN', label: 'Kawin' },
-        { value: 'TIDAK_KAWIN', label: 'Tidak Kawin' }
+        { value: 'Menikah', label: 'Menikah' },
+        { value: 'Belum Menikah', label: 'Belum Menikah' },
+        { value: 'Cerai', label: 'Cerai' },
       ]
     }
   ];
 
-  // Handlers
-  const handleSearch = (term) => {
-    console.log('Search:', term);
-    // Implement search logic here
-  };
+  // Handlers — client-side filter & search
+  const handleSearch = useCallback((term) => {
+    setSearchKeyword(term || "");
+  }, []);
 
-  const handleFilter = (filters) => {
-    console.log('Filters:', filters);
-    // Implement filter logic here
-  };
+  const handleFilter = useCallback((filters) => {
+    setActiveFilters({
+      Divisi: filters.Divisi || "",
+      Status_Pernikahan: filters.Status_Pernikahan || "",
+    });
+  }, []);
 
   const handleEdit = (row) => {
     navigate(`/karyawan/edit/${row.ID_Karyawan}`);
@@ -125,8 +153,14 @@ const KaryawanPage = () => {
   const handleDelete = (row) => {
     const confirmed = window.confirm(`Hapus karyawan ${row.Nama_Karyawan}?`);
     if (confirmed) {
-      // Implement delete logic here
-      success(`Berhasil menghapus ${row.Nama_Karyawan}`);
+      KaryawanService.delete(row.ID_Karyawan)
+        .then(() => {
+          success(`Berhasil menghapus ${row.Nama_Karyawan}`);
+          setQueryKaryawan((v) => ({ ...v }));
+        })
+        .catch((err) => {
+          error(err.response?.data?.message || "Gagal menghapus karyawan.");
+        });
     }
   };
 
@@ -156,38 +190,32 @@ const KaryawanPage = () => {
             <h5>Karyawan</h5>
             <Paginator paginate={paginateKaryawan} callbackPaginator={callbackPaginator} />
           </Card.Header>
-          {loading ? (
-            <div className="d-flex justify-content-center p-5">
-              <Spinner animation="border" variant="primary" />
-            </div>
-          ) : (
-            <AdvancedTable
-              columns={karyawanColumns}
-              data={daftarKaryawan.results || []}
-              loading={loading}
-              searchable={true}
-              selectable={true}
-              exportable={true}
-              deletable={true}
-              filters={karyawanFilters}
-              onSearch={handleSearch}
-              onFilter={handleFilter}
-              onEdit={handleEdit}
-              onDelete={handleDelete}
-              onBulkDelete={handleBulkDelete}
-              onExport={handleExport}
-              pagination={{
-                currentPage: queryKaryawan.page,
-                total: daftarKaryawan.total || 0,
-                from: (queryKaryawan.page - 1) * queryKaryawan.limit + 1,
-                to: queryKaryawan.page * queryKaryawan.limit,
-                lastPage: Math.ceil((daftarKaryawan.total || 0) / queryKaryawan.limit)
-              }}
-              onPageChange={(page, limit) => {
-                setQueryKaryawan((values) => ({ ...values, page, limit }));
-              }}
-            />
-          )}
+          <AdvancedTable
+            columns={karyawanColumns}
+            data={filteredData}
+            loading={loading}
+            searchable={true}
+            selectable={true}
+            exportable={true}
+            deletable={true}
+            filters={karyawanFilters}
+            onSearch={handleSearch}
+            onFilter={handleFilter}
+            onEdit={handleEdit}
+            onDelete={handleDelete}
+            onBulkDelete={handleBulkDelete}
+            onExport={handleExport}
+            pagination={{
+              currentPage: queryKaryawan.page,
+              total: daftarKaryawan.total || 0,
+              from: (queryKaryawan.page - 1) * queryKaryawan.limit + 1,
+              to: queryKaryawan.page * queryKaryawan.limit,
+              lastPage: Math.ceil((daftarKaryawan.total || 0) / queryKaryawan.limit)
+            }}
+            onPageChange={(page, limit) => {
+              setQueryKaryawan((values) => ({ ...values, page, limit }));
+            }}
+          />
         </Card>
       </NavigationWidget>
       <ToastWidget

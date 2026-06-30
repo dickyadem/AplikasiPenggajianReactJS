@@ -141,6 +141,14 @@ const KaryawanEditPage = () => {
                             type="number"
                             onChange={handleInput} />
                     </Form.Group>
+                    <Form.Group className="mt-3">
+                        <Form.Label>Gaji Pokok (Rp)</Form.Label>
+                        <Form.Control name="Gaji_Pokok"
+                            value={karyawan.Gaji_Pokok || ""}
+                            type="number"
+                            min="0"
+                            onChange={handleInput} />
+                    </Form.Group>
                 </Card.Body>
             </Card>
         </NavigationWidget>

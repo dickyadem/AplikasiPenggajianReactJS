@@ -49,40 +49,11 @@ const ProfilEditPage = () => {
             newErrors.Nama = "Nama perusahaan harus diisi.";
         }
 
-        // Validasi Alamat (minimal 10 karakter)
-        if (profil.Alamat && profil.Alamat.length < 10) {
-            newErrors.Alamat = "Alamat minimal 10 karakter.";
-        }
-
-        // Validasi Telepon (10-13 digit)
-        if (profil.Telepon) {
-            const teleponRegex = /^[0-9]{10,13}$/;
-            if (!teleponRegex.test(profil.Telepon)) {
-                newErrors.Telepon = "Telepon harus 10-13 digit angka.";
-            }
-        }
-
-        // Validasi Fax (10-15 digit)
-        if (profil.Fax) {
-            const faxRegex = /^[0-9]{10,15}$/;
-            if (!faxRegex.test(profil.Fax)) {
-                newErrors.Fax = "Fax harus 10-15 digit angka.";
-            }
-        }
-
         // Validasi Email
         if (profil.Email) {
             const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
             if (!emailRegex.test(profil.Email)) {
                 newErrors.Email = "Format email tidak valid.";
-            }
-        }
-
-        // Validasi Website
-        if (profil.Website) {
-            const urlRegex = /^(http|https):\/\/[^ "]+$/;
-            if (!urlRegex.test(profil.Website)) {
-                newErrors.Website = "Website harus dimulai dengan http:// atau https://";
             }
         }
 
@@ -208,9 +179,6 @@ const ProfilEditPage = () => {
                         <Form.Control.Feedback type="invalid">
                             {errors.Telepon}
                         </Form.Control.Feedback>
-                        <Form.Text className="text-muted">
-                            10-13 digit angka
-                        </Form.Text>
                     </Form.Group>
 
                     <Form.Group className="mb-3">
@@ -219,15 +187,8 @@ const ProfilEditPage = () => {
                             name="Fax"
                             value={profil.Fax || ""}
                             onChange={handleInput}
-                            placeholder="02112345679"
-                            isInvalid={!!errors.Fax}
+                            placeholder="021-12345679"
                         />
-                        <Form.Control.Feedback type="invalid">
-                            {errors.Fax}
-                        </Form.Control.Feedback>
-                        <Form.Text className="text-muted">
-                            10-15 digit angka
-                        </Form.Text>
                     </Form.Group>
 
                     <Form.Group className="mb-3">
@@ -252,7 +213,6 @@ const ProfilEditPage = () => {
                             value={profil.Website || ""}
                             onChange={handleInput}
                             placeholder="https://www.perusahaan.com"
-                            isInvalid={!!errors.Website}
                         />
                         <Form.Control.Feedback type="invalid">
                             {errors.Website}

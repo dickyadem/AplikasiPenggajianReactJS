@@ -132,22 +132,22 @@ const getRole = () => {
 const hasRole = (requiredRole) => {
     const user = getUser();
     if (!user) return false;
-    
-    // Admin has access to everything
-    if (user.role === 'admin') return true;
-    
-    return user.role === requiredRole;
+
+    const userRole = user.role?.toLowerCase();
+    if (userRole === 'admin') return true;
+
+    return userRole === requiredRole?.toLowerCase();
 };
 
 // Check if user has any of the specified roles
 const hasAnyRole = (roles) => {
     const user = getUser();
     if (!user) return false;
-    
-    // Admin has access to everything
-    if (user.role === 'admin') return true;
-    
-    return roles.includes(user.role);
+
+    const userRole = user.role?.toLowerCase();
+    if (userRole === 'admin') return true;
+
+    return roles.map(r => r.toLowerCase()).includes(userRole);
 };
 
 // Check permission (alias for hasRole)
@@ -168,10 +168,11 @@ const ROLE_HIERARCHY = {
 const hasRoleOrHigher = (requiredRole) => {
     const user = getUser();
     if (!user) return false;
-    
-    const userLevel = ROLE_HIERARCHY[user.role] || 0;
-    const requiredLevel = ROLE_HIERARCHY[requiredRole] || 0;
-    
+
+    const userRole = user.role?.toLowerCase();
+    const userLevel = ROLE_HIERARCHY[userRole] || 0;
+    const requiredLevel = ROLE_HIERARCHY[requiredRole?.toLowerCase()] || 0;
+
     return userLevel >= requiredLevel;
 };
 

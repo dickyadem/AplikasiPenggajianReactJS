@@ -1,5 +1,5 @@
 const config = {
-  BASE_URL: "http://localhost:4000",
+  BASE_URL: process.env.REACT_APP_API_URL || "https://api-payroll.vercel.app",
 };
 
 export default config;

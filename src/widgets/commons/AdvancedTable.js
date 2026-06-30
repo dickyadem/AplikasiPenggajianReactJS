@@ -1,4 +1,4 @@
-import { useState, useEffect, useMemo, useCallback } from "react";
+import { useState, useEffect, useMemo, useCallback, useRef } from "react";
 import { Table, Form, InputGroup, Button, Spinner } from "react-bootstrap";
 import { FaSearch, FaTrash, FaDownload, FaChevronLeft, FaChevronRight } from "react-icons/fa";
 import "./AdvancedTable.css";
@@ -25,9 +25,14 @@ const AdvancedTable = ({
     const [searchTerm, setSearchTerm] = useState("");
     const [selectedRows, setSelectedRows] = useState([]);
     const [filterValues, setFilterValues] = useState({});
+    const isMounted = useRef(false);
 
-    // Debounce search
+    // Debounce search — skip on initial mount, only fire when user types
     useEffect(() => {
+        if (!isMounted.current) {
+            isMounted.current = true;
+            return;
+        }
         const timer = setTimeout(() => {
             if (onSearch) {
                 onSearch(searchTerm);
@@ -35,7 +40,7 @@ const AdvancedTable = ({
         }, 500);
 
         return () => clearTimeout(timer);
-    }, [searchTerm, onSearch]);
+    }, [searchTerm]); // eslint-disable-line react-hooks/exhaustive-deps
 
     // Handle filter change
     const handleFilterChange = (key, value) => {

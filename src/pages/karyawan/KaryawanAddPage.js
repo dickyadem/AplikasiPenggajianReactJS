@@ -314,6 +314,21 @@ const KaryawanAddPage = () => {
                                 {errors.Jumlah_Anak}
                             </Form.Control.Feedback>
                         </Form.Group>
+                        <Form.Group className="mt-3">
+                            <Form.Label>Gaji Pokok (Rp)</Form.Label>
+                            <Form.Control
+                                name="Gaji_Pokok"
+                                value={karyawan.Gaji_Pokok || ""}
+                                onChange={handleInput}
+                                isInvalid={!!errors.Gaji_Pokok}
+                                type="number"
+                                min="0"
+                                placeholder="Contoh: 5000000"
+                            />
+                            <Form.Control.Feedback type="invalid">
+                                {errors.Gaji_Pokok}
+                            </Form.Control.Feedback>
+                        </Form.Group>
                     </Card.Body>
                 </Card>
             </NavigationWidget>

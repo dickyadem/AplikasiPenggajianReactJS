@@ -11,19 +11,19 @@ UserService.create = (user) => {
 };
 
 UserService.get = (email) => {
-  return HTTPService.get(`/user/${email}`);
+  return HTTPService.get(`/user/${encodeURIComponent(email)}`);
 };
 
 UserService.edit = (email, user) => {
-  return HTTPService.put(`/user/${email}`, user);
+  return HTTPService.put(`/user/${encodeURIComponent(email)}`, user);
 };
 
 UserService.delete = (email) => {
-  return HTTPService.delete(`/user/${email}`);
+  return HTTPService.delete(`/user/${encodeURIComponent(email)}`);
 };
 
 UserService.resetPassword = (email, newPassword) => {
-  return HTTPService.put(`/user/reset-password/${email}`, { newPassword });
+  return HTTPService.put(`/user/reset-password/${encodeURIComponent(email)}`, { newPassword });
 };
 
 export default UserService;

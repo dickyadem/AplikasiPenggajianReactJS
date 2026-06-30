@@ -51,19 +51,40 @@ const UserPage = () => {
   // Table columns
   const userColumns = [
     {
+      header: 'ID User',
+      accessor: 'ID_User',
+      style: { minWidth: '120px' }
+    },
+    {
+      header: 'Nama',
+      accessor: 'NamaLengkap',
+      style: { minWidth: '200px' }
+    },
+    {
       header: 'Email',
       accessor: 'email',
       style: { minWidth: '250px' }
     },
     {
-      header: 'Username',
-      accessor: 'username',
-      style: { minWidth: '200px' }
-    },
-    {
       header: 'Role',
       accessor: 'role',
       style: { minWidth: '120px' }
+    },
+    {
+      header: 'Department',
+      accessor: 'department',
+      style: { minWidth: '120px' },
+      render: (row) => row.department || '-'
+    },
+    {
+      header: 'Status',
+      accessor: 'Status',
+      style: { minWidth: '100px' },
+      render: (row) => (
+        <span className={`badge bg-${row.Status === 'Active' ? 'success' : 'secondary'}`}>
+          {row.Status}
+        </span>
+      )
     },
     {
       header: 'Aksi',

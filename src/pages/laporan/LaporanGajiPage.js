@@ -60,7 +60,7 @@ const LaporanPage = () => {
 
     const formatRupiah = (value) => {
         if (!value && value !== 0) return "Rp 0";
-        const numeric = value.toString().replace(/[^0-9]/g, "");
+        const numeric = parseFloat(value) || 0;
         return new Intl.NumberFormat("id-ID", {
             style: "currency",
             currency: "IDR",
