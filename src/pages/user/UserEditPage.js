@@ -1,6 +1,6 @@
 import { Button, Card, Form, Row, Col, Spinner } from "react-bootstrap";
 import NavigationWidget from "../../widgets/commons/NavigationWidget";
-import { FaArrowLeft, FaSave } from "react-icons/fa";
+import { ArrowLeft, FloppyDisk } from "@phosphor-icons/react";
 import { useNavigate, useParams } from "react-router-dom";
 import UserService from "../../services/UserService";
 import { useState, useEffect } from "react";
@@ -98,10 +98,10 @@ const UserEditPage = () => {
         actionTop={
           <>
             <Button className="me-2" variant="secondary" onClick={() => navigate(-1)}>
-              <FaArrowLeft /> Kembali
+              <ArrowLeft /> Kembali
             </Button>
             <Button onClick={handleSubmit} disabled={saving}>
-              <FaSave /> {saving ? "Menyimpan..." : "Simpan"}
+              <FloppyDisk /> {saving ? "Menyimpan..." : "Simpan"}
             </Button>
           </>
         }

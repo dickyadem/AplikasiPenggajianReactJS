@@ -3,7 +3,7 @@ import NavigationWidget from "../../widgets/commons/NavigationWidget";
 import { useNavigate } from "react-router-dom";
 import { useEffect, useState } from "react";
 import ProfilService from "../../services/ProfilService";
-import { VscAdd } from "react-icons/vsc";
+import { Plus } from "@phosphor-icons/react";
 import ToastWidget from "../../widgets/commons/ToastWidget";
 import useToast from "../../hooks/useToast";
 import AdvancedTable from "../../widgets/commons/AdvancedTable";
@@ -126,7 +126,7 @@ const ProfilPage = () => {
           onClick={() => navigate("/profil/add")}
           variant="primary"
         >
-          <VscAdd /> Tambah Data Perusahaan
+          <Plus /> Tambah Data Perusahaan
         </Button>
       }>
         <Card className="mt-2">

@@ -2,7 +2,7 @@ import { useEffect, useState } from "react";
 import PendapatanService from "../../services/PendapatanService";
 import { Button, Modal, Table, Form, InputGroup } from "react-bootstrap";
 import { helperReadableCurrency } from "../../utils/helpers";
-import { FaArrowDown } from "react-icons/fa";
+import { ArrowDown } from "@phosphor-icons/react";
 import PendapatanSearchInlineWidget from "./PendapatanSearchInlineWidget";
 
 const initQuery = { page: 1, limit: 7 };
@@ -87,7 +87,7 @@ const PendapatanChoiceWidget = ({
                                 <td>{pendapatan.Nama_Pendapatan}</td>
                                 <td>
                                     <Button onClick={() => handleChoice(pendapatan)}>
-                                        <FaArrowDown />
+                                        <ArrowDown />
                                     </Button>
                                 </td>
                             </tr>

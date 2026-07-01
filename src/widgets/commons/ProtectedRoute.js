@@ -2,15 +2,16 @@ import { useState, useEffect } from "react";
 import { Navigate, useLocation } from "react-router-dom";
 import AuthService from "../../services/AuthService";
 
-const ProtectedRoute = ({ 
-    children, 
+const ProtectedRoute = ({
+    children,
     requiredRole = null,
     requiredRoles = [],
-    redirectPath = "/" 
+    redirectPath = "/"
 }) => {
     const location = useLocation();
     const [isChecking, setIsChecking] = useState(true);
-    const [isAllowed, setIsAllowed] = useState(false);
+    // 'ok' | 'unauthenticated' (no/expired session -> login) | 'forbidden' (logged in, wrong role -> unauthorized page)
+    const [status, setStatus] = useState('checking');
 
     useEffect(() => {
         checkAccess();
@@ -18,39 +19,39 @@ const ProtectedRoute = ({
 
     const checkAccess = async () => {
         try {
-            // Check if logged in
+            // Not logged in at all -> send to login
             if (!AuthService.isLoggedIn()) {
-                setIsAllowed(false);
+                setStatus('unauthenticated');
                 setIsChecking(false);
                 return;
             }
 
             // If no role requirement, allow access
             if (!requiredRole && requiredRoles.length === 0) {
-                setIsAllowed(true);
+                setStatus('ok');
                 setIsChecking(false);
                 return;
             }
 
             // Check single role
             if (requiredRole && AuthService.hasRole(requiredRole)) {
-                setIsAllowed(true);
+                setStatus('ok');
                 setIsChecking(false);
                 return;
             }
 
             // Check multiple roles
             if (requiredRoles.length > 0 && AuthService.hasAnyRole(requiredRoles)) {
-                setIsAllowed(true);
+                setStatus('ok');
                 setIsChecking(false);
                 return;
             }
 
-            // Access denied
-            setIsAllowed(false);
+            // Logged in, but role isn't allowed for this route
+            setStatus('forbidden');
         } catch (error) {
             console.error("ProtectedRoute error:", error);
-            setIsAllowed(false);
+            setStatus('forbidden');
         } finally {
             setIsChecking(false);
         }
@@ -61,9 +62,12 @@ const ProtectedRoute = ({
         return null; // or <Spinner /> if you want
     }
 
-    // Redirect if not allowed
-    if (!isAllowed) {
+    if (status === 'unauthenticated') {
         return <Navigate to={redirectPath} replace />;
+    }
+
+    if (status === 'forbidden') {
+        return <Navigate to="/unauthorized" replace state={{ from: location }} />;
     }
 
     return children;

@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
 import { Button, Form, InputGroup } from "react-bootstrap";
-import { FaSearch } from "react-icons/fa";
+import { MagnifyingGlass } from "@phosphor-icons/react";
 
 const GolonganSearchInlineWidget = ({
     attr,
@@ -47,7 +47,7 @@ const GolonganSearchInlineWidget = ({
         <Button
           {...attr}
           onClick={() => callbackGolonganSearchInlineWidget(query)}>
-          <FaSearch /> Search
+          <MagnifyingGlass /> Search
         </Button>
             </InputGroup>
         </>

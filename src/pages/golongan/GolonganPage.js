@@ -1,7 +1,7 @@
 import { Button, Card, Spinner } from "react-bootstrap";
 import NavigationWidget from "../../widgets/commons/NavigationWidget";
 import { useNavigate } from "react-router-dom";
-import { VscAdd } from "react-icons/vsc";
+import { Plus } from "@phosphor-icons/react";
 import { useEffect, useState } from "react";
 import GolonganService from "../../services/GolonganService";
 import Paginator from "../../widgets/commons/PaginatorWidget";
@@ -79,7 +79,7 @@ const GolonganPage = () => {
       <NavigationWidget
         buttonCreate={
           <Button onClick={() => navigate("/golongan/add")}>
-            <VscAdd />  Tambah
+            <Plus />  Tambah
           </Button>
         }
       >

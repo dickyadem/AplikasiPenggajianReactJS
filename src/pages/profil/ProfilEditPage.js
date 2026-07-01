@@ -1,6 +1,6 @@
 import { Button, Card, Form, Spinner } from "react-bootstrap";
 import NavigationWidget from "../../widgets/commons/NavigationWidget";
-import { FaArrowLeft, FaSave } from "react-icons/fa";
+import { ArrowLeft, FloppyDisk } from "@phosphor-icons/react";
 import { useNavigate, useParams } from "react-router-dom";
 import { useState, useEffect } from "react";
 import ProfilService from "../../services/ProfilService";
@@ -114,10 +114,10 @@ const ProfilEditPage = () => {
             actionTop={
                 <>
                     <Button className="me-2" variant="secondary" onClick={() => navigate(-1)}>
-                        <FaArrowLeft /> Kembali
+                        <ArrowLeft /> Kembali
                     </Button>
                     <Button onClick={handleProfilServiceEdit} disabled={loading}>
-                        <FaSave /> {loading ? "Menyimpan..." : "Simpan"}
+                        <FloppyDisk /> {loading ? "Menyimpan..." : "Simpan"}
                     </Button>
                 </>
             }

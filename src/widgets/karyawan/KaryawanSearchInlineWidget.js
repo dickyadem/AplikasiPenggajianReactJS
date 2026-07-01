@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
 import { Button, Form, InputGroup } from "react-bootstrap";
-import { FaSearch } from "react-icons/fa";
+import { MagnifyingGlass } from "@phosphor-icons/react";
 
 const KaryawanSearchInlineWidget = ({
     attr,
@@ -47,7 +47,7 @@ const KaryawanSearchInlineWidget = ({
         <Button
           {...attr}
           onClick={() => callbackKaryawanSearchInlineWidget(query)}>
-          <FaSearch /> Search
+          <MagnifyingGlass /> Search
         </Button>
             </InputGroup>
         </>

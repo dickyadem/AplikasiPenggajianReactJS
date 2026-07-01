@@ -48,6 +48,9 @@
 
 /* Summary Cards */
 .dashboard-cards {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+    gap: 24px;
     margin-bottom: 30px;
 }
 
@@ -85,7 +88,7 @@
 }
 
 .card-karyawan .card-icon {
-    background: linear-gradient(135deg, #0ea5e9 0%, #6366f1 100%);
+    background: linear-gradient(135deg, #0ea5e9 0%, #0284c7 100%);
     color: #fff;
 }
 
@@ -118,6 +121,8 @@
     margin-bottom: 8px;
     text-transform: uppercase;
     letter-spacing: 0.5px;
+    word-break: keep-all;
+    overflow-wrap: normal;
 }
 
 .card-value {
@@ -125,8 +130,8 @@
     font-weight: 700;
     color: #1e293b;
     margin-bottom: 8px;
-    word-break: break-word;
-    overflow-wrap: break-word;
+    word-break: keep-all;
+    overflow-wrap: normal;
     line-height: 1.2;
 }
 
@@ -161,7 +166,7 @@
 }
 
 .chart-card .card-header {
-    background: linear-gradient(135deg, #0ea5e9 0%, #6366f1 100%);
+    background: linear-gradient(135deg, #0ea5e9 0%, #0284c7 100%);
     color: #fff;
     font-weight: 600;
     font-size: 16px;
@@ -239,6 +244,12 @@
 }
 
 /* Breakdown Section */
+.breakdown-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+    gap: 16px;
+}
+
 .breakdown-item {
     padding: 20px;
     border-radius: 12px;
@@ -268,13 +279,19 @@
     font-weight: 700;
     color: #1e293b;
     margin: 0;
-    word-break: break-word;
-    overflow-wrap: break-word;
+    word-break: keep-all;
+    overflow-wrap: normal;
 }
 
 /* Compliance Section */
 .compliance-card {
     background: linear-gradient(135deg, #f0f9ff 0%, #e0f2fe 100%);
+}
+
+.compliance-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(160px, 1fr));
+    gap: 16px;
 }
 
 .compliance-item {
@@ -294,8 +311,8 @@
     font-size: 18px;
     font-weight: 700;
     margin-bottom: 8px;
-    word-break: break-word;
-    overflow-wrap: break-word;
+    word-break: keep-all;
+    overflow-wrap: normal;
 }
 
 .compliance-label {
@@ -392,7 +409,7 @@
     width: 100%;
     padding: 16px;
     border-radius: 12px;
-    background: linear-gradient(135deg, #0ea5e9 0%, #6366f1 100%);
+    background: linear-gradient(135deg, #0ea5e9 0%, #0284c7 100%);
     border: none;
     color: #fff;
     font-weight: 600;
@@ -485,7 +502,7 @@
 
 /* Chart Card Header Colors */
 .chart-card:nth-child(odd) .card-header {
-    background: linear-gradient(135deg, #0ea5e9 0%, #6366f1 100%);
+    background: linear-gradient(135deg, #0ea5e9 0%, #0284c7 100%);
 }
 
 .chart-card:nth-child(even) .card-header {

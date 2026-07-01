@@ -1,6 +1,6 @@
 import { Button, Card, Form } from "react-bootstrap";
 import NavigationWidget from "../../widgets/commons/NavigationWidget";
-import { FaArrowLeft, FaSave } from "react-icons/fa";
+import { ArrowLeft, FloppyDisk, ArrowsClockwise } from "@phosphor-icons/react";
 import { useNavigate } from "react-router-dom";
 import { useState, useEffect } from "react";
 import PotonganService from "../../services/PotonganService";
@@ -183,10 +183,10 @@ const PotonganAddPage = () => {
                 actionTop={
                     <>
                         <Button className="me-2" variant="secondary" onClick={() => navigate(-1)} disabled={loading}>
-                            <FaArrowLeft /> Kembali
+                            <ArrowLeft /> Kembali
                         </Button>
                         <Button onClick={handlePotonganServiceCreate} disabled={loading}>
-                            <FaSave /> {loading ? "Menyimpan..." : "Simpan"}
+                            <FloppyDisk /> {loading ? "Menyimpan..." : "Simpan"}
                         </Button>
                     </>
                 }
@@ -229,7 +229,7 @@ const PotonganAddPage = () => {
                                     type="button"
                                     title="Generate ID Otomatis"
                                 >
-                                    🔄 Generate
+                                    <ArrowsClockwise /> Generate
                                 </Button>
                             </div>
                             <Form.Control.Feedback type="invalid">

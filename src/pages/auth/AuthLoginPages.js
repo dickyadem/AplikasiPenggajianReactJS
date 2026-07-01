@@ -5,7 +5,7 @@ import { Form, Button, InputGroup } from "react-bootstrap";
 import useToast from "../../hooks/useToast";
 import ToastWidget from "../../widgets/commons/ToastWidget";
 import LoadingOverlay from "../../widgets/commons/LoadingOverlay";
-import { FaEnvelope, FaLock, FaEye, FaEyeSlash, FaArrowRight } from "react-icons/fa";
+import { EnvelopeSimple, Lock, Eye, EyeSlash, ArrowRight, Briefcase } from "@phosphor-icons/react";
 import "./Auth.css";
 
 const AuthLoginPage = () => {
@@ -130,7 +130,7 @@ const AuthLoginPage = () => {
           <div className="login-form-panel">
             <div className="login-form-wrapper">
               <div className="form-header">
-                <div className="form-logo">💼</div>
+                <div className="form-logo"><Briefcase weight="fill" /></div>
                 <h2 className="form-title">Welcome back</h2>
                 <p className="form-subtitle">Masuk ke akun Anda untuk melanjutkan</p>
               </div>
@@ -139,7 +139,7 @@ const AuthLoginPage = () => {
                 <div className={`field-group ${focused === 'email' ? 'focused' : ''} ${user.email ? 'has-value' : ''}`}>
                   <label className="field-label">Email</label>
                   <div className="field-input-wrap">
-                    <FaEnvelope className="field-icon" />
+                    <EnvelopeSimple className="field-icon" />
                     <input
                       name="email"
                       onChange={handleInput}
@@ -158,7 +158,7 @@ const AuthLoginPage = () => {
                 <div className={`field-group ${focused === 'password' ? 'focused' : ''} ${user.password ? 'has-value' : ''}`}>
                   <label className="field-label">Password</label>
                   <div className="field-input-wrap">
-                    <FaLock className="field-icon" />
+                    <Lock className="field-icon" />
                     <input
                       name="password"
                       onChange={handleInput}
@@ -176,7 +176,7 @@ const AuthLoginPage = () => {
                       className="field-toggle"
                       onClick={() => setShowPassword(!showPassword)}
                     >
-                      {showPassword ? <FaEyeSlash /> : <FaEye />}
+                      {showPassword ? <EyeSlash /> : <Eye />}
                     </button>
                   </div>
                 </div>
@@ -196,7 +196,7 @@ const AuthLoginPage = () => {
                   ) : (
                     <>
                       Masuk
-                      <FaArrowRight className="btn-arrow" />
+                      <ArrowRight className="btn-arrow" />
                     </>
                   )}
                 </button>

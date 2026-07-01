@@ -1,7 +1,7 @@
 import { useEffect, useState } from "react";
 import { useNavigate, useParams } from "react-router-dom";
 import { Button, Card, Form } from "react-bootstrap";
-import { FaArrowLeft, FaSave, FaTrash } from "react-icons/fa";
+import { ArrowLeft, FloppyDisk, Trash } from "@phosphor-icons/react";
 import NavigationWidget from "../../widgets/commons/NavigationWidget";
 import PotonganService from "../../services/PotonganService";
 import JabatanService from "../../services/JabatanService";
@@ -167,13 +167,13 @@ const PotonganEditPage = () => {
                 actionTop={
                     <>
                         <Button className="me-2" variant="secondary" onClick={() => navigate(-1)} disabled={loading}>
-                            <FaArrowLeft /> Kembali
+                            <ArrowLeft /> Kembali
                         </Button>
                         <Button className="me-2" variant="danger" onClick={handlePotonganServiceDelete} disabled={loading}>
-                            <FaTrash /> Hapus
+                            <Trash /> Hapus
                         </Button>
                         <Button onClick={handlePotonganServiceEdit} disabled={loading}>
-                            <FaSave /> {loading ? "Menyimpan..." : "Simpan"}
+                            <FloppyDisk /> {loading ? "Menyimpan..." : "Simpan"}
                         </Button>
                     </>
                 }

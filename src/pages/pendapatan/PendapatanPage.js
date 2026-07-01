@@ -1,7 +1,7 @@
 import { Button, Card, Spinner } from "react-bootstrap";
 import NavigationWidget from "../../widgets/commons/NavigationWidget";
 import { useNavigate } from "react-router-dom";
-import { VscAdd } from "react-icons/vsc";
+import { Plus } from "@phosphor-icons/react";
 import { useEffect, useState } from "react";
 import PendapatanService from "../../services/PendapatanService";
 import Paginator from "../../widgets/commons/PaginatorWidget";
@@ -113,7 +113,7 @@ const PendapatanPage = () => {
       <NavigationWidget
         buttonCreate={
           <Button onClick={() => navigate("/pendapatan/add")}>
-            <VscAdd />  Tambah
+            <Plus />  Tambah
           </Button>
         }
       >

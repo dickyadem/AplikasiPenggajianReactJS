@@ -1,6 +1,6 @@
 import { Button, Card, Form, Row, Col, InputGroup } from "react-bootstrap";
 import NavigationWidget from "../../widgets/commons/NavigationWidget";
-import { FaArrowLeft, FaSave, FaEye, FaEyeSlash } from "react-icons/fa";
+import { ArrowLeft, FloppyDisk, Eye, EyeSlash } from "@phosphor-icons/react";
 import { useNavigate } from "react-router-dom";
 import UserService from "../../services/UserService";
 import { useState } from "react";
@@ -85,10 +85,10 @@ const UserAddPage = () => {
         actionTop={
           <>
             <Button className="me-2" variant="secondary" onClick={() => navigate(-1)}>
-              <FaArrowLeft /> Kembali
+              <ArrowLeft /> Kembali
             </Button>
             <Button onClick={handleSubmit} disabled={loading}>
-              <FaSave /> {loading ? "Menyimpan..." : "Simpan"}
+              <FloppyDisk /> {loading ? "Menyimpan..." : "Simpan"}
             </Button>
           </>
         }
@@ -150,7 +150,7 @@ const UserAddPage = () => {
                       variant="outline-secondary"
                       onClick={() => setShowPassword(!showPassword)}
                     >
-                      {showPassword ? <FaEyeSlash /> : <FaEye />}
+                      {showPassword ? <EyeSlash /> : <Eye />}
                     </Button>
                   </InputGroup>
                 </Form.Group>

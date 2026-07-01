@@ -40,12 +40,17 @@
 }
 
 .logo-icon {
-    font-size: 28px;
+    width: 40px;
+    height: 40px;
     flex-shrink: 0;
     display: flex;
     align-items: center;
     justify-content: center;
-    height: 32px;
+    font-size: 20px;
+    color: #ffffff;
+    border-radius: 11px;
+    background: linear-gradient(135deg, #0ea5e9 0%, #0284c7 100%);
+    box-shadow: 0 4px 12px rgba(14, 165, 233, 0.35);
 }
 
 .logo-text {
@@ -139,7 +144,7 @@
 }
 
 .menu-item.active {
-    background: linear-gradient(90deg, #0ea5e9, #6366f1);
+    background: linear-gradient(90deg, #0ea5e9, #0284c7);
     color: #fff;
     box-shadow: 0 4px 6px rgba(14, 165, 233, 0.3);
 }
@@ -278,7 +283,7 @@
     top: 20px;
     left: 20px;
     z-index: 1001;
-    background: linear-gradient(135deg, #0ea5e9, #6366f1) !important;
+    background: linear-gradient(135deg, #0ea5e9, #0284c7) !important;
     border: none !important;
     color: #fff !important;
     font-size: 20px !important;

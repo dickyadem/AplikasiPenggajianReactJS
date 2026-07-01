@@ -4,7 +4,7 @@ import NavigationWidget from "../../widgets/commons/NavigationWidget";
 import { useToast } from "../../widgets/commons/ToastProvider";
 import AuthService from "../../services/AuthService";
 import RBACService from "../../services/RBACService";
-import { FaUsers, FaLock, FaKey, FaUserTag } from "react-icons/fa";
+import { Users, Lock, Key, Tag, Lightning, ArrowsClockwise, TestTube, ChartBar, TrendUp } from "@phosphor-icons/react";
 
 const RBACTestPage = () => {
     const { success, error } = useToast();
@@ -69,13 +69,13 @@ const RBACTestPage = () => {
         <NavigationWidget>
             <div className="rbac-test-page" style={{ padding: '20px' }}>
                 <h2 className="mb-4">
-                    <FaLock /> RBAC Test Page
+                    <Lock /> RBAC Test Page
                 </h2>
 
                 {/* Current User Info */}
                 <Card className="mb-4">
                     <Card.Header className="bg-primary text-white">
-                        <FaUserTag /> User Information
+                        <Tag /> User Information
                     </Card.Header>
                     <Card.Body>
                         {currentUser ? (
@@ -116,7 +116,7 @@ const RBACTestPage = () => {
                 {/* Available Roles */}
                 <Card className="mb-4">
                     <Card.Header className="bg-success text-white">
-                        <FaUsers /> Available Roles
+                        <Users /> Available Roles
                     </Card.Header>
                     <Card.Body>
                         {loading ? (
@@ -165,7 +165,7 @@ const RBACTestPage = () => {
                 {/* Permissions */}
                 <Card className="mb-4">
                     <Card.Header className="bg-warning">
-                        <FaKey /> Available Permissions
+                        <Key /> Available Permissions
                     </Card.Header>
                     <Card.Body>
                         {loading ? (
@@ -202,7 +202,7 @@ const RBACTestPage = () => {
                 {/* My Permissions */}
                 <Card className="mb-4">
                     <Card.Header className="bg-danger text-white">
-                        <FaLock /> My Permissions
+                        <Lock /> My Permissions
                     </Card.Header>
                     <Card.Body>
                         {userPermissions.length > 0 ? (
@@ -225,7 +225,7 @@ const RBACTestPage = () => {
                 {/* Quick Actions */}
                 <Card>
                     <Card.Header className="bg-dark text-white">
-                        ⚡ Quick Actions
+<Lightning weight="fill" /> Quick Actions
                     </Card.Header>
                     <Card.Body>
                         <div className="d-flex gap-2 flex-wrap">
@@ -233,7 +233,7 @@ const RBACTestPage = () => {
                                 variant="primary"
                                 onClick={loadUserData}
                             >
-                                🔄 Refresh Data
+<ArrowsClockwise /> Refresh Data
                             </Button>
                             <Button
                                 variant="success"
@@ -244,7 +244,7 @@ const RBACTestPage = () => {
                                     success("Check console for details!");
                                 }}
                             >
-                                🧪 Test Permissions
+<TestTube /> Test Permissions
                             </Button>
                             <Button
                                 variant="info"
@@ -256,7 +256,7 @@ const RBACTestPage = () => {
                                     success("Check console for role checks!");
                                 }}
                             >
-                                📊 Check All Roles
+<ChartBar /> Check All Roles
                             </Button>
                             <Button
                                 variant="warning"
@@ -268,7 +268,7 @@ const RBACTestPage = () => {
                                     success("Check console for hierarchy test!");
                                 }}
                             >
-                                📈 Test Hierarchy
+<TrendUp /> Test Hierarchy
                             </Button>
                         </div>
                     </Card.Body>

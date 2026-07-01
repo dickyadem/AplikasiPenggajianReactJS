@@ -1,7 +1,7 @@
 import { Button, Card, Col, Form, InputGroup, Row, Table, Spinner, Badge } from "react-bootstrap";
 import NavigationWidget from "../../widgets/commons/NavigationWidget";
 import { useNavigate } from "react-router-dom";
-import { FaArrowLeft, FaSave, FaCalculator, FaUser, FaBuilding, FaMoneyBillWave } from "react-icons/fa";
+import { ArrowLeft, FloppyDisk, Calculator, User, Buildings, Money, ArrowsClockwise, ChartBar, Wallet } from "@phosphor-icons/react";
 import { useEffect, useState } from "react";
 import PendapatanService from "../../services/PendapatanService";
 import PotonganService from "../../services/PotonganService";
@@ -405,10 +405,10 @@ const PenggajianInputPage = () => {
             actionTop={
                 <>
                     <Button className="me-2" variant="secondary" onClick={() => navigate(-1)} disabled={loading}>
-                        <FaArrowLeft /> Kembali
+                        <ArrowLeft /> Kembali
                     </Button>
                     <Button onClick={handleGajiServiceCreate} disabled={loading}>
-                        <FaSave /> {loading ? "Menyimpan..." : "Simpan"}
+                        <FloppyDisk /> {loading ? "Menyimpan..." : "Simpan"}
                     </Button>
                 </>
             }
@@ -435,7 +435,7 @@ const PenggajianInputPage = () => {
                                         type="button"
                                         title="Generate ID Otomatis"
                                     >
-                                        🔄 Generate
+                                        <ArrowsClockwise /> Generate
                                     </Button>
                                 </div>
                                 <Form.Text className="text-muted">
@@ -565,7 +565,7 @@ const PenggajianInputPage = () => {
                         disabled={!gaji.ID_Karyawan}
                         title="Hitung PPh 21 otomatis berdasarkan penghasilan dan status karyawan"
                     >
-                        <FaCalculator /> Hitung PPh 21 Otomatis
+                        <Calculator /> Hitung PPh 21 Otomatis
                     </Button>
                 </Card.Header>
                 <Card.Body>
@@ -612,7 +612,7 @@ const PenggajianInputPage = () => {
             {pPhCalculation && (
                 <Card style={{ marginBottom: "20px" }} className="bg-light">
                     <Card.Header className="bg-warning text-dark">
-                        <h5 className="mb-0">📊 Detail Perhitungan PPh 21</h5>
+                        <h5 className="mb-0"><ChartBar weight="fill" /> Detail Perhitungan PPh 21</h5>
                     </Card.Header>
                     <Card.Body>
                         <Row>
@@ -676,7 +676,7 @@ const PenggajianInputPage = () => {
             {/* Summary Section */}
             <Card>
                 <Card.Header className="bg-primary text-white">
-                    <h5 className="mb-0">💰 Ringkasan Gaji</h5>
+                    <h5 className="mb-0"><Wallet weight="fill" /> Ringkasan Gaji</h5>
                 </Card.Header>
                 <Card.Body>
                     <Row>

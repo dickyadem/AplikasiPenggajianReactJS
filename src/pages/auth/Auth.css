@@ -52,7 +52,7 @@
 .glow-2 {
   width: 400px;
   height: 400px;
-  background: radial-gradient(circle, #6366f1 0%, transparent 70%);
+  background: radial-gradient(circle, #0284c7 0%, transparent 70%);
   bottom: -15%;
   left: 25%;
   animation-delay: -4s;
@@ -98,7 +98,7 @@
   top: 0;
   height: 100%;
   width: 1px;
-  background: linear-gradient(180deg, transparent, rgba(99, 102, 241, 0.06) 30%, rgba(99, 102, 241, 0.06) 70%, transparent);
+  background: linear-gradient(180deg, transparent, rgba(56, 189, 248, 0.06) 30%, rgba(56, 189, 248, 0.06) 70%, transparent);
   animation: vScan 10s linear infinite;
 }
 
@@ -165,10 +165,7 @@
 }
 
 .brand-accent {
-  background: linear-gradient(135deg, #38bdf8, #818cf8);
-  -webkit-background-clip: text;
-  -webkit-text-fill-color: transparent;
-  background-clip: text;
+  color: #38bdf8;
 }
 
 .brand-tagline {
@@ -237,7 +234,7 @@
   width: 8px;
   height: 8px;
   border-radius: 50%;
-  background: linear-gradient(135deg, #38bdf8, #818cf8);
+  background: #38bdf8;
   flex-shrink: 0;
   box-shadow: 0 0 10px rgba(56, 189, 248, 0.4);
 }
@@ -268,9 +265,17 @@
 }
 
 .form-logo {
-  font-size: 48px;
-  margin-bottom: 16px;
-  filter: drop-shadow(0 4px 12px rgba(0,0,0,0.3));
+  width: 56px;
+  height: 56px;
+  margin: 0 auto 16px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 26px;
+  color: #ffffff;
+  border-radius: 16px;
+  background: linear-gradient(135deg, #0ea5e9 0%, #0284c7 100%);
+  box-shadow: 0 8px 20px rgba(14, 165, 233, 0.35);
 }
 
 .form-title {
@@ -399,7 +404,7 @@
   align-items: center;
   justify-content: center;
   gap: 10px;
-  background: linear-gradient(135deg, #0ea5e9 0%, #6366f1 100%);
+  background: linear-gradient(135deg, #0ea5e9 0%, #0284c7 100%);
   box-shadow: 0 4px 20px rgba(14, 165, 233, 0.3);
   transition: transform 0.2s, box-shadow 0.2s;
   margin-top: 4px;

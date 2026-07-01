@@ -1,7 +1,7 @@
 import { useEffect, useState } from "react";
 import { useLocation, useNavigate } from "react-router-dom";
 import NavigationWidget from "../../widgets/commons/NavigationWidget";
-import { FaDownload, FaFileExcel, FaHospital, FaFileAlt, FaFilter, FaRedo } from "react-icons/fa";
+import { DownloadSimple, FirstAidKit, FileText, Funnel, ChartBar } from "@phosphor-icons/react";
 import ReportingService from "../../services/LaporanService";
 import { Button, Card, Col, Form, Row, Spinner, Badge, Table } from "react-bootstrap";
 import KaryawanService from "../../services/KaryawanService";
@@ -238,7 +238,7 @@ const LaporanPage = () => {
                 {/* Filter Card */}
                 <Card className="filter-card no-print">
                     <Card.Header>
-                        <FaFilter /> Filter Laporan
+                        <Funnel /> Filter Laporan
                     </Card.Header>
                     <Card.Body>
                         <Row>
@@ -299,7 +299,7 @@ const LaporanPage = () => {
                                         setShowPotonganPPH(false);
                                     }}
                                 >
-                                    <FaFileAlt /> Laporan List Penggajian
+                                    <FileText /> Laporan List Penggajian
                                 </Button>
                                 <Button
                                     className="action-btn action-btn-info"
@@ -309,7 +309,7 @@ const LaporanPage = () => {
                                         setShowPotonganPPH(false);
                                     }}
                                 >
-                                    <FaHospital /> Laporan BPJS
+                                    <FirstAidKit /> Laporan BPJS
                                 </Button>
                                 <Button
                                     className="action-btn action-btn-warning"
@@ -319,13 +319,13 @@ const LaporanPage = () => {
                                         setShowPotonganBPJS(false);
                                     }}
                                 >
-                                    <FaFileAlt /> Laporan PPh
+                                    <FileText /> Laporan PPh
                                 </Button>
                                 <Button
                                     className="action-btn action-btn-danger"
                                     onClick={handleExportListGaji}
                                 >
-                                    <FaDownload /> Export Excel
+                                    <DownloadSimple /> Export Excel
                                 </Button>
                             </Col>
                         </Row>
@@ -344,7 +344,7 @@ const LaporanPage = () => {
                 {showListPenggajian && !loadingLaporan && (
                     <Card className="report-card">
                         <Card.Header>
-                            <FaFileAlt /> Laporan List Penggajian
+                            <FileText /> Laporan List Penggajian
                         </Card.Header>
                         <Card.Body>
                             <Table striped bordered hover responsive className="table-modern">
@@ -398,7 +398,7 @@ const LaporanPage = () => {
                 {showPotonganBPJS && !loadingLaporan && (
                     <Card className="report-card bpjs">
                         <Card.Header>
-                            <FaHospital /> Laporan Potongan BPJS
+                            <FirstAidKit /> Laporan Potongan BPJS
                         </Card.Header>
                         <Card.Body>
                             <Table striped bordered hover responsive className="table-modern">
@@ -469,7 +469,7 @@ const LaporanPage = () => {
                 {showPotonganPPH && !loadingLaporan && (
                     <Card className="report-card pph">
                         <Card.Header>
-                            <FaFileAlt /> Laporan Potongan PPh
+                            <FileText /> Laporan Potongan PPh
                         </Card.Header>
                         <Card.Body>
                             <Table striped bordered hover responsive className="table-modern">
@@ -540,7 +540,7 @@ const LaporanPage = () => {
                 {!showListPenggajian && !showPotonganBPJS && !showPotonganPPH && !loadingLaporan && (
                     <Card className="report-card">
                         <Card.Body className="empty-state">
-                            <div className="empty-state-icon">📊</div>
+                            <div className="empty-state-icon"><ChartBar weight="fill" /></div>
                             <h5 className="empty-state-title">Pilih Laporan</h5>
                             <p className="empty-state-text">
                                 Silakan pilih jenis laporan yang ingin ditampilkan dari filter di atas

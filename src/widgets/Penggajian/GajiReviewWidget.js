@@ -1,6 +1,6 @@
 import GajiService from "../../services/GajiService";
 import { Button, Modal, Table } from "react-bootstrap";
-import { FaFileExcel, FaPrint, FaSearchPlus } from "react-icons/fa";
+import { FileXls, Printer, MagnifyingGlassPlus } from "@phosphor-icons/react";
 import { useState } from "react";
 import {
     helperReadableCurrency,
@@ -24,7 +24,7 @@ const GajiReviewWidget = ({ attr, ID_Gaji }) => {
     return (
         <>
             <Button {...attr} onClick={handleGajiServiceGet}>
-                <FaSearchPlus />
+                <MagnifyingGlassPlus />
             </Button>
 
             {gaji && (
@@ -49,7 +49,7 @@ const GajiReviewWidget = ({ attr, ID_Gaji }) => {
                     </Table>
                     <Modal.Footer>
                         <Button onClick={handleFakturPrint}>
-                            <FaFileExcel /> Export to Excel
+                            <FileXls /> Export to Excel
                         </Button>
                     </Modal.Footer>
                 </Modal>

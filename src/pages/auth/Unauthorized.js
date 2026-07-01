@@ -1,6 +1,6 @@
 import { useNavigate } from "react-router-dom";
 import { Button, Card, Container } from "react-bootstrap";
-import { FaLock, FaHome, FaArrowLeft } from "react-icons/fa";
+import { Lock, House, ArrowLeft } from "@phosphor-icons/react";
 import "./Unauthorized.css";
 
 const Unauthorized = () => {
@@ -11,7 +11,7 @@ const Unauthorized = () => {
             <Card className="unauthorized-card">
                 <Card.Body className="text-center">
                     <div className="unauthorized-icon">
-                        <FaLock />
+                        <Lock />
                     </div>
                     <h1 className="unauthorized-title">403 - Access Denied</h1>
                     <p className="unauthorized-message">
@@ -23,13 +23,13 @@ const Unauthorized = () => {
                             onClick={() => navigate(-1)}
                             className="me-2"
                         >
-                            <FaArrowLeft /> Kembali
+                            <ArrowLeft /> Kembali
                         </Button>
                         <Button
                             variant="success"
                             onClick={() => navigate("/dashboard")}
                         >
-                            <FaHome /> Dashboard
+                            <House /> Dashboard
                         </Button>
                     </div>
                     <div className="unauthorized-help">

@@ -2,7 +2,7 @@ import { useEffect, useState } from "react";
 import PotonganService from "../../services/PotonganService";
 import { Button, Modal, Table, Form, InputGroup } from "react-bootstrap";
 import { helperReadableCurrency } from "../../utils/helpers";
-import { FaArrowDown } from "react-icons/fa";
+import { ArrowDown } from "@phosphor-icons/react";
 import PotonganSearchInlineWidget from "./PotonganSearchInlineWidget";
 
 const initQuery = { page: 1, limit: 7 };
@@ -87,7 +87,7 @@ const PotonganChoiceWidget = ({
                                 <td>{potongan.Nama_Potongan}</td>
                                 <td>
                                     <Button onClick={() => handleChoice(potongan)}>
-                                        <FaArrowDown />
+                                        <ArrowDown />
                                     </Button>
                                 </td>
                             </tr>

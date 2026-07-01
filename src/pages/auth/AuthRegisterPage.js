@@ -5,7 +5,7 @@ import { Container, Card, Row, Col, Form, Button, InputGroup } from "react-boots
 import HTTPService from "../../services/HTTPService";
 import useToast from "../../hooks/useToast";
 import ToastWidget from "../../widgets/commons/ToastWidget";
-import { FaEnvelope, FaLock, FaUser, FaEye, FaEyeSlash, FaUserPlus, FaCheck } from "react-icons/fa";
+import { EnvelopeSimple, Lock, User, Eye, EyeSlash, UserPlus, Check, Briefcase, Gift } from "@phosphor-icons/react";
 import "./Auth.css";
 
 const AuthRegisterPage = () => {
@@ -95,7 +95,7 @@ const AuthRegisterPage = () => {
             <Col lg={6} className="d-none d-lg-block">
               <div className="auth-branding">
                 <div className="brand-content">
-                  <div className="brand-logo">💼</div>
+                  <div className="brand-logo"><Briefcase weight="fill" /></div>
                   <h1 className="brand-title">Sistem Penggajian</h1>
                   <p className="brand-subtitle">Payroll Management System</p>
                   <p className="brand-description">
@@ -104,13 +104,13 @@ const AuthRegisterPage = () => {
                   </p>
                   
                   <div className="register-features">
-                    <h6>🎁 Keuntungan Register:</h6>
+                    <h6><Gift className="benefit-icon" /> Keuntungan Register:</h6>
                     <ul>
-                      <li><FaCheck className="check-icon" /> Akses Dashboard Analytics</li>
-                      <li><FaCheck className="check-icon" /> Kelola Data Karyawan</li>
-                      <li><FaCheck className="check-icon" /> Generate Slip Gaji Otomatis</li>
-                      <li><FaCheck className="check-icon" /> Laporan BPJS & PPh</li>
-                      <li><FaCheck className="check-icon" /> Export Data ke Excel</li>
+                      <li><Check className="check-icon" /> Akses Dashboard Analytics</li>
+                      <li><Check className="check-icon" /> Kelola Data Karyawan</li>
+                      <li><Check className="check-icon" /> Generate Slip Gaji Otomatis</li>
+                      <li><Check className="check-icon" /> Laporan BPJS & PPh</li>
+                      <li><Check className="check-icon" /> Export Data ke Excel</li>
                     </ul>
                   </div>
                 </div>
@@ -123,7 +123,7 @@ const AuthRegisterPage = () => {
                 <Card className="auth-card">
                   <Card.Body>
                     <div className="auth-header">
-                      <div className="mobile-logo d-lg-none">💼</div>
+                      <div className="mobile-logo d-lg-none"><Briefcase weight="fill" /></div>
                       <h2 className="auth-title">Buat Akun</h2>
                       <p className="auth-subtitle">Daftar untuk mulai menggunakan</p>
                     </div>
@@ -133,7 +133,7 @@ const AuthRegisterPage = () => {
                         <Form.Label>Nama Lengkap</Form.Label>
                         <InputGroup className="input-group-custom">
                           <InputGroup.Text className="input-icon">
-                            <FaUser />
+                            <User />
                           </InputGroup.Text>
                           <Form.Control
                             name="NamaLengkap"
@@ -150,7 +150,7 @@ const AuthRegisterPage = () => {
                         <Form.Label>Email Address</Form.Label>
                         <InputGroup className="input-group-custom">
                           <InputGroup.Text className="input-icon">
-                            <FaEnvelope />
+                            <EnvelopeSimple />
                           </InputGroup.Text>
                           <Form.Control
                             name="email"
@@ -167,7 +167,7 @@ const AuthRegisterPage = () => {
                         <Form.Label>Password</Form.Label>
                         <InputGroup className="input-group-custom">
                           <InputGroup.Text className="input-icon">
-                            <FaLock />
+                            <Lock />
                           </InputGroup.Text>
                           <Form.Control
                             name="password"
@@ -181,7 +181,7 @@ const AuthRegisterPage = () => {
                             className="input-icon toggle-password"
                             onClick={() => setShowPassword(!showPassword)}
                           >
-                            {showPassword ? <FaEyeSlash /> : <FaEye />}
+                            {showPassword ? <EyeSlash /> : <Eye />}
                           </InputGroup.Text>
                         </InputGroup>
                       </Form.Group>
@@ -190,7 +190,7 @@ const AuthRegisterPage = () => {
                         <Form.Label>Konfirmasi Password</Form.Label>
                         <InputGroup className="input-group-custom">
                           <InputGroup.Text className="input-icon">
-                            <FaLock />
+                            <Lock />
                           </InputGroup.Text>
                           <Form.Control
                             name="confirmPassword"
@@ -204,7 +204,7 @@ const AuthRegisterPage = () => {
                             className="input-icon toggle-password"
                             onClick={() => setShowConfirmPassword(!showConfirmPassword)}
                           >
-                            {showConfirmPassword ? <FaEyeSlash /> : <FaEye />}
+                            {showConfirmPassword ? <EyeSlash /> : <Eye />}
                           </InputGroup.Text>
                         </InputGroup>
                       </Form.Group>
@@ -245,7 +245,7 @@ const AuthRegisterPage = () => {
                           className="btn-register"
                           onClick={handleRegister}
                         >
-                          <FaUserPlus /> Daftar
+                          <UserPlus /> Daftar
                         </Button>
                       </div>
 

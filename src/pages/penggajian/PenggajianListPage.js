@@ -5,9 +5,10 @@ import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { useToast } from "../../widgets/commons/ToastProvider";
 import AdvancedTable from "../../widgets/commons/AdvancedTable";
-import { FaTrash, FaFileDownload, FaPlus, FaEye } from "react-icons/fa";
+import { Trash, FileArrowDown, Plus, Eye, Wallet } from "@phosphor-icons/react";
 import { helperReadableCurrency } from "../../utils/helpers";
 import { exportToExcel } from "../../utils/exportToExcel";
+import AuthService from "../../services/AuthService";
 
 const PenggajianListPage = () => {
   const navigate = useNavigate();
@@ -160,17 +161,19 @@ const PenggajianListPage = () => {
   return (
     <NavigationWidget
       buttonCreate={
-        <Button
-          variant="success"
-          onClick={() => navigate('/penggajian/input')}
-        >
-          <FaPlus /> Input Penggajian
-        </Button>
+        AuthService.hasAnyRole(['admin', 'finance', 'hr_staff']) && (
+          <Button
+            variant="success"
+            onClick={() => navigate('/penggajian/input')}
+          >
+            <Plus /> Input Penggajian
+          </Button>
+        )
       }
     >
       <Card className="mt-2">
         <Card.Header className="bg-secondary text-light d-flex justify-content-between align-items-center">
-          <h5 className="mb-0">💰 List Penggajian</h5>
+          <h5 className="mb-0"><Wallet weight="fill" /> List Penggajian</h5>
         </Card.Header>
         <Card.Body>
           {loading ? (

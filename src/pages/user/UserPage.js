@@ -1,10 +1,10 @@
 import { Button, Card, Spinner, Modal, Form, InputGroup } from "react-bootstrap";
 import NavigationWidget from "../../widgets/commons/NavigationWidget";
 import { useNavigate } from "react-router-dom";
-import { VscAdd } from "react-icons/vsc";
 import { useEffect, useState } from "react";
-import { FaKey, FaEye, FaEyeSlash } from "react-icons/fa";
+import { Plus, Key, Eye, EyeSlash } from "@phosphor-icons/react";
 import UserService from "../../services/UserService";
+import AuthService from "../../services/AuthService";
 import ToastWidget from "../../widgets/commons/ToastWidget";
 import useToast from "../../hooks/useToast";
 import AdvancedTable from "../../widgets/commons/AdvancedTable";
@@ -96,7 +96,7 @@ const UserPage = () => {
           variant="outline-warning"
           onClick={(e) => { e.stopPropagation(); handleResetPassword(row); }}
         >
-          <FaKey /> Reset Password
+          <Key /> Reset Password
         </Button>
       )
     }
@@ -154,9 +154,11 @@ const UserPage = () => {
     <>
       <NavigationWidget
         buttonCreate={
-          <Button onClick={() => navigate("/user/add")}>
-            <VscAdd />  Tambah
-          </Button>
+          AuthService.hasRole('admin') && (
+            <Button onClick={() => navigate("/user/add")}>
+              <Plus />  Tambah
+            </Button>
+          )
         }
       >
         <Card className="mt-2">
@@ -177,7 +179,7 @@ const UserPage = () => {
               selectable={true}
               exportable={true}
               onSearch={handleSearch}
-              onEdit={handleEdit}
+              onEdit={AuthService.hasRole('admin') ? handleEdit : undefined}
               onDelete={handleDelete}
               onExport={handleExport}
               pagination={{
@@ -204,7 +206,7 @@ const UserPage = () => {
       {/* Modal Reset Password */}
       <Modal show={showResetModal} onHide={() => setShowResetModal(false)} centered>
         <Modal.Header closeButton>
-          <Modal.Title><FaKey /> Reset Password</Modal.Title>
+          <Modal.Title><Key /> Reset Password</Modal.Title>
         </Modal.Header>
         <Modal.Body>
           <p>Reset password untuk: <strong>{resetEmail}</strong></p>
@@ -221,7 +223,7 @@ const UserPage = () => {
                 variant="outline-secondary"
                 onClick={() => setShowPassword(!showPassword)}
               >
-                {showPassword ? <FaEyeSlash /> : <FaEye />}
+                {showPassword ? <EyeSlash /> : <Eye />}
               </Button>
             </InputGroup>
           </Form.Group>

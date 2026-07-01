@@ -19,10 +19,10 @@ import NavigationWidget from "../../widgets/commons/NavigationWidget";
 import KaryawanService from "../../services/KaryawanService";
 import GajiService from "../../services/GajiService";
 import {
-    FaUsers, FaMoneyBillWave, FaChartLine, FaCalendarAlt,
-    FaUserPlus, FaArrowUp, FaArrowDown, FaClock, FaCheckCircle,
-    FaFileAlt, FaWallet
-} from "react-icons/fa";
+    Users, Money, ChartLineUp, CalendarBlank,
+    UserPlus, ArrowUp, ArrowDown, Clock, CheckCircle,
+    FileText, Wallet, ChartBar, Lightning
+} from "@phosphor-icons/react";
 import "./Dashboard.css";
 
 // Register ChartJS components
@@ -355,90 +355,82 @@ const Dashboard = () => {
             <div className="dashboard-page">
                 {/* Welcome Section */}
                 <div className="dashboard-welcome">
-                    <h1>📊 Dashboard</h1>
+                    <h1><ChartBar weight="fill" /> Dashboard</h1>
                     <p>Selamat datang di Sistem Penggajian - Ringkasan lengkap perusahaan Anda</p>
                 </div>
 
                 {/* Summary Cards */}
-                <Row className="dashboard-cards">
-                    <Col xl={3} md={6} className="mb-4">
-                        <Card className="summary-card card-karyawan">
-                            <Card.Body>
-                                <div className="card-icon">
-                                    <FaUsers />
+                <div className="dashboard-cards">
+                    <Card className="summary-card card-karyawan">
+                        <Card.Body>
+                            <div className="card-icon">
+                                <Users />
+                            </div>
+                            <div className="card-content">
+                                <h6 className="card-label">Total Karyawan</h6>
+                                <h3 className="card-value">{dashboardData.totalKaryawan}</h3>
+                                <div className="card-subtext">
+                                    <UserPlus className="me-1" />
+                                    <span>{dashboardData.karyawanBaru} baru bulan ini</span>
                                 </div>
-                                <div className="card-content">
-                                    <h6 className="card-label">Total Karyawan</h6>
-                                    <h3 className="card-value">{dashboardData.totalKaryawan}</h3>
-                                    <div className="card-subtext">
-                                        <FaUserPlus className="me-1" />
-                                        <span>{dashboardData.karyawanBaru} baru bulan ini</span>
-                                    </div>
-                                </div>
-                            </Card.Body>
-                        </Card>
-                    </Col>
+                            </div>
+                        </Card.Body>
+                    </Card>
 
-                    <Col xl={3} md={6} className="mb-4">
-                        <Card className="summary-card card-gaji">
-                            <Card.Body>
-                                <div className="card-icon">
-                                    <FaMoneyBillWave />
+                    <Card className="summary-card card-gaji">
+                        <Card.Body>
+                            <div className="card-icon">
+                                <Money />
+                            </div>
+                            <div className="card-content">
+                                <h6 className="card-label">Total Gaji Bersih</h6>
+                                <h3 className="card-value">{formatRupiah(dashboardData.totalGaji)}</h3>
+                                <div className="card-subtext">
+                                    <ArrowUp className="me-1 text-success" />
+                                    <span className="text-success">Periode {dashboardData.periodeAktif}</span>
                                 </div>
-                                <div className="card-content">
-                                    <h6 className="card-label">Total Gaji Bersih</h6>
-                                    <h3 className="card-value">{formatRupiah(dashboardData.totalGaji)}</h3>
-                                    <div className="card-subtext">
-                                        <FaArrowUp className="me-1 text-success" />
-                                        <span className="text-success">Periode {dashboardData.periodeAktif}</span>
-                                    </div>
-                                </div>
-                            </Card.Body>
-                        </Card>
-                    </Col>
+                            </div>
+                        </Card.Body>
+                    </Card>
 
-                    <Col xl={3} md={6} className="mb-4">
-                        <Card className="summary-card card-penggajian">
-                            <Card.Body>
-                                <div className="card-icon">
-                                    <FaCalendarAlt />
+                    <Card className="summary-card card-penggajian">
+                        <Card.Body>
+                            <div className="card-icon">
+                                <CalendarBlank />
+                            </div>
+                            <div className="card-content">
+                                <h6 className="card-label">Penggajian Bulan Ini</h6>
+                                <h3 className="card-value">{dashboardData.penggajianBulanIni}</h3>
+                                <div className="card-subtext">
+                                    <CheckCircle weight="fill" className="me-1 text-success" />
+                                    <span>Dari {dashboardData.totalKaryawan} karyawan</span>
                                 </div>
-                                <div className="card-content">
-                                    <h6 className="card-label">Penggajian Bulan Ini</h6>
-                                    <h3 className="card-value">{dashboardData.penggajianBulanIni}</h3>
-                                    <div className="card-subtext">
-                                        <FaCheckCircle className="me-1 text-success" />
-                                        <span>Dari {dashboardData.totalKaryawan} karyawan</span>
-                                    </div>
-                                </div>
-                            </Card.Body>
-                        </Card>
-                    </Col>
+                            </div>
+                        </Card.Body>
+                    </Card>
 
-                    <Col xl={3} md={6} className="mb-4">
-                        <Card className="summary-card card-progress">
-                            <Card.Body>
-                                <div className="card-icon">
-                                    <FaChartLine />
+                    <Card className="summary-card card-progress">
+                        <Card.Body>
+                            <div className="card-icon">
+                                <ChartLineUp />
+                            </div>
+                            <div className="card-content">
+                                <h6 className="card-label">Progress Penggajian</h6>
+                                <h3 className="card-value">
+                                    {dashboardData.totalKaryawan > 0
+                                        ? Math.round((dashboardData.penggajianBulanIni / dashboardData.totalKaryawan) * 100)
+                                        : 0}%
+                                </h3>
+                                <div className="card-progress">
+                                    <ProgressBar
+                                        now={(dashboardData.penggajianBulanIni / dashboardData.totalKaryawan) * 100 || 0}
+                                        variant={dashboardData.penggajianBulanIni >= dashboardData.totalKaryawan ? 'success' : 'warning'}
+                                    />
                                 </div>
-                                <div className="card-content">
-                                    <h6 className="card-label">Progress Penggajian</h6>
-                                    <h3 className="card-value">
-                                        {dashboardData.totalKaryawan > 0 
-                                            ? Math.round((dashboardData.penggajianBulanIni / dashboardData.totalKaryawan) * 100) 
-                                            : 0}%
-                                    </h3>
-                                    <div className="card-progress">
-                                        <ProgressBar 
-                                            now={(dashboardData.penggajianBulanIni / dashboardData.totalKaryawan) * 100 || 0} 
-                                            variant={dashboardData.penggajianBulanIni >= dashboardData.totalKaryawan ? 'success' : 'warning'}
-                                        />
-                                    </div>
-                                </div>
-                            </Card.Body>
-                        </Card>
-                    </Col>
-                </Row>
+                            </div>
+                        </Card.Body>
+                    </Card>
+                </div>
 
                 {/* Payroll Breakdown Section */}
                 <Row className="mb-4">
@@ -446,48 +438,40 @@ const Dashboard = () => {
                         <Card className="chart-card">
                             <Card.Header>
                                 <div className="chart-header">
-                                    💰 Breakdown Penggajian - {dashboardData.periodeAktif}
+                                    <Wallet weight="fill" /> Breakdown Penggajian - {dashboardData.periodeAktif}
                                 </div>
                             </Card.Header>
                             <Card.Body>
-                                <Row>
-                                    <Col md={3} sm={6} className="text-center mb-3">
-                                        <div className="breakdown-item">
-                                            <div className="breakdown-icon text-primary">
-                                                <FaMoneyBillWave />
-                                            </div>
-                                            <h6 className="breakdown-label">Total Pendapatan</h6>
-                                            <h4 className="breakdown-value">{formatRupiah(dashboardData.totalPokok)}</h4>
+                                <div className="breakdown-grid">
+                                    <div className="breakdown-item text-center">
+                                        <div className="breakdown-icon text-primary">
+                                            <Money />
                                         </div>
-                                    </Col>
-                                    <Col md={3} sm={6} className="text-center mb-3">
-                                        <div className="breakdown-item">
-                                            <div className="breakdown-icon text-success">
-                                                <FaArrowUp />
-                                            </div>
-                                            <h6 className="breakdown-label">Total Tunjangan</h6>
-                                            <h4 className="breakdown-value">{formatRupiah(dashboardData.totalTunjangan)}</h4>
+                                        <h6 className="breakdown-label">Total Pendapatan</h6>
+                                        <h4 className="breakdown-value">{formatRupiah(dashboardData.totalPokok)}</h4>
+                                    </div>
+                                    <div className="breakdown-item text-center">
+                                        <div className="breakdown-icon text-success">
+                                            <ArrowUp />
                                         </div>
-                                    </Col>
-                                    <Col md={3} sm={6} className="text-center mb-3">
-                                        <div className="breakdown-item">
-                                            <div className="breakdown-icon text-danger">
-                                                <FaArrowDown />
-                                            </div>
-                                            <h6 className="breakdown-label">Total Potongan</h6>
-                                            <h4 className="breakdown-value">{formatRupiah(dashboardData.totalPotongan)}</h4>
+                                        <h6 className="breakdown-label">Total Tunjangan</h6>
+                                        <h4 className="breakdown-value">{formatRupiah(dashboardData.totalTunjangan)}</h4>
+                                    </div>
+                                    <div className="breakdown-item text-center">
+                                        <div className="breakdown-icon text-danger">
+                                            <ArrowDown />
                                         </div>
-                                    </Col>
-                                    <Col md={3} sm={6} className="text-center mb-3">
-                                        <div className="breakdown-item">
-                                            <div className="breakdown-icon text-info">
-                                                <FaWallet />
-                                            </div>
-                                            <h6 className="breakdown-label">Gaji Bersih</h6>
-                                            <h4 className="breakdown-value">{formatRupiah(dashboardData.totalGaji)}</h4>
+                                        <h6 className="breakdown-label">Total Potongan</h6>
+                                        <h4 className="breakdown-value">{formatRupiah(dashboardData.totalPotongan)}</h4>
+                                    </div>
+                                    <div className="breakdown-item text-center">
+                                        <div className="breakdown-icon text-info">
+                                            <Wallet />
                                         </div>
-                                    </Col>
-                                </Row>
+                                        <h6 className="breakdown-label">Gaji Bersih</h6>
+                                        <h4 className="breakdown-value">{formatRupiah(dashboardData.totalGaji)}</h4>
+                                    </div>
+                                </div>
                             </Card.Body>
                         </Card>
                     </Col>
@@ -499,45 +483,39 @@ const Dashboard = () => {
                         <Card className="chart-card compliance-card">
                             <Card.Header>
                                 <div className="chart-header">
-                                    📊 Compliance & Statistik
+                                    <ChartBar weight="fill" /> Compliance & Statistik
                                 </div>
                             </Card.Header>
                             <Card.Body>
-                                <Row>
-                                    <Col md={4} className="text-center mb-3">
-                                        <div className="compliance-item">
-                                            <div className="compliance-value text-primary">
-                                                {formatRupiah(dashboardData.totalBPJS)}
-                                            </div>
-                                            <h6 className="compliance-label">Total BPJS</h6>
-                                            <small className="compliance-subtext">
-                                                {dashboardData.complianceStats.bpjs}% dari gaji
-                                            </small>
+                                <div className="compliance-grid">
+                                    <div className="compliance-item text-center">
+                                        <div className="compliance-value text-primary">
+                                            {formatRupiah(dashboardData.totalBPJS)}
                                         </div>
-                                    </Col>
-                                    <Col md={4} className="text-center mb-3">
-                                        <div className="compliance-item">
-                                            <div className="compliance-value text-danger">
-                                                {formatRupiah(dashboardData.totalPPh)}
-                                            </div>
-                                            <h6 className="compliance-label">Total PPh 21</h6>
-                                            <small className="compliance-subtext">
-                                                {dashboardData.complianceStats.pph}% dari gaji
-                                            </small>
+                                        <h6 className="compliance-label">Total BPJS</h6>
+                                        <small className="compliance-subtext">
+                                            {dashboardData.complianceStats.bpjs}% dari gaji
+                                        </small>
+                                    </div>
+                                    <div className="compliance-item text-center">
+                                        <div className="compliance-value text-danger">
+                                            {formatRupiah(dashboardData.totalPPh)}
                                         </div>
-                                    </Col>
-                                    <Col md={4} className="text-center mb-3">
-                                        <div className="compliance-item">
-                                            <div className="compliance-value text-success">
-                                                {dashboardData.complianceStats.onTime}%
-                                            </div>
-                                            <h6 className="compliance-label">On-Time Payment</h6>
-                                            <small className="compliance-subtext">
-                                                {dashboardData.penggajianBulanIni} dari {dashboardData.totalKaryawan}
-                                            </small>
+                                        <h6 className="compliance-label">Total PPh 21</h6>
+                                        <small className="compliance-subtext">
+                                            {dashboardData.complianceStats.pph}% dari gaji
+                                        </small>
+                                    </div>
+                                    <div className="compliance-item text-center">
+                                        <div className="compliance-value text-success">
+                                            {dashboardData.complianceStats.onTime}%
                                         </div>
-                                    </Col>
-                                </Row>
+                                        <h6 className="compliance-label">On-Time Payment</h6>
+                                        <small className="compliance-subtext">
+                                            {dashboardData.penggajianBulanIni} dari {dashboardData.totalKaryawan}
+                                        </small>
+                                    </div>
+                                </div>
                             </Card.Body>
                         </Card>
                     </Col>
@@ -546,7 +524,7 @@ const Dashboard = () => {
                         <Card className="chart-card">
                             <Card.Header>
                                 <div className="chart-header">
-                                    <FaClock /> Status Penggajian
+                                    <Clock /> Status Penggajian
                                 </div>
                             </Card.Header>
                             <Card.Body>
@@ -574,7 +552,7 @@ const Dashboard = () => {
                         <Card className="chart-card">
                             <Card.Header>
                                 <div className="chart-header">
-                                    <FaChartLine /> Trend Penggajian 6 Bulan Terakhir
+                                    <ChartLineUp /> Trend Penggajian 6 Bulan Terakhir
                                 </div>
                             </Card.Header>
                             <Card.Body>
@@ -589,7 +567,7 @@ const Dashboard = () => {
                         <Card className="chart-card">
                             <Card.Header>
                                 <div className="chart-header">
-                                    <FaUsers /> Status Penggajian
+                                    <Users /> Status Penggajian
                                 </div>
                             </Card.Header>
                             <Card.Body>
@@ -616,7 +594,7 @@ const Dashboard = () => {
                         <Card className="chart-card">
                             <Card.Header>
                                 <div className="chart-header">
-                                    <FaUsers /> Distribusi Karyawan per Divisi
+                                    <Users /> Distribusi Karyawan per Divisi
                                 </div>
                             </Card.Header>
                             <Card.Body>
@@ -631,7 +609,7 @@ const Dashboard = () => {
                         <Card className="chart-card activity-card">
                             <Card.Header>
                                 <div className="chart-header">
-                                    <FaClock /> Aktivitas Terakhir
+                                    <Clock /> Aktivitas Terakhir
                                 </div>
                                 <Button 
                                     variant="link" 
@@ -647,7 +625,7 @@ const Dashboard = () => {
                                         dashboardData.recentActivities.map((activity, index) => (
                                             <div key={index} className="activity-item">
                                                 <div className="activity-icon">
-                                                    <FaMoneyBillWave />
+                                                    <Money />
                                                 </div>
                                                 <div className="activity-content">
                                                     <h6 className="activity-title">{activity.title}</h6>
@@ -673,7 +651,7 @@ const Dashboard = () => {
                 <Card className="quick-actions-card">
                     <Card.Header>
                         <div className="chart-header">
-                            ⚡ Aksi Cepat
+                            <Lightning weight="fill" /> Aksi Cepat
                         </div>
                     </Card.Header>
                     <Card.Body>
@@ -683,7 +661,7 @@ const Dashboard = () => {
                                     className="quick-action-btn"
                                     onClick={() => navigate('/karyawan/add')}
                                 >
-                                    <FaUserPlus />
+                                    <UserPlus />
                                     <span>Tambah Karyawan</span>
                                 </Button>
                             </Col>
@@ -692,7 +670,7 @@ const Dashboard = () => {
                                     className="quick-action-btn"
                                     onClick={() => navigate('/penggajian/input')}
                                 >
-                                    <FaMoneyBillWave />
+                                    <Money />
                                     <span>Input Penggajian</span>
                                 </Button>
                             </Col>
@@ -701,7 +679,7 @@ const Dashboard = () => {
                                     className="quick-action-btn"
                                     onClick={() => navigate('/laporan')}
                                 >
-                                    <FaFileAlt />
+                                    <FileText />
                                     <span>Lihat Laporan</span>
                                 </Button>
                             </Col>
@@ -710,7 +688,7 @@ const Dashboard = () => {
                                     className="quick-action-btn"
                                     onClick={() => navigate('/penggajian')}
                                 >
-                                    <FaChartLine />
+                                    <ChartLineUp />
                                     <span>Riwayat Gaji</span>
                                 </Button>
                             </Col>

@@ -1,11 +1,11 @@
 import { useState, useEffect } from "react";
 import { useNavigate, useLocation } from "react-router-dom";
 import {
-    FaHome, FaUsers, FaBuilding, FaUserTie, FaBriefcase,
-    FaLayerGroup, FaMoneyBillWave, FaFileInvoice,
-    FaChartLine, FaHospital, FaFileAlt, FaCog, FaSignOutAlt,
-    FaChevronDown, FaChevronUp, FaBars, FaTimes, FaUserCircle
-} from "react-icons/fa";
+    House, Users, Buildings, IdentificationBadge, Briefcase,
+    Stack, Money, Receipt,
+    ChartLineUp, FirstAidKit, FileText, GearSix, SignOut,
+    CaretDown, CaretUp, List, X, UserCircle
+} from "@phosphor-icons/react";
 import { Button, Badge } from "react-bootstrap";
 import AuthService from "../../services/AuthService";
 import "./Sidebar.css";
@@ -14,36 +14,36 @@ const menuItems = {
     dashboard: {
         path: "/dashboard",
         label: "Dashboard",
-        icon: <FaHome />
+        icon: <House />
     },
     master: {
         label: "Master Data",
-        icon: <FaBuilding />,
+        icon: <Buildings />,
         items: [
-            { path: "/user", label: "User", icon: <FaUsers /> },
-            { path: "/profil", label: "Profil", icon: <FaUserTie /> },
-            { path: "/karyawan", label: "Karyawan", icon: <FaBriefcase /> },
-            { path: "/jabatan", label: "Jabatan", icon: <FaLayerGroup /> },
-            { path: "/golongan", label: "Golongan", icon: <FaLayerGroup /> },
-            { path: "/pendapatan", label: "Pendapatan", icon: <FaMoneyBillWave /> },
-            { path: "/potongan", label: "Potongan", icon: <FaMoneyBillWave /> }
+            { path: "/user", label: "User", icon: <Users />, roles: ['admin', 'hr_staff', 'manager', 'finance', 'employee'] },
+            { path: "/profil", label: "Profil", icon: <IdentificationBadge />, roles: ['admin', 'hr_staff', 'manager'] },
+            { path: "/karyawan", label: "Karyawan", icon: <Briefcase />, roles: ['admin', 'hr_staff', 'manager'] },
+            { path: "/jabatan", label: "Jabatan", icon: <Stack />, roles: ['admin', 'hr_staff', 'manager'] },
+            { path: "/golongan", label: "Golongan", icon: <Stack />, roles: ['admin', 'hr_staff', 'manager'] },
+            { path: "/pendapatan", label: "Pendapatan", icon: <Money />, roles: ['admin', 'finance', 'hr_staff', 'manager'] },
+            { path: "/potongan", label: "Potongan", icon: <Money />, roles: ['admin', 'finance', 'hr_staff', 'manager'] }
         ]
     },
     transaksi: {
         label: "Transaksi",
-        icon: <FaFileInvoice />,
+        icon: <Receipt />,
         items: [
-            { path: "/penggajian", label: "List Penggajian", icon: <FaChartLine /> },
-            { path: "/penggajian/input", label: "Input Penggajian", icon: <FaFileInvoice /> }
+            { path: "/penggajian", label: "List Penggajian", icon: <ChartLineUp />, roles: ['admin', 'finance', 'hr_staff', 'manager'] },
+            { path: "/penggajian/input", label: "Input Penggajian", icon: <Receipt />, roles: ['admin', 'finance', 'hr_staff'] }
         ]
     },
     laporan: {
         label: "Laporan",
-        icon: <FaFileAlt />,
+        icon: <FileText />,
         items: [
-            { path: "/laporan", label: "Laporan Gaji", icon: <FaFileAlt /> },
-            { path: "/laporan", label: "Laporan BPJS", icon: <FaHospital />, query: "bpjs" },
-            { path: "/laporan", label: "Laporan PPh", icon: <FaFileAlt />, query: "pph" }
+            { path: "/laporan", label: "Laporan Gaji", icon: <FileText />, roles: ['admin', 'finance', 'hr_staff', 'manager'] },
+            { path: "/laporan", label: "Laporan BPJS", icon: <FirstAidKit />, query: "bpjs", roles: ['admin', 'finance', 'hr_staff', 'manager'] },
+            { path: "/laporan", label: "Laporan PPh", icon: <FileText />, query: "pph", roles: ['admin', 'finance', 'hr_staff', 'manager'] }
         ]
     }
 };
@@ -81,6 +81,11 @@ const Sidebar = ({ onCollapse }) => {
             onCollapse(newState);
         }
     };
+
+    // Only show menu items the logged-in user's role is actually allowed to open
+    const visibleMasterItems = menuItems.master.items.filter(item => AuthService.hasAnyRole(item.roles));
+    const visibleTransaksiItems = menuItems.transaksi.items.filter(item => AuthService.hasAnyRole(item.roles));
+    const visibleLaporanItems = menuItems.laporan.items.filter(item => AuthService.hasAnyRole(item.roles));
 
     const isActive = (path) => {
         return location.pathname === path;
@@ -129,7 +134,7 @@ const Sidebar = ({ onCollapse }) => {
                 {/* Logo */}
                 <div className="sidebar-header">
                     <div className="logo-section">
-                        <span className="logo-icon">💼</span>
+                        <span className="logo-icon"><Briefcase weight="fill" /></span>
                         {!isCollapsed && (
                             <div className="logo-text">
                                 <h4>PAYROLL</h4>
@@ -142,7 +147,7 @@ const Sidebar = ({ onCollapse }) => {
                         className="collapse-btn"
                         onClick={handleCollapse}
                     >
-                        {isCollapsed ? <FaBars /> : <FaTimes />}
+                        {isCollapsed ? <List /> : <X />}
                     </Button>
                 </div>
 
@@ -158,100 +163,106 @@ const Sidebar = ({ onCollapse }) => {
                     </div>
 
                     {/* Master Data */}
-                    <div className="menu-section">
-                        <div 
-                            className={`menu-item menu-parent ${isActiveParent(menuItems.master.items) ? 'active' : ''}`}
-                            onClick={() => toggleMenu('master')}
-                        >
-                            <span className="menu-icon">{menuItems.master.icon}</span>
-                            {!isCollapsed && (
-                                <>
-                                    <span className="menu-label">{menuItems.master.label}</span>
-                                    <span className="menu-arrow">
-                                        {openMenus.master ? <FaChevronUp /> : <FaChevronDown />}
-                                    </span>
-                                </>
+                    {visibleMasterItems.length > 0 && (
+                        <div className="menu-section">
+                            <div
+                                className={`menu-item menu-parent ${isActiveParent(visibleMasterItems) ? 'active' : ''}`}
+                                onClick={() => toggleMenu('master')}
+                            >
+                                <span className="menu-icon">{menuItems.master.icon}</span>
+                                {!isCollapsed && (
+                                    <>
+                                        <span className="menu-label">{menuItems.master.label}</span>
+                                        <span className="menu-arrow">
+                                            {openMenus.master ? <CaretUp /> : <CaretDown />}
+                                        </span>
+                                    </>
+                                )}
+                            </div>
+                            {openMenus.master && !isCollapsed && (
+                                <div className="submenu">
+                                    {visibleMasterItems.map((item, index) => (
+                                        <div
+                                            key={index}
+                                            className={`submenu-item ${isActive(item.path) ? 'active' : ''}`}
+                                            onClick={() => handleNavigate(item.path)}
+                                        >
+                                            <span className="submenu-icon">{item.icon}</span>
+                                            <span className="submenu-label">{item.label}</span>
+                                        </div>
+                                    ))}
+                                </div>
                             )}
                         </div>
-                        {openMenus.master && !isCollapsed && (
-                            <div className="submenu">
-                                {menuItems.master.items.map((item, index) => (
-                                    <div
-                                        key={index}
-                                        className={`submenu-item ${isActive(item.path) ? 'active' : ''}`}
-                                        onClick={() => handleNavigate(item.path)}
-                                    >
-                                        <span className="submenu-icon">{item.icon}</span>
-                                        <span className="submenu-label">{item.label}</span>
-                                    </div>
-                                ))}
-                            </div>
-                        )}
-                    </div>
+                    )}
 
                     {/* Transaksi */}
-                    <div className="menu-section">
-                        <div 
-                            className={`menu-item menu-parent ${isActiveParent(menuItems.transaksi.items) ? 'active' : ''}`}
-                            onClick={() => toggleMenu('transaksi')}
-                        >
-                            <span className="menu-icon">{menuItems.transaksi.icon}</span>
-                            {!isCollapsed && (
-                                <>
-                                    <span className="menu-label">{menuItems.transaksi.label}</span>
-                                    <span className="menu-arrow">
-                                        {openMenus.transaksi ? <FaChevronUp /> : <FaChevronDown />}
-                                    </span>
-                                </>
+                    {visibleTransaksiItems.length > 0 && (
+                        <div className="menu-section">
+                            <div
+                                className={`menu-item menu-parent ${isActiveParent(visibleTransaksiItems) ? 'active' : ''}`}
+                                onClick={() => toggleMenu('transaksi')}
+                            >
+                                <span className="menu-icon">{menuItems.transaksi.icon}</span>
+                                {!isCollapsed && (
+                                    <>
+                                        <span className="menu-label">{menuItems.transaksi.label}</span>
+                                        <span className="menu-arrow">
+                                            {openMenus.transaksi ? <CaretUp /> : <CaretDown />}
+                                        </span>
+                                    </>
+                                )}
+                            </div>
+                            {openMenus.transaksi && !isCollapsed && (
+                                <div className="submenu">
+                                    {visibleTransaksiItems.map((item, index) => (
+                                        <div
+                                            key={index}
+                                            className={`submenu-item ${isActive(item.path) ? 'active' : ''}`}
+                                            onClick={() => handleNavigate(item.path)}
+                                        >
+                                            <span className="submenu-icon">{item.icon}</span>
+                                            <span className="submenu-label">{item.label}</span>
+                                        </div>
+                                    ))}
+                                </div>
                             )}
                         </div>
-                        {openMenus.transaksi && !isCollapsed && (
-                            <div className="submenu">
-                                {menuItems.transaksi.items.map((item, index) => (
-                                    <div
-                                        key={index}
-                                        className={`submenu-item ${isActive(item.path) ? 'active' : ''}`}
-                                        onClick={() => handleNavigate(item.path)}
-                                    >
-                                        <span className="submenu-icon">{item.icon}</span>
-                                        <span className="submenu-label">{item.label}</span>
-                                    </div>
-                                ))}
-                            </div>
-                        )}
-                    </div>
+                    )}
 
                     {/* Laporan */}
-                    <div className="menu-section">
-                        <div 
-                            className={`menu-item menu-parent ${isActiveParent(menuItems.laporan.items) ? 'active' : ''}`}
-                            onClick={() => toggleMenu('laporan')}
-                        >
-                            <span className="menu-icon">{menuItems.laporan.icon}</span>
-                            {!isCollapsed && (
-                                <>
-                                    <span className="menu-label">{menuItems.laporan.label}</span>
-                                    <span className="menu-arrow">
-                                        {openMenus.laporan ? <FaChevronUp /> : <FaChevronDown />}
-                                    </span>
-                                </>
+                    {visibleLaporanItems.length > 0 && (
+                        <div className="menu-section">
+                            <div
+                                className={`menu-item menu-parent ${isActiveParent(visibleLaporanItems) ? 'active' : ''}`}
+                                onClick={() => toggleMenu('laporan')}
+                            >
+                                <span className="menu-icon">{menuItems.laporan.icon}</span>
+                                {!isCollapsed && (
+                                    <>
+                                        <span className="menu-label">{menuItems.laporan.label}</span>
+                                        <span className="menu-arrow">
+                                            {openMenus.laporan ? <CaretUp /> : <CaretDown />}
+                                        </span>
+                                    </>
+                                )}
+                            </div>
+                            {openMenus.laporan && !isCollapsed && (
+                                <div className="submenu">
+                                    {visibleLaporanItems.map((item, index) => (
+                                        <div
+                                            key={index}
+                                            className={`submenu-item ${isActive(item.path) && (!item.query || new URLSearchParams(location.search).get('filter') === item.query) ? 'active' : ''}`}
+                                            onClick={() => handleNavigate(item.path, item.query)}
+                                        >
+                                            <span className="submenu-icon">{item.icon}</span>
+                                            <span className="submenu-label">{item.label}</span>
+                                        </div>
+                                    ))}
+                                </div>
                             )}
                         </div>
-                        {openMenus.laporan && !isCollapsed && (
-                            <div className="submenu">
-                                {menuItems.laporan.items.map((item, index) => (
-                                    <div
-                                        key={index}
-                                        className={`submenu-item ${isActive(item.path) && (!item.query || new URLSearchParams(location.search).get('filter') === item.query) ? 'active' : ''}`}
-                                        onClick={() => handleNavigate(item.path, item.query)}
-                                    >
-                                        <span className="submenu-icon">{item.icon}</span>
-                                        <span className="submenu-label">{item.label}</span>
-                                    </div>
-                                ))}
-                            </div>
-                        )}
-                    </div>
+                    )}
                 </nav>
 
                 {/* Bottom Actions */}
@@ -259,7 +270,7 @@ const Sidebar = ({ onCollapse }) => {
                     {/* User Info */}
                     {!isCollapsed && (
                         <div className="sidebar-user-info">
-                            <FaUserCircle className="user-avatar" />
+                            <UserCircle className="user-avatar" />
                             <div className="user-details">
                                 <div className="user-name">{user?.username || 'User'}</div>
                                 <div className="user-role">
@@ -275,21 +286,23 @@ const Sidebar = ({ onCollapse }) => {
                         className="menu-item"
                         onClick={() => navigate('/profile')}
                     >
-                        <span className="menu-icon"><FaUserCircle /></span>
+                        <span className="menu-icon"><UserCircle /></span>
                         {!isCollapsed && <span className="menu-label">Profile</span>}
                     </div>
-                    <div
-                        className="menu-item"
-                        onClick={() => navigate('/settings')}
-                    >
-                        <span className="menu-icon"><FaCog /></span>
-                        {!isCollapsed && <span className="menu-label">Settings</span>}
-                    </div>
+                    {AuthService.hasRole('admin') && (
+                        <div
+                            className="menu-item"
+                            onClick={() => navigate('/settings')}
+                        >
+                            <span className="menu-icon"><GearSix /></span>
+                            {!isCollapsed && <span className="menu-label">Settings</span>}
+                        </div>
+                    )}
                     <div
                         className="menu-item logout"
                         onClick={handleLogout}
                     >
-                        <span className="menu-icon"><FaSignOutAlt /></span>
+                        <span className="menu-icon"><SignOut /></span>
                         {!isCollapsed && <span className="menu-label">Logout</span>}
                     </div>
                 </div>

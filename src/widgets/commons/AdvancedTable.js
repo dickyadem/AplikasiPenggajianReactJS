@@ -1,6 +1,6 @@
 import { useState, useEffect, useMemo, useCallback, useRef } from "react";
 import { Table, Form, InputGroup, Button, Spinner } from "react-bootstrap";
-import { FaSearch, FaTrash, FaDownload, FaChevronLeft, FaChevronRight } from "react-icons/fa";
+import { MagnifyingGlass, Trash, DownloadSimple, CaretLeft, CaretRight } from "@phosphor-icons/react";
 import "./AdvancedTable.css";
 
 const AdvancedTable = ({
@@ -132,7 +132,7 @@ const AdvancedTable = ({
                     {searchable && (
                         <InputGroup className="table-search">
                             <InputGroup.Text>
-                                <FaSearch />
+                                <MagnifyingGlass />
                             </InputGroup.Text>
                             <Form.Control
                                 placeholder="Cari data..."
@@ -146,7 +146,7 @@ const AdvancedTable = ({
                 <div className="table-toolbar-right">
                     {selectable && selectedRows.length > 0 && (
                         <Button variant="danger" size="sm" onClick={handleBulkDelete}>
-                            <FaTrash /> Hapus ({selectedRows.length})
+                            <Trash /> Hapus ({selectedRows.length})
                         </Button>
                     )}
 
@@ -157,7 +157,7 @@ const AdvancedTable = ({
                             onClick={handleExport}
                             disabled={!data || data.length === 0}
                         >
-                            <FaDownload /> Export Excel
+                            <DownloadSimple /> Export Excel
                         </Button>
                     )}
                 </div>
@@ -232,7 +232,7 @@ const AdvancedTable = ({
                                                             size="sm"
                                                             onClick={() => onDelete(row)}
                                                         >
-                                                            <FaTrash /> Hapus
+                                                            <Trash /> Hapus
                                                         </Button>
                                                     )}
                                                 </div>
@@ -265,7 +265,7 @@ const AdvancedTable = ({
                             disabled={pagination.currentPage === 1}
                             onClick={() => handlePageChange(pagination.currentPage - 1)}
                         >
-                            <FaChevronLeft /> Prev
+                            <CaretLeft /> Prev
                         </Button>
                         <span className="pagination-pages">
                             Halaman {pagination.currentPage} dari {pagination.lastPage}
@@ -276,7 +276,7 @@ const AdvancedTable = ({
                             disabled={pagination.currentPage === pagination.lastPage}
                             onClick={() => handlePageChange(pagination.currentPage + 1)}
                         >
-                            Next <FaChevronRight />
+                            Next <CaretRight />
                         </Button>
                     </div>
                 </div>

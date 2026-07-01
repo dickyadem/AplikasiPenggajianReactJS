@@ -38,8 +38,17 @@
 }
 
 .brand-icon {
-    font-size: 32px;
-    filter: drop-shadow(0 2px 4px rgba(0, 0, 0, 0.2));
+    width: 44px;
+    height: 44px;
+    flex-shrink: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 22px;
+    color: #ffffff;
+    border-radius: 12px;
+    background: linear-gradient(135deg, #0ea5e9 0%, #0284c7 100%);
+    box-shadow: 0 4px 12px rgba(14, 165, 233, 0.35);
 }
 
 .brand-text {
@@ -200,7 +209,7 @@
     width: 48px;
     height: 48px;
     border-radius: 14px;
-    background: linear-gradient(135deg, #0ea5e9 0%, #6366f1 100%);
+    background: linear-gradient(135deg, #0ea5e9 0%, #0284c7 100%);
     display: flex;
     align-items: center;
     justify-content: center;
@@ -246,7 +255,7 @@
     letter-spacing: 0.5px;
     padding: 3px 8px !important;
     border-radius: 6px !important;
-    background: linear-gradient(135deg, #0ea5e9 0%, #6366f1 100%) !important;
+    background: linear-gradient(135deg, #0ea5e9 0%, #0284c7 100%) !important;
     color: #ffffff !important;
     width: fit-content;
     border: none !important;

@@ -4,9 +4,9 @@ import { Card, Form, Button, Row, Col, Tabs, Tab, Badge, FormCheck } from "react
 import NavigationWidget from "../../widgets/commons/NavigationWidget";
 import { useToast } from "../../widgets/commons/ToastProvider";
 import {
-    FaCog, FaBuilding, FaMoneyBillWave, FaBell, FaLock,
-    FaPalette, FaGlobe, FaDatabase, FaSave, FaUndo
-} from "react-icons/fa";
+    GearSix, Buildings, Money, Bell, Lock,
+    Palette, Globe, Database, FloppyDisk, ArrowCounterClockwise
+} from "@phosphor-icons/react";
 import "./Settings.css";
 
 const Settings = () => {
@@ -79,7 +79,7 @@ const Settings = () => {
         <NavigationWidget>
             <div className="settings-page">
                 <div className="settings-header">
-                    <h1><FaCog  /> Pengaturan Sistem</h1>
+                    <h1><GearSix /> Pengaturan Sistem</h1>
                     <p>Konfigurasi dan preferensi sistem penggajian</p>
                 </div>
 
@@ -93,22 +93,22 @@ const Settings = () => {
                                     orientation="vertical"
                                     className="settings-tabs"
                                 >
-                                    <Tab eventKey="general" title={<><FaCog  /> Umum< />}>
+                                    <Tab eventKey="general" title={<><GearSix /> Umum< />}>
                                         <div className="tab-description">Pengaturan dasar sistem</div>
                                     </Tab>
-                                    <Tab eventKey="company" title={<><FaBuilding  /> Perusahaan< />}>
+                                    <Tab eventKey="company" title={<><Buildings /> Perusahaan< />}>
                                         <div className="tab-description">Informasi perusahaan</div>
                                     </Tab>
-                                    <Tab eventKey="payroll" title={<><FaMoneyBillWave  /> Penggajian< />}>
+                                    <Tab eventKey="payroll" title={<><Money /> Penggajian< />}>
                                         <div className="tab-description">Konfigurasi penggajian</div>
                                     </Tab>
-                                    <Tab eventKey="tax" title={<><FaLock  /> Pajak & BPJS< />}>
+                                    <Tab eventKey="tax" title={<><Lock /> Pajak & BPJS< />}>
                                         <div className="tab-description">Pengaturan pajak dan BPJS</div>
                                     </Tab>
-                                    <Tab eventKey="notifications" title={<><FaBell  /> Notifikasi< />}>
+                                    <Tab eventKey="notifications" title={<><Bell /> Notifikasi< />}>
                                         <div className="tab-description">Preferensi notifikasi</div>
                                     </Tab>
-                                    <Tab eventKey="system" title={<><FaDatabase  /> Sistem< />}>
+                                    <Tab eventKey="system" title={<><Database /> Sistem< />}>
                                         <div className="tab-description">Pengaturan sistem</div>
                                     </Tab>
                                 </Tabs>
@@ -121,12 +121,12 @@ const Settings = () => {
                             <Card.Header>
                                 <div className="settings-card-header">
                                     <h4>
-                                        {activeTab === "general" && <><FaCog  /> Pengaturan Umum< />}
-                                        {activeTab === "company" && <><FaBuilding  /> Informasi Perusahaan< />}
-                                        {activeTab === "payroll" && <><FaMoneyBillWave  /> Pengaturan Penggajian< />}
-                                        {activeTab === "tax" && <><FaLock  /> Pajak & BPJS< />}
-                                        {activeTab === "notifications" && <><FaBell  /> Notifikasi< />}
-                                        {activeTab === "system" && <><FaDatabase  /> Pengaturan Sistem< />}
+                                        {activeTab === "general" && <><GearSix /> Pengaturan Umum< />}
+                                        {activeTab === "company" && <><Buildings /> Informasi Perusahaan< />}
+                                        {activeTab === "payroll" && <><Money /> Pengaturan Penggajian< />}
+                                        {activeTab === "tax" && <><Lock /> Pajak & BPJS< />}
+                                        {activeTab === "notifications" && <><Bell /> Notifikasi< />}
+                                        {activeTab === "system" && <><Database /> Pengaturan Sistem< />}
                                     </h4>
                                 </div>
                             </Card.Header>
@@ -488,7 +488,7 @@ const Settings = () => {
                                             < />
                                         ) : (
                                             <>
-                                                <FaSave  /> Simpan Pengaturan
+                                                <FloppyDisk /> Simpan Pengaturan
                                             < />
                                         )}
                                     </Button>
@@ -496,7 +496,7 @@ const Settings = () => {
                                         variant="outline-secondary"
                                         onClick={handleReset}
                                     >
-                                        <FaUndo  /> Reset Default
+                                        <ArrowCounterClockwise /> Reset Default
                                     </Button>
                                 </div>
                             </Card.Body>

@@ -4,9 +4,9 @@ import { Card, Form, Button, Row, Col, Badge, Avatar } from "react-bootstrap";
 import NavigationWidget from "../../widgets/commons/NavigationWidget";
 import { useToast } from "../../widgets/commons/ToastProvider";
 import {
-    FaUser, FaEnvelope, FaPhone, FaBuilding, FaCalendarAlt,
-    FaMapMarkerAlt, FaEdit, FaSave, FaCamera, FaLock, FaKey
-} from "react-icons/fa";
+    User, EnvelopeSimple, Phone, Buildings, CalendarBlank,
+    MapPin, PencilSimple, FloppyDisk, Camera, Lock, Key
+} from "@phosphor-icons/react";
 import AuthService from "../../services/AuthService";
 import "./Profile.css";
 
@@ -98,11 +98,11 @@ const Profile = () => {
                                         <img src={user.avatar} alt="Profile" className="profile-avatar" />
                                     ) : (
                                         <div className="profile-avatar-placeholder">
-                                            <FaUser />
+                                            <User />
                                         </div>
                                     )}
                                     <label htmlFor="avatar-upload" className="avatar-edit-btn">
-                                        <FaCamera />
+                                        <Camera />
                                         <input
                                             type="file"
                                             id="avatar-upload"
@@ -127,7 +127,7 @@ const Profile = () => {
                                         variant="primary"
                                         onClick={() => setEditing(true)}
                                     >
-                                        <FaEdit /> Edit Profil
+                                        <PencilSimple /> Edit Profil
                                     </Button>
                                 ) : (
                                     <>
@@ -143,7 +143,7 @@ const Profile = () => {
                                                 </>
                                             ) : (
                                                 <>
-                                                    <FaSave /> Simpan
+                                                    <FloppyDisk /> Simpan
                                                 </>
                                             )}
                                         </Button>
@@ -166,7 +166,7 @@ const Profile = () => {
                         <Card className="profile-card">
                             <Card.Header>
                                 <div className="card-header-content">
-                                    <FaUser /> Informasi Pribadi
+                                    <User /> Informasi Pribadi
                                 </div>
                             </Card.Header>
                             <Card.Body>
@@ -261,7 +261,7 @@ const Profile = () => {
                         <Card className="profile-card">
                             <Card.Header>
                                 <div className="card-header-content">
-                                    <FaLock /> Ubah Password
+                                    <Lock /> Ubah Password
                                 </div>
                             </Card.Header>
                             <Card.Body>
@@ -298,7 +298,7 @@ const Profile = () => {
                                     className="w-100"
                                     disabled={saving}
                                 >
-                                    <FaKey /> Ubah Password
+                                    <Key /> Ubah Password
                                 </Button>
                             </Card.Body>
                         </Card>
@@ -307,7 +307,7 @@ const Profile = () => {
                         <Card className="profile-card mt-4">
                             <Card.Header>
                                 <div className="card-header-content">
-                                    <FaCalendarAlt /> Statistik Akun
+                                    <CalendarBlank /> Statistik Akun
                                 </div>
                             </Card.Header>
                             <Card.Body>

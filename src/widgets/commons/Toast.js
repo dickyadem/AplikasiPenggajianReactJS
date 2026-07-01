@@ -1,8 +1,8 @@
 import { useEffect } from "react";
-import { 
-    FaCheckCircle, FaExclamationCircle, FaExclamationTriangle, 
-    FaInfoCircle, FaTimes 
-} from "react-icons/fa";
+import {
+    CheckCircle, WarningCircle, Warning,
+    Info, X
+} from "@phosphor-icons/react";
 import "./Toast.css";
 
 const Toast = ({ id, type, message, duration = 5000, onClose }) => {
@@ -18,15 +18,15 @@ const Toast = ({ id, type, message, duration = 5000, onClose }) => {
     const getIcon = () => {
         switch (type) {
             case 'success':
-                return <FaCheckCircle className="toast-icon success" />;
+                return <CheckCircle weight="fill" className="toast-icon success" />;
             case 'error':
-                return <FaExclamationCircle className="toast-icon error" />;
+                return <WarningCircle weight="fill" className="toast-icon error" />;
             case 'warning':
-                return <FaExclamationTriangle className="toast-icon warning" />;
+                return <Warning weight="fill" className="toast-icon warning" />;
             case 'info':
-                return <FaInfoCircle className="toast-icon info" />;
+                return <Info weight="fill" className="toast-icon info" />;
             default:
-                return <FaInfoCircle className="toast-icon info" />;
+                return <Info weight="fill" className="toast-icon info" />;
         }
     };
 
@@ -44,7 +44,7 @@ const Toast = ({ id, type, message, duration = 5000, onClose }) => {
                     {message}
                 </div>
                 <button className="toast-close" onClick={() => onClose(id)}>
-                    <FaTimes />
+                    <X />
                 </button>
             </div>
             <div className="toast-progress">

@@ -1,7 +1,7 @@
 import { useEffect, useState } from "react";
 import { useNavigate, useParams } from "react-router-dom";
 import { Button, Card, Form } from "react-bootstrap";
-import { FaArrowLeft, FaSave, FaTrash } from "react-icons/fa";
+import { ArrowLeft, FloppyDisk, Trash } from "@phosphor-icons/react";
 import NavigationWidget from "../../widgets/commons/NavigationWidget";
 import JabatanService from "../../services/JabatanService";
 import { useToast } from "../../widgets/commons/ToastProvider";
@@ -55,13 +55,13 @@ const JabatanEditPage = () => {
         <NavigationWidget actionTop={
             <>
                 <Button className="me-2" variant="secondary" onClick={() => navigate(-1)}>
-                    <FaArrowLeft /> Kembali
+                    <ArrowLeft /> Kembali
                 </Button>
                 <Button className="me-2" variant="danger" onClick={handleJabatanServiceDelete}>
-                    <FaTrash />Hapus
+                    <Trash />Hapus
                 </Button>
                 <Button onClick={handleJabatanServiceEdit}>
-                    <FaSave />Simpan
+                    <FloppyDisk />Simpan
                 </Button>
             </>
         }>

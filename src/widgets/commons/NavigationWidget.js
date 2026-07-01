@@ -1,7 +1,7 @@
 import { useState, useEffect } from "react";
 import { Container, Navbar, Stack, Button, Dropdown, Badge } from "react-bootstrap";
 import { useNavigate } from "react-router-dom";
-import { FaBell, FaUserCircle, FaCog, FaSignOutAlt, FaBars, FaUser } from "react-icons/fa";
+import { Bell, UserCircle, GearSix, SignOut, List, User, Briefcase } from "@phosphor-icons/react";
 import AuthService from "../../services/AuthService";
 import "./NavigationWidget.css";
 
@@ -33,10 +33,10 @@ const NavigationWidget = ({ children, buttonCreate, actionTop }) => {
               className="mobile-toggle d-lg-none"
               onClick={() => window.dispatchEvent(new CustomEvent('toggleSidebar'))}
             >
-              <FaBars />
+              <List />
             </Button>
             <div className="navbar-brand-section">
-              <span className="brand-icon">💼</span>
+              <span className="brand-icon"><Briefcase weight="fill" /></span>
               <div className="brand-text">
                 <h4 className="brand-title">Sistem Penggajian</h4>
                 <p className="brand-subtitle">Payroll Management System</p>
@@ -46,7 +46,7 @@ const NavigationWidget = ({ children, buttonCreate, actionTop }) => {
 
           <div className="navbar-right">
             <Button variant="link" className="nav-action-btn">
-              <FaBell />
+              <Bell />
               <Badge bg="danger" className="notification-badge">3</Badge>
             </Button>
 
@@ -54,7 +54,7 @@ const NavigationWidget = ({ children, buttonCreate, actionTop }) => {
 
             <Dropdown className="user-dropdown" align="end">
               <Dropdown.Toggle variant="link" className="user-toggle">
-                <FaUserCircle className="user-icon" />
+                <UserCircle className="user-icon" />
                 <div className="user-info">
                   <span className="user-name">{displayName}</span>
                   <span className="user-role">{displayRole}</span>
@@ -65,7 +65,7 @@ const NavigationWidget = ({ children, buttonCreate, actionTop }) => {
                 {/* User Header */}
                 <div className="dropdown-user-header">
                   <div className="dropdown-avatar">
-                    <FaUserCircle />
+                    <UserCircle />
                   </div>
                   <div className="dropdown-user-detail">
                     <span className="dropdown-user-name">{displayName}</span>
@@ -78,19 +78,19 @@ const NavigationWidget = ({ children, buttonCreate, actionTop }) => {
 
                 {/* Menu Items */}
                 <Dropdown.Item onClick={() => navigate('/profile')} className="dropdown-menu-item">
-                  <div className="dropdown-item-icon profile-icon"><FaUser /></div>
+                  <div className="dropdown-item-icon profile-icon"><User /></div>
                   <span className="dropdown-item-label">Profile</span>
                 </Dropdown.Item>
 
                 <Dropdown.Item onClick={() => navigate('/settings')} className="dropdown-menu-item">
-                  <div className="dropdown-item-icon settings-icon"><FaCog /></div>
+                  <div className="dropdown-item-icon settings-icon"><GearSix /></div>
                   <span className="dropdown-item-label">Settings</span>
                 </Dropdown.Item>
 
                 <div className="dropdown-menu-divider"></div>
 
                 <Dropdown.Item onClick={handleLogout} className="dropdown-menu-item logout-item">
-                  <div className="dropdown-item-icon logout-icon"><FaSignOutAlt /></div>
+                  <div className="dropdown-item-icon logout-icon"><SignOut /></div>
                   <span className="dropdown-item-label">Logout</span>
                 </Dropdown.Item>
               </Dropdown.Menu>
