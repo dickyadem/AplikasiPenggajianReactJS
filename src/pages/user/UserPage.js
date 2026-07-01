@@ -86,7 +86,7 @@ const UserPage = () => {
         </span>
       )
     },
-    {
+    ...(AuthService.hasRole('admin') ? [{
       header: 'Aksi',
       accessor: 'actions',
       style: { minWidth: '140px' },
@@ -99,7 +99,7 @@ const UserPage = () => {
           <Key /> Reset Password
         </Button>
       )
-    }
+    }] : [])
   ];
 
   // Handlers

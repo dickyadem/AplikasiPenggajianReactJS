@@ -1,23 +1,71 @@
 import { useState, useEffect } from "react";
 import { Container, Navbar, Stack, Button, Dropdown, Badge } from "react-bootstrap";
 import { useNavigate } from "react-router-dom";
-import { Bell, UserCircle, GearSix, SignOut, List, User, Briefcase } from "@phosphor-icons/react";
+import { Bell, UserCircle, GearSix, SignOut, List, User, Briefcase, CheckCircle, Warning, Info, Checks } from "@phosphor-icons/react";
 import AuthService from "../../services/AuthService";
+import NotificationService from "../../services/NotificationService";
 import "./NavigationWidget.css";
+
+const NOTIFICATION_ICON = {
+  success: <CheckCircle weight="fill" />,
+  warning: <Warning weight="fill" />,
+  info: <Info weight="fill" />,
+};
+
+const formatNotificationTime = (isoString) => {
+  if (!isoString) return "";
+  return new Date(isoString).toLocaleString("id-ID", {
+    day: "numeric",
+    month: "short",
+    hour: "2-digit",
+    minute: "2-digit",
+  });
+};
 
 const NavigationWidget = ({ children, buttonCreate, actionTop }) => {
   const navigate = useNavigate();
   const [user, setUser] = useState(null);
+  const [notifications, setNotifications] = useState([]);
 
   useEffect(() => {
     const userInfo = AuthService.getUser();
     setUser(userInfo);
   }, []);
 
+  useEffect(() => {
+    NotificationService.list()
+      .then((response) => {
+        const results = response.data.results || response.data || [];
+        setNotifications(
+          results.map((n) => ({
+            id: n.id,
+            type: n.type,
+            title: n.title,
+            message: n.message,
+            time: formatNotificationTime(n.created_at),
+            read: !!n.is_read,
+          }))
+        );
+      })
+      .catch((err) => console.error("Error loading notifications:", err));
+  }, []);
+
   const handleLogout = () => {
     AuthService.logout();
     navigate("/");
   };
+
+  const markAsRead = (id) => {
+    setNotifications((prev) => prev.map((n) => (n.id === id ? { ...n, read: true } : n)));
+    NotificationService.markAsRead(id).catch((err) => console.error("Error marking notification as read:", err));
+  };
+
+  const markAllAsRead = () => {
+    setNotifications((prev) => prev.map((n) => ({ ...n, read: true })));
+    NotificationService.markAllAsRead().catch((err) => console.error("Error marking all notifications as read:", err));
+  };
+
+  const unreadCount = notifications.filter((n) => !n.read).length;
 
   const displayName = user?.username || user?.NamaLengkap || "User";
   const displayRole = (user?.role || "user").toUpperCase();
@@ -45,10 +93,55 @@ const NavigationWidget = ({ children, buttonCreate, actionTop }) => {
           </div>
 
           <div className="navbar-right">
-            <Button variant="link" className="nav-action-btn">
-              <Bell />
-              <Badge bg="danger" className="notification-badge">3</Badge>
-            </Button>
+            <Dropdown className="notification-dropdown" align="end">
+              <Dropdown.Toggle variant="link" className="nav-action-btn">
+                <Bell />
+                {unreadCount > 0 && (
+                  <Badge bg="danger" className="notification-badge">{unreadCount}</Badge>
+                )}
+              </Dropdown.Toggle>
+
+              <Dropdown.Menu className="notification-menu">
+                <div className="notification-menu-header">
+                  <span className="notification-menu-title">Notifikasi</span>
+                  {unreadCount > 0 && (
+                    <button type="button" className="notification-mark-all" onClick={markAllAsRead}>
+                      <Checks /> Tandai semua dibaca
+                    </button>
+                  )}
+                </div>
+
+                <div className="dropdown-menu-divider"></div>
+
+                {notifications.length > 0 ? (
+                  <div className="notification-list">
+                    {notifications.map((notif) => (
+                      <button
+                        type="button"
+                        key={notif.id}
+                        className={`notification-item ${notif.read ? '' : 'unread'}`}
+                        onClick={() => markAsRead(notif.id)}
+                      >
+                        <div className={`notification-item-icon ${notif.type}`}>
+                          {NOTIFICATION_ICON[notif.type]}
+                        </div>
+                        <div className="notification-item-body">
+                          <span className="notification-item-title">{notif.title}</span>
+                          <span className="notification-item-message">{notif.message}</span>
+                          <span className="notification-item-time">{notif.time}</span>
+                        </div>
+                        {!notif.read && <span className="notification-item-dot"></span>}
+                      </button>
+                    ))}
+                  </div>
+                ) : (
+                  <div className="notification-empty">
+                    <Bell />
+                    <span>Belum ada notifikasi</span>
+                  </div>
+                )}
+              </Dropdown.Menu>
+            </Dropdown>
 
             <div className="navbar-divider"></div>
 

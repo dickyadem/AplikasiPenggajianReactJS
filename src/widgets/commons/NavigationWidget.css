@@ -96,6 +96,11 @@
     transform: translateY(-2px);
 }
 
+/* Bootstrap adds a caret to any .dropdown-toggle; the bell stays icon-only */
+.nav-action-btn.dropdown-toggle::after {
+    display: none;
+}
+
 /* Notification Badge */
 .notification-badge {
     position: absolute;
@@ -345,6 +350,163 @@
     background: #dc2626;
     color: #ffffff;
     box-shadow: 0 4px 12px rgba(220, 38, 38, 0.3);
+}
+
+/* Notification Dropdown */
+.notification-menu {
+    border: 1px solid #e2e8f0 !important;
+    border-radius: 16px !important;
+    box-shadow: 0 20px 60px rgba(0, 0, 0, 0.15), 0 0 0 1px rgba(0, 0, 0, 0.03) !important;
+    padding: 0 !important;
+    width: 340px;
+    max-width: 90vw;
+    margin-top: 12px !important;
+    background: #ffffff !important;
+    overflow: hidden;
+    animation: dropdownReveal 0.25s cubic-bezier(0.22, 1, 0.36, 1);
+}
+
+.notification-menu-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 12px;
+    padding: 16px 18px;
+}
+
+.notification-menu-title {
+    font-size: 15px;
+    font-weight: 700;
+    color: #1e293b;
+}
+
+.notification-mark-all {
+    display: flex;
+    align-items: center;
+    gap: 4px;
+    background: none;
+    border: none;
+    font-size: 12px;
+    font-weight: 600;
+    color: #0284c7;
+    padding: 0;
+    cursor: pointer;
+    transition: color 0.2s ease;
+}
+
+.notification-mark-all:hover {
+    color: #0ea5e9;
+}
+
+.notification-list {
+    max-height: 360px;
+    overflow-y: auto;
+}
+
+.notification-item {
+    display: flex;
+    align-items: flex-start;
+    gap: 12px;
+    width: 100%;
+    padding: 14px 18px;
+    background: transparent;
+    border: none;
+    border-bottom: 1px solid #f1f5f9;
+    text-align: left;
+    cursor: pointer;
+    transition: background 0.2s ease;
+}
+
+.notification-item:last-child {
+    border-bottom: none;
+}
+
+.notification-item:hover {
+    background: #f8fafc;
+}
+
+.notification-item.unread {
+    background: #f0f9ff;
+}
+
+.notification-item.unread:hover {
+    background: #e0f2fe;
+}
+
+.notification-item-icon {
+    width: 36px;
+    height: 36px;
+    border-radius: 10px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+    font-size: 16px;
+    color: #ffffff;
+}
+
+.notification-item-icon.success {
+    background: #059669;
+}
+
+.notification-item-icon.warning {
+    background: #d97706;
+}
+
+.notification-item-icon.info {
+    background: #2563eb;
+}
+
+.notification-item-body {
+    display: flex;
+    flex-direction: column;
+    gap: 2px;
+    min-width: 0;
+    flex: 1;
+}
+
+.notification-item-title {
+    font-size: 13px;
+    font-weight: 600;
+    color: #1e293b;
+    line-height: 1.4;
+}
+
+.notification-item-message {
+    font-size: 12px;
+    color: #64748b;
+    line-height: 1.4;
+}
+
+.notification-item-time {
+    font-size: 11px;
+    color: #94a3b8;
+    margin-top: 2px;
+}
+
+.notification-item-dot {
+    width: 8px;
+    height: 8px;
+    border-radius: 50%;
+    background: #0ea5e9;
+    flex-shrink: 0;
+    margin-top: 6px;
+}
+
+.notification-empty {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 10px;
+    padding: 40px 20px;
+    color: #94a3b8;
+    font-size: 13px;
+}
+
+.notification-empty svg {
+    font-size: 28px;
+    opacity: 0.5;
 }
 
 /* Dropdown Item Text */

@@ -1,4 +1,4 @@
-import { useState, useCallback, createContext, useContext } from "react";
+import { useState, useCallback, useMemo, createContext, useContext } from "react";
 import Toast from "./Toast";
 import "./Toast.css";
 
@@ -26,20 +26,23 @@ const ToastProvider = ({ children }) => {
         setToasts((prev) => prev.filter((toast) => toast.id !== id));
     }, []);
 
-    const toast = {
-        success: (message, duration) => addToast('success', message, duration),
-        error: (message, duration) => addToast('error', message, duration),
-        warning: (message, duration) => addToast('warning', message, duration),
-        info: (message, duration) => addToast('info', message, duration),
-    };
+    const success = useCallback((message, duration) => addToast('success', message, duration), [addToast]);
+    const error = useCallback((message, duration) => addToast('error', message, duration), [addToast]);
+    const warning = useCallback((message, duration) => addToast('warning', message, duration), [addToast]);
+    const info = useCallback((message, duration) => addToast('info', message, duration), [addToast]);
 
-    const contextValue = {
+    // Keep a stable identity across renders so components that put
+    // success/error/etc. in a useEffect dependency array don't re-fire
+    // on every toast add/remove (which previously caused infinite fetch loops).
+    const toast = useMemo(() => ({ success, error, warning, info }), [success, error, warning, info]);
+
+    const contextValue = useMemo(() => ({
         toast,
-        success: (message, duration) => addToast('success', message, duration),
-        error: (message, duration) => addToast('error', message, duration),
-        warning: (message, duration) => addToast('warning', message, duration),
-        info: (message, duration) => addToast('info', message, duration),
-    };
+        success,
+        error,
+        warning,
+        info,
+    }), [toast, success, error, warning, info]);
 
     return (
         <ToastContext.Provider value={contextValue}>

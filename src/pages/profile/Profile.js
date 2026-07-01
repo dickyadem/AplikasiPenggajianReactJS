@@ -1,6 +1,6 @@
 import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
-import { Card, Form, Button, Row, Col, Badge, Avatar } from "react-bootstrap";
+import { Card, Form, Button, Row, Col, Badge, Spinner } from "react-bootstrap";
 import NavigationWidget from "../../widgets/commons/NavigationWidget";
 import { useToast } from "../../widgets/commons/ToastProvider";
 import {
@@ -8,6 +8,7 @@ import {
     MapPin, PencilSimple, FloppyDisk, Camera, Lock, Key
 } from "@phosphor-icons/react";
 import AuthService from "../../services/AuthService";
+import UserService from "../../services/UserService";
 import "./Profile.css";
 
 const Profile = () => {
@@ -15,14 +16,15 @@ const Profile = () => {
     const { success, error } = useToast();
     const [editing, setEditing] = useState(false);
     const [saving, setSaving] = useState(false);
+    const [loading, setLoading] = useState(true);
     const [user, setUser] = useState({
-        username: "Admin",
-        email: "admin@perusahaan.com",
-        phone: "0812-3456-7890",
-        department: "IT",
-        position: "System Administrator",
-        joinDate: "2023-01-15",
-        address: "Jl. Sudirman No. 123, Jakarta",
+        username: "",
+        email: "",
+        phone: "",
+        department: "",
+        position: "",
+        joinDate: "",
+        address: "",
         avatar: null
     });
 
@@ -33,17 +35,49 @@ const Profile = () => {
     });
 
     useEffect(() => {
-        // Load user profile from API
-        // For demo, using static data
-    }, []);
+        UserService.getMe()
+            .then((response) => {
+                const data = response.data;
+                setUser((prev) => ({
+                    ...prev,
+                    username: data.NamaLengkap || "",
+                    email: data.email || "",
+                    phone: data.phone || "",
+                    department: data.department || "",
+                    position: data.position || "",
+                    joinDate: data.joinDate || "",
+                    address: data.address || "",
+                }));
+            })
+            .catch((err) => {
+                const msg = err?.response?.data?.message || "Gagal memuat data profil.";
+                error(msg);
+            })
+            .finally(() => {
+                setLoading(false);
+            });
+    }, [error]);
 
     const handleSave = () => {
         setSaving(true);
-        setTimeout(() => {
-            success("Profil berhasil diupdate!");
-            setEditing(false);
-            setSaving(false);
-        }, 1000);
+        UserService.updateMe({
+            NamaLengkap: user.username,
+            phone: user.phone,
+            department: user.department,
+            position: user.position,
+            address: user.address,
+        })
+            .then(() => {
+                success("Profil berhasil diupdate!");
+                setEditing(false);
+            })
+            .catch((err) => {
+                const msg = err?.response?.data?.message || "Gagal menyimpan profil.";
+                error(msg);
+            })
+            .finally(() => {
+                setSaving(false);
+            });
     };
 
     const handleChangePassword = async () => {
@@ -84,6 +118,16 @@ const Profile = () => {
             reader.readAsDataURL(file);
         }
     };
+
+    if (loading) {
+        return (
+            <NavigationWidget>
+                <div className="d-flex justify-content-center p-5">
+                    <Spinner animation="border" variant="primary" />
+                </div>
+            </NavigationWidget>
+        );
+    }
 
     return (
         <NavigationWidget>
@@ -188,8 +232,8 @@ const Profile = () => {
                                             <Form.Control
                                                 type="email"
                                                 value={user.email}
-                                                onChange={(e) => setUser(prev => ({ ...prev, email: e.target.value }))}
-                                                disabled={!editing}
+                                                disabled
+                                                className="bg-light"
                                             />
                                         </Form.Group>
                                     </Col>

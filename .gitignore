@@ -23,3 +23,4 @@ yarn-debug.log*
 yarn-error.log*
 DEPLOYMENT_NOTES.md
 .claude/skills/
+FE_API_GUIDE.md

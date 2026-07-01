@@ -26,4 +26,12 @@ UserService.resetPassword = (email, newPassword) => {
   return HTTPService.put(`/user/reset-password/${encodeURIComponent(email)}`, { newPassword });
 };
 
+UserService.getMe = () => {
+  return HTTPService.get(`/user/me`);
+};
+
+UserService.updateMe = (data) => {
+  return HTTPService.put(`/user/me`, data);
+};
+
 export default UserService;
