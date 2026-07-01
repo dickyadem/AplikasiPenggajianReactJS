@@ -4,6 +4,8 @@ Aplikasi web untuk mengelola penggajian karyawan — data master (karyawan, jaba
 
 Frontend ini dibangun dengan React (Create React App) dan mengonsumsi REST API dari backend terpisah ([API-PAYROLL](https://github.com/dickyadem/API-PAYROLL), live di `https://api-payroll.vercel.app`).
 
+**Live Demo**: [dickyadem.github.io/AplikasiPenggajianReactJS](https://dickyadem.github.io/AplikasiPenggajianReactJS/)
+
 ---
 
 ## Tech Stack
