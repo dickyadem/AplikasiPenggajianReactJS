@@ -1,70 +1,140 @@
-# Getting Started with Create React App
+# Sistem Penggajian (Payroll Management System)
 
-This project was bootstrapped with [Create React App](https://github.com/facebook/create-react-app).
+Aplikasi web untuk mengelola penggajian karyawan — data master (karyawan, jabatan, golongan, pendapatan, potongan), proses penggajian bulanan dengan perhitungan PPh 21 & BPJS otomatis, slip gaji, laporan (export Excel), dashboard analitik, serta manajemen user dengan kontrol akses berbasis role (RBAC).
 
-## Available Scripts
+Frontend ini dibangun dengan React (Create React App) dan mengonsumsi REST API dari backend terpisah ([API-PAYROLL](https://github.com/dickyadem/API-PAYROLL), live di `https://api-payroll.vercel.app`).
 
-In the project directory, you can run:
+---
 
-### `npm start`
+## Tech Stack
 
-Runs the app in the development mode.\
-Open [http://localhost:3000](http://localhost:3000) to view it in your browser.
+- **React 18** (Create React App / `react-scripts`)
+- **React Router v6** — routing & route protection berbasis role
+- **React-Bootstrap 5** — komponen UI (Bootstrap 5.3)
+- **@phosphor-icons/react** — satu-satunya icon library yang dipakai di seluruh app (weight & size distandarkan lewat `IconContext.Provider` di `App.js`)
+- **Axios** — HTTP client (`src/services/HTTPService.js`), otomatis kirim token via header `x-access-token`
+- **Chart.js + react-chartjs-2** — grafik di Dashboard
+- **xlsx** — export data ke Excel
+- **gh-pages** — deploy ke GitHub Pages
 
-The page will reload when you make changes.\
-You may also see any lint errors in the console.
+---
 
-### `npm test`
+## Fitur Utama
 
-Launches the test runner in the interactive watch mode.\
-See the section about [running tests](https://facebook.github.io/create-react-app/docs/running-tests) for more information.
+| Modul | Deskripsi |
+|---|---|
+| **Dashboard** | Ringkasan total karyawan, total gaji, progress penggajian, breakdown pendapatan/potongan, grafik tren 6 bulan, distribusi karyawan per divisi |
+| **Master Data** | CRUD Karyawan, Jabatan, Golongan, Pendapatan, Potongan, Profil Perusahaan |
+| **Penggajian** | Input penggajian dengan kalkulasi otomatis PPh 21 & BPJS, list & riwayat penggajian |
+| **Laporan** | Laporan List Penggajian, Laporan BPJS, Laporan PPh — bisa di-export ke Excel |
+| **User Management** | Kelola akun user & role (admin only) |
+| **RBAC** | Kontrol akses per halaman/aksi berdasarkan role, lihat tabel role di bawah |
+| **Notifikasi** | Dropdown notifikasi di navbar (tersambung ke `GET /notifications`) |
+| **Profile** | Edit profil sendiri (tersambung ke `GET/PUT /user/me`) |
 
-### `npm run build`
+---
 
-Builds the app for production to the `build` folder.\
-It correctly bundles React in production mode and optimizes the build for the best performance.
+## Role & Hak Akses
 
-The build is minified and the filenames include the hashes.\
-Your app is ready to be deployed!
+Role bertingkat (level lebih tinggi otomatis punya akses level di bawahnya untuk pengecekan `hasRoleOrHigher`):
 
-See the section about [deployment](https://facebook.github.io/create-react-app/docs/deployment) for more information.
+```
+employee (1) < finance (2) < hr_staff (3) < manager (4) < admin (5)
+```
 
-### `npm run eject`
+| Halaman / Aksi | employee | finance | hr_staff | manager | admin |
+|---|:---:|:---:|:---:|:---:|:---:|
+| Dashboard, Profile | ✅ | ✅ | ✅ | ✅ | ✅ |
+| Master Data (Karyawan, Jabatan, Golongan, Profil) | ❌ | ❌ | ✅ | ✅ | ✅ |
+| Pendapatan, Potongan | ❌ | ✅ | ✅ | ✅ | ✅ |
+| List Penggajian (lihat) | ❌ | ✅ | ✅ | ✅ | ✅ |
+| Input Penggajian | ❌ | ✅ | ✅ | ❌ | ✅ |
+| Laporan | ❌ | ✅ | ✅ | ✅ | ✅ |
+| Kelola User (list, tambah, edit, reset password) | ❌ | ❌ | ❌ | ❌ | ✅ |
+| Settings, RBAC Test | ❌ | ❌ | ❌ | ❌ | ✅ |
 
-**Note: this is a one-way operation. Once you `eject`, you can't go back!**
+> Manager sengaja **tidak** diberi akses Input Penggajian — perannya review/approve laporan, bukan input data (pemisahan tugas/*separation of duties*). Employee tidak diberi akses manajemen apa pun untuk menghindari konflik kepentingan (mis. tidak bisa input gaji sendiri).
 
-If you aren't satisfied with the build tool and configuration choices, you can `eject` at any time. This command will remove the single build dependency from your project.
+Implementasi:
+- Pembatasan route ada di `src/App.js` (prop `requiredRole` / `requiredRoles` pada `<ProtectedRoute>`)
+- Pembatasan menu sidebar ada di `src/widgets/commons/Sidebar.js` (properti `roles` per item menu, harus selalu sinkron dengan `App.js`)
+- Akses ditolak diarahkan ke halaman `/unauthorized`, bukan ke halaman login (kecuali memang belum login)
 
-Instead, it will copy all the configuration files and the transitive dependencies (webpack, Babel, ESLint, etc) right into your project so you have full control over them. All of the commands except `eject` will still work, but they will point to the copied scripts so you can tweak them. At this point you're on your own.
+---
 
-You don't have to ever use `eject`. The curated feature set is suitable for small and middle deployments, and you shouldn't feel obligated to use this feature. However we understand that this tool wouldn't be useful if you couldn't customize it when you are ready for it.
+## Struktur Folder
 
-## Learn More
+```
+src/
+├── pages/            # Satu folder per modul/halaman (dashboard, karyawan, jabatan, golongan,
+│                        pendapatan, potongan, penggajian, laporan, profil, profile, user,
+│                        settings, rbac, auth)
+├── widgets/           # Komponen reusable (Sidebar, NavigationWidget, AdvancedTable, Toast,
+│                        search/choice widget per modul, dsb.)
+├── services/          # Satu file per resource API (KaryawanService, GajiService, UserService,
+│                        NotificationService, HTTPService, AuthService, dst.)
+├── hooks/             # Custom hooks (mis. useToast)
+├── utils/             # Helper (format currency/date, export Excel, kalkulator PPh 21)
+├── App.js             # Definisi seluruh route + proteksi role
+└── config.js          # BASE_URL API (dari env REACT_APP_API_URL)
+```
 
-You can learn more in the [Create React App documentation](https://facebook.github.io/create-react-app/docs/getting-started).
+---
 
-To learn React, check out the [React documentation](https://reactjs.org/).
+## Getting Started
 
-### Code Splitting
+### Prasyarat
+- Node.js (versi yang kompatibel dengan `react-scripts@5`)
+- Backend API sudah jalan (lokal di `http://localhost:4000` atau pakai production `https://api-payroll.vercel.app`)
 
-This section has moved here: [https://facebook.github.io/create-react-app/docs/code-splitting](https://facebook.github.io/create-react-app/docs/code-splitting)
+### Instalasi
+```bash
+npm install
+```
 
-### Analyzing the Bundle Size
+### Konfigurasi environment
+Buat `.env` di root project kalau ingin override base URL API (default fallback ke production):
+```env
+REACT_APP_API_URL=http://localhost:4000
+```
 
-This section has moved here: [https://facebook.github.io/create-react-app/docs/analyzing-the-bundle-size](https://facebook.github.io/create-react-app/docs/analyzing-the-bundle-size)
+### Menjalankan secara lokal
+```bash
+npm start
+```
+Buka [http://localhost:3000](http://localhost:3000).
 
-### Making a Progressive Web App
+### Build production
+```bash
+npm run build
+```
 
-This section has moved here: [https://facebook.github.io/create-react-app/docs/making-a-progressive-web-app](https://facebook.github.io/create-react-app/docs/making-a-progressive-web-app)
+### Deploy ke GitHub Pages
+```bash
+npm run deploy
+```
+(Menjalankan `predeploy` → `npm run build`, lalu publish folder `build` via `gh-pages`. Live di `https://dickyadem.github.io/AplikasiPenggajianReactJS`.)
 
-### Advanced Configuration
+> Catatan: `package.json` punya field `homepage` yang di-set ke URL GitHub Pages tersebut — CRA memakainya untuk menghitung `PUBLIC_URL`. `BrowserRouter`'s `basename` di `App.js` dibuat kondisional (`process.env.NODE_ENV === 'production'`) supaya dev server tetap jalan normal dari `localhost:3000/` root, sementara build production tetap routing dengan benar di bawah `/AplikasiPenggajianReactJS/`.
 
-This section has moved here: [https://facebook.github.io/create-react-app/docs/advanced-configuration](https://facebook.github.io/create-react-app/docs/advanced-configuration)
+---
 
-### Deployment
+## Dokumentasi Lain
 
-This section has moved here: [https://facebook.github.io/create-react-app/docs/deployment](https://facebook.github.io/create-react-app/docs/deployment)
+- **Backend API reference** — lihat repo [API-PAYROLL](https://github.com/dickyadem/API-PAYROLL) untuk source code backend
+- **RBAC_INTEGRATION.md** — panduan awal integrasi RBAC (role, testing scenario)
+- **EXPORT_EXCEL_GUIDE.md** — cara pakai fitur export Excel di komponen lain
 
-### `npm run build` fails to minify
+> `DEPLOYMENT_NOTES.md` dan `FE_API_GUIDE.md` ada di root project tapi **tidak ikut ke repo** (masuk `.gitignore`) — keduanya catatan kerja lokal berisi kontrak API terbaru, kredensial deployment, dan daftar bug/TODO yang sedang di-tracking bareng tim backend.
 
-This section has moved here: [https://facebook.github.io/create-react-app/docs/troubleshooting#npm-run-build-fails-to-minify](https://facebook.github.io/create-react-app/docs/troubleshooting#npm-run-build-fails-to-minify)
+---
+
+## Scripts
+
+| Command | Fungsi |
+|---|---|
+| `npm start` | Jalankan dev server |
+| `npm run build` | Build production ke folder `build/` |
+| `npm test` | Jalankan test runner (CRA/Jest) |
+| `npm run deploy` | Build + publish ke GitHub Pages |
+| `npm run eject` | Eject konfigurasi CRA (irreversible, hindari kecuali benar-benar perlu) |

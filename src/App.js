@@ -39,7 +39,7 @@ function App() {
   return (
     <IconContext.Provider value={{ size: "1em", weight: "regular" }}>
     <ToastProvider>
-      <BrowserRouter basename={process.env.PUBLIC_URL}>
+      <BrowserRouter basename={process.env.NODE_ENV === 'production' ? process.env.PUBLIC_URL : undefined}>
         <Routes>
           <Route path="/" element={<AuthLoginPage />} />
           <Route path="/unauthorized" element={<Unauthorized />} />
@@ -67,7 +67,7 @@ function App() {
                   </ProtectedRoute>
                 } />
                 <Route path="/user" element={
-                  <ProtectedRoute requiredRoles={['admin', 'hr_staff', 'manager', 'finance', 'employee']}>
+                  <ProtectedRoute requiredRole="admin">
                     <UserPage />
                   </ProtectedRoute>
                 } />

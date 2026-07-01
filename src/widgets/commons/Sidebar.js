@@ -20,7 +20,7 @@ const menuItems = {
         label: "Master Data",
         icon: <Buildings />,
         items: [
-            { path: "/user", label: "User", icon: <Users />, roles: ['admin', 'hr_staff', 'manager', 'finance', 'employee'] },
+            { path: "/user", label: "User", icon: <Users />, roles: ['admin'] },
             { path: "/profil", label: "Profil", icon: <IdentificationBadge />, roles: ['admin', 'hr_staff', 'manager'] },
             { path: "/karyawan", label: "Karyawan", icon: <Briefcase />, roles: ['admin', 'hr_staff', 'manager'] },
             { path: "/jabatan", label: "Jabatan", icon: <Stack />, roles: ['admin', 'hr_staff', 'manager'] },
