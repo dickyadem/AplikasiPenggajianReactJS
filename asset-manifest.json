@@ -1,15 +1,15 @@
 {
   "files": {
-    "main.css": "/AplikasiPenggajianReactJS/static/css/main.d1cba0aa.css",
-    "main.js": "/AplikasiPenggajianReactJS/static/js/main.77cd278e.js",
+    "main.css": "/AplikasiPenggajianReactJS/static/css/main.9b6b27e7.css",
+    "main.js": "/AplikasiPenggajianReactJS/static/js/main.7676e63d.js",
     "static/js/45.1c478307.chunk.js": "/AplikasiPenggajianReactJS/static/js/45.1c478307.chunk.js",
     "index.html": "/AplikasiPenggajianReactJS/index.html",
-    "main.d1cba0aa.css.map": "/AplikasiPenggajianReactJS/static/css/main.d1cba0aa.css.map",
-    "main.77cd278e.js.map": "/AplikasiPenggajianReactJS/static/js/main.77cd278e.js.map",
+    "main.9b6b27e7.css.map": "/AplikasiPenggajianReactJS/static/css/main.9b6b27e7.css.map",
+    "main.7676e63d.js.map": "/AplikasiPenggajianReactJS/static/js/main.7676e63d.js.map",
     "45.1c478307.chunk.js.map": "/AplikasiPenggajianReactJS/static/js/45.1c478307.chunk.js.map"
   },
   "entrypoints": [
-    "static/css/main.d1cba0aa.css",
-    "static/js/main.77cd278e.js"
+    "static/css/main.9b6b27e7.css",
+    "static/js/main.7676e63d.js"
   ]
 }
