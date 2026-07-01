@@ -1,4 +1,5 @@
 import { BrowserRouter, Routes, Route } from "react-router-dom";
+import { IconContext } from "@phosphor-icons/react";
 import { ToastProvider } from "./widgets/commons/ToastProvider";
 import Layout from "./widgets/commons/Layout";
 import ProtectedRoute from "./widgets/commons/ProtectedRoute";
@@ -36,8 +37,9 @@ import PotonganEditPage from "./pages/potongan/PotonganEditPage";
 
 function App() {
   return (
+    <IconContext.Provider value={{ size: "1em", weight: "regular" }}>
     <ToastProvider>
-      <BrowserRouter>
+      <BrowserRouter basename={process.env.PUBLIC_URL}>
         <Routes>
           <Route path="/" element={<AuthLoginPage />} />
           <Route path="/unauthorized" element={<Unauthorized />} />
@@ -191,6 +193,7 @@ function App() {
         </Routes>
       </BrowserRouter>
     </ToastProvider>
+    </IconContext.Provider>
   );
 }
 
