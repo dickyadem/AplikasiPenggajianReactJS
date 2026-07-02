@@ -96,10 +96,11 @@ const hitungPPhDariPKP = (pkp) => {
 // ============================================
 /**
  * @param {Object} params - Parameter perhitungan
- * @param {number} params.gajiPokok - Gaji pokok per bulan
- * @param {number} params.tunjangan - Total tunjangan per bulan (opsional)
- * @param {number} params.bonus - Bonus per bulan (opsional, dibagi 12 jika tahunan)
- * @param {number} params.thr - THR per bulan (opsional, dibagi 12 jika tahunan)
+ * @param {number} params.penghasilanTetapBulanan - Total pendapatan berjenis "Tetap" per bulan
+ *   (gaji pokok + semua tunjangan rutin) - dianggap berulang tiap bulan, jadi dikali 12 untuk setahun.
+ * @param {number} params.penghasilanTidakTetapSetahun - Total pendapatan berjenis "Tidak Tetap"
+ *   (bonus, lembur, THR) - masukkan jumlah aktualnya untuk periode ini, JANGAN dikali 12,
+ *   karena komponen ini secara sifat tidak berulang tiap bulan.
  * @param {number} params.iuranPensiun - Iuran pensiun per bulan (opsional)
  * @param {number} params.iuranBPJS - Iuran BPJS (JHT+JP) per bulan (opsional)
  * @param {string} params.statusPernikahan - Status: 'KAWIN' atau 'TIDAK_KAWIN'
@@ -107,41 +108,43 @@ const hitungPPhDariPKP = (pkp) => {
  * @returns {Object} Hasil perhitungan
  */
 const hitungPPh21Bulanan = (params) => {
-    // 1. Hitung Penghasilan Bruto Setahun
-    const gajiPokok = parseFloat(params.gajiPokok) || 0;
-    const tunjangan = parseFloat(params.tunjangan) || 0;
-    const bonus = parseFloat(params.bonus) || 0;
-    const thr = parseFloat(params.thr) || 0;
+    const penghasilanTetapBulanan = parseFloat(params.penghasilanTetapBulanan) || 0;
+    const penghasilanTidakTetapSetahun = parseFloat(params.penghasilanTidakTetapSetahun) || 0;
     const iuranPensiun = parseFloat(params.iuranPensiun) || 0;
     const iuranBPJS = parseFloat(params.iuranBPJS) || 0;
     const statusPernikahan = params.statusPernikahan || 'TIDAK_KAWIN';
     const jumlahAnak = parseInt(params.jumlahAnak) || 0;
-    
-    const penghasilanBrutoPerBulan = gajiPokok + tunjangan + bonus + thr;
-    const penghasilanBrutoPerTahun = penghasilanBrutoPerBulan * 12;
-    
+
+    // 1. Hitung Penghasilan Bruto Setahun — hanya komponen Tetap yang dikali 12
+    const penghasilanTetapSetahun = penghasilanTetapBulanan * 12;
+    const penghasilanBrutoPerTahun = penghasilanTetapSetahun + penghasilanTidakTetapSetahun;
+
     // 2. Hitung Pengurangan Setahun
     const biayaJabatan = hitungBiayaJabatan(penghasilanBrutoPerTahun);
     const totalIuranPerTahun = (iuranPensiun + iuranBPJS) * 12;
     const totalPengurangan = biayaJabatan + totalIuranPerTahun;
-    
+
     // 3. Hitung Penghasilan Netto Setahun
     const penghasilanNettoPerTahun = penghasilanBrutoPerTahun - totalPengurangan;
-    
+
     // 4. Hitung PTKP
     const ptkp = hitungPTKP(statusPernikahan, jumlahAnak);
-    
+
     // 5. Hitung PKP (Penghasilan Kena Pajak)
     const pkp = Math.max(0, penghasilanNettoPerTahun - ptkp);
-    
+
     // 6. Hitung PPh Terutang Setahun
     const pphTerutangSetahun = hitungPPhDariPKP(pkp);
-    
-    // 7. Hitung PPh 21 Bulanan
+
+    // 7. Hitung PPh 21 Bulanan (rata-rata terutang setahun dibagi 12 — bulan THR/bonus
+    //    turun idealnya dipajaki lebih besar dengan metode "penghasilan tidak teratur"
+    //    terpisah, belum diimplementasikan di sini)
     const pph21Bulanan = pphTerutangSetahun / 12;
-    
+
     return {
-        penghasilanBrutoPerBulan,
+        penghasilanTetapBulanan,
+        penghasilanTetapSetahun,
+        penghasilanTidakTetapSetahun,
         penghasilanBrutoPerTahun,
         biayaJabatan,
         totalIuranPerTahun,

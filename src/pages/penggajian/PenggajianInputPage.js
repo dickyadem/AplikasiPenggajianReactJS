@@ -271,45 +271,36 @@ const PenggajianInputPage = () => {
             return;
         }
 
-        // Ambil data dari itemsPendapatan
+        // Jumlahkan pendapatan berdasarkan Jenis (Tetap/Tidak Tetap) dari data master
+        // Pendapatan, bukan menebak dari nama komponennya — supaya semua item ikut
+        // terhitung (bukan cuma 1 item pertama yang kebetulan cocok kata kunci).
         const pendapatanValues = Object.values(gaji.itemsPendapatan);
-        
-        // Cari komponen penghasilan
-        const gajiPokokItem = pendapatanValues.find(p => 
-            p.Nama_Pendapatan?.toLowerCase().includes('gaji pokok') || 
-            p.Nama_Pendapatan?.toLowerCase().includes('gaji')
-        );
-        
-        const tunjanganItem = pendapatanValues.find(p => 
-            p.Nama_Pendapatan?.toLowerCase().includes('tunjangan')
-        );
-        
-        const bonusItem = pendapatanValues.find(p => 
-            p.Nama_Pendapatan?.toLowerCase().includes('bonus')
-        );
-        
-        const thrItem = pendapatanValues.find(p => 
-            p.Nama_Pendapatan?.toLowerCase().includes('thr')
-        );
+        let penghasilanTetapBulanan = 0;
+        let penghasilanTidakTetapSetahun = 0;
+
+        pendapatanValues.forEach((item) => {
+            const jumlah = parseFloat(item.Jumlah_Pendapatan) || 0;
+            const sourceItem = filteredPendapatan.find(p => p.ID_Pendapatan === item.ID_Pendapatan);
+            const jenis = sourceItem?.Jenis || 'Tetap';
+            if (jenis === 'Tidak Tetap') {
+                penghasilanTidakTetapSetahun += jumlah;
+            } else {
+                penghasilanTetapBulanan += jumlah;
+            }
+        });
 
         // Cari iuran BPJS dari potongan
-        const bpjsItem = Object.values(gaji.itemsPotongan).find(p => 
+        const bpjsItem = Object.values(gaji.itemsPotongan).find(p =>
             p.Nama_Potongan?.toLowerCase().includes('bpjs') ||
             p.ID_Potongan === '01'
         );
-
-        const gajiPokok = parseFloat(gajiPokokItem?.Jumlah_Pendapatan) || 0;
-        const tunjangan = parseFloat(tunjanganItem?.Jumlah_Pendapatan) || 0;
-        const bonus = parseFloat(bonusItem?.Jumlah_Pendapatan) || 0;
-        const thr = parseFloat(thrItem?.Jumlah_Pendapatan) || 0;
         const iuranBPJS = parseFloat(bpjsItem?.Jumlah_Potongan) || 0;
 
-        // Hitung PPh 21
+        // Hitung PPh 21 — komponen Tidak Tetap (bonus/THR) TIDAK dikali 12,
+        // karena sifatnya tidak berulang tiap bulan
         const result = hitungPPh21Bulanan({
-            gajiPokok,
-            tunjangan,
-            bonus,
-            thr,
+            penghasilanTetapBulanan,
+            penghasilanTidakTetapSetahun,
             iuranPensiun: 0,
             iuranBPJS,
             statusPernikahan: selectedKaryawan.Status_Pernikahan || 'TIDAK_KAWIN',
@@ -620,8 +611,12 @@ const PenggajianInputPage = () => {
                                 <Table size="sm" bordered>
                                     <tbody>
                                         <tr>
-                                            <th width="50%">Penghasilan Bruto/Bulan</th>
-                                            <td>{formatRupiah(pPhCalculation.penghasilanBrutoPerBulan.toString())}</td>
+                                            <th width="50%">Penghasilan Tetap/Bulan</th>
+                                            <td>{formatRupiah(pPhCalculation.penghasilanTetapBulanan.toString())}</td>
+                                        </tr>
+                                        <tr>
+                                            <th>Penghasilan Tidak Tetap (Bonus/THR periode ini)</th>
+                                            <td>{formatRupiah(pPhCalculation.penghasilanTidakTetapSetahun.toString())}</td>
                                         </tr>
                                         <tr>
                                             <th>Penghasilan Bruto/Tahun</th>

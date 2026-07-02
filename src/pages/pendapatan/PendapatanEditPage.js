@@ -119,6 +119,7 @@ const PendapatanEditPage = () => {
         const dataToSend = {
             ID_Pendapatan: pendapatan.ID_Pendapatan,
             Nama_Pendapatan: pendapatan.Nama_Pendapatan,
+            Jenis: pendapatan.Jenis || "Tetap",
             ID_Jabatan: pendapatan.ID_Jabatan || null,
             Nominal: pendapatan.Nominal ? parseInt(pendapatan.Nominal) : 0,
             Keterangan: pendapatan.Keterangan,
@@ -203,6 +204,20 @@ const PendapatanEditPage = () => {
                             <Form.Control.Feedback type="invalid">
                                 {errors.Nama_Pendapatan}
                             </Form.Control.Feedback>
+                        </Form.Group>
+                        <Form.Group className="mt-3">
+                            <Form.Label>Jenis *</Form.Label>
+                            <Form.Select
+                                name="Jenis"
+                                value={pendapatan.Jenis || "Tetap"}
+                                onChange={handleInput}
+                            >
+                                <option value="Tetap">Tetap</option>
+                                <option value="Tidak Tetap">Tidak Tetap</option>
+                            </Form.Select>
+                            <Form.Text className="text-muted">
+                                Pendapatan Tetap (gaji pokok, tunjangan rutin) vs Tidak Tetap (bonus, lembur, THR).
+                            </Form.Text>
                         </Form.Group>
                         <Form.Group className="mt-3">
                             <Form.Label>Jabatan (Opsional)</Form.Label>
