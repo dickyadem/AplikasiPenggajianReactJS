@@ -36,6 +36,45 @@ Frontend ini dibangun dengan React (Create React App) dan mengonsumsi REST API d
 
 ---
 
+## Dokumentasi Tampilan
+
+### Login
+
+![Halaman Login](document/img/Login.png)
+
+### Dashboard
+
+![Dashboard](document/img/Dasboard.png)
+![Dashboard Detail](document/img/Dasboard1.png)
+
+### Data Master
+
+| Modul | Tampilan |
+|---|---|
+| Data perusahaan | ![Data Perusahaan](document/img/DataPerusahaan.png) |
+| Karyawan | ![Menu Karyawan](document/img/MenuKaryawan.png) |
+| Jabatan | ![Menu Jabatan](document/img/MenuJabatan.png) |
+| Golongan | ![Menu Golongan](document/img/MenuGolongan.png) |
+| Pendapatan | ![Menu Pendapatan](document/img/MenuPendapatan.png) |
+| Potongan | ![Menu Potongan](document/img/MenuPotongan.png) |
+| User | ![Menu User](document/img/MenuUser.png) |
+
+### Penggajian dan Laporan
+
+#### Input Penggajian
+
+![Input Penggajian](document/img/InputPenggajian.png)
+
+#### List Penggajian
+
+![List Penggajian](document/img/ListPenggajian.png)
+
+#### Laporan Gaji
+
+![Laporan Gaji](document/img/LaporanGaji.png)
+
+---
+
 ## Role & Hak Akses
 
 Role bertingkat (level lebih tinggi otomatis punya akses level di bawahnya untuk pengecekan `hasRoleOrHigher`):

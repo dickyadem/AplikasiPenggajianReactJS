@@ -305,6 +305,7 @@ const PotonganAddPage = () => {
                                                     key={item.value}
                                                     type="button"
                                                     className="list-group-item list-group-item-action"
+                                                    onMouseDown={(e) => e.preventDefault()}
                                                     onClick={() => handleNominalPresetSelect(item.value)}
                                                     style={{ cursor: "pointer", border: "none" }}
                                                 >
